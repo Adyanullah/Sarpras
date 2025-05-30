@@ -1,7 +1,4 @@
 <x-layout>
-    <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#TambahPengadaan">
-        <i class="bi bi-plus-circle me-2"></i>Tambah Pengadaan
-    </button>
     <div class="table-responsive">
         <table id="tabelPengadaan" class="table table-bordered table-striped align-middle">
             <thead class="table-light text-center">

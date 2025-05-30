@@ -20,10 +20,10 @@
                         <i class="bi bi-file-earmark-pdf"></i> Cetak PDF
                     </button>
                     <ul class="dropdown-menu bg-danger" style=" min-width: 100%;">
-                        <li><a class="dropdown-item text-white" target="_blank" href="">1 Bulan</a></li>
-                        <li><a class="dropdown-item text-white" target="_blank" href="">3 Bulan</a></li>
-                        <li><a class="dropdown-item text-white" target="_blank" href="">6 Bulan</a></li>
-                        <li><a class="dropdown-item text-white" target="_blank" href="">1 Tahun</a></li>
+                        <li><a class="dropdown-item text-white" target="_blank" href="{{ route('pengadaan.pdf', 1) }}">1 Bulan</a></li>
+                        <li><a class="dropdown-item text-white" target="_blank" href="{{ route('pengadaan.pdf', 3) }}">3 Bulan</a></li>
+                        <li><a class="dropdown-item text-white" target="_blank" href="{{ route('pengadaan.pdf', 6) }}">6 Bulan</a></li>
+                        <li><a class="dropdown-item text-white" target="_blank" href="{{ route('pengadaan.pdf', 12) }}">1 Tahun</a></li>
                     </ul>
                 </div>
                 <div class="btn-group">
@@ -32,10 +32,10 @@
                         <i class="bi bi-file-earmark-excel"></i> Ekspor Excel
                     </button>
                     <ul class="dropdown-menu bg-success" style="min-width: 100%;">
-                        <li><a class="dropdown-item text-white" href="">1 Bulan</a></li>
-                        <li><a class="dropdown-item text-white" href="">3 Bulan</a></li>
-                        <li><a class="dropdown-item text-white" href="">6 Bulan</a></li>
-                        <li><a class="dropdown-item text-white" href="">1 Tahun</a></li>
+                        <li><a class="dropdown-item text-white" href="{{ route('pengadaan.excel', 1) }}">1 Bulan</a></li>
+                        <li><a class="dropdown-item text-white" href="{{ route('pengadaan.excel', 3) }}">3 Bulan</a></li>
+                        <li><a class="dropdown-item text-white" href="{{ route('pengadaan.excel', 6) }}">6 Bulan</a></li>
+                        <li><a class="dropdown-item text-white" href="{{ route('pengadaan.excel', 12) }}">1 Tahun</a></li>
                     </ul>
                 </div>
             </div>
@@ -46,35 +46,44 @@
             <thead class="table-light text-center">
                 <tr>
                     <th>No</th>
-                    <th>Kode Barang</th>
+                    <th>Tanggal Pengadaan</th>
                     <th>Nama Barang</th>
                     <th>Jenis Barang</th>
                     <th>Merk / Spesifikasi</th>
                     <th>Jumlah Barang</th>
-                    <th>Tanggal Pengadaan</th>
                     <th>Sumber Dana</th>
                     <th>Supplier</th>
-                    <th>Harga Satuan</th>
                     <th>Total Harga</th>
-                    <th>Aksi</th>
+                    <th>Status</th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>BRG-001</td>
-                    <td>Proyektor Epson</td>
-                    <td>Elektronik</td>
-                    <td>Epson X400, 3000 lumens</td>
-                    <td>2 Unit</td>
-                    <td>15-01-2025</td>
-                    <td>BOS</td>
-                    <td>CV. Sinar Abadi</td>
-                    <td>Rp 5.000.000</td>
-                    <td>Rp 10.000.000</td>
-                    <td><button class="btn btn-primary px-2 py-1 m-0">Detail</button>
-                    </td>
-                </tr>
+                @forelse ($pengadaans as $pengadaan)
+                    <tr>
+                        <td>{{ $loop->iteration }}</td>
+                        <td>{{ $pengadaan->created_at->format('Y-m-d') }}</td>
+                        <td>{{ $pengadaan->nama_barang }}</td>
+                        <td>{{ $pengadaan->jenis_barang }}</td>
+                        <td>{{ $pengadaan->merk_barang }}</td>
+                        <td>{{ $pengadaan->jumlah }} Unit</td>
+                        <td>{{ $pengadaan->sumber_dana }}</td>
+                        <td>{{ $pengadaan->cv_pengadaan }}</td>
+                        <td>Rp {{ number_format($pengadaan->harga_perolehan, 0, ',', '.') }}</td>
+                        <td>
+                            @if ($pengadaan->status == 'pending')
+                                <span class="badge bg-warning">Belum disetujui</span>
+                            @elseif ($pengadaan->status == 'disetujui')
+                                <span class="badge bg-success">Disetujui</span>
+                            @else
+                                <span class="badge bg-danger">Ditolak</span>
+                            @endif
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="11" class="text-center">Tidak ada data</td>
+                    </tr>
+                @endforelse
             </tbody>
         </table>
     </div>

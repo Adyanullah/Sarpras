@@ -75,9 +75,9 @@
                 </tr>
             </thead>
             <tbody>
-                @forelse ($dataInventaris as $item)
+                @forelse ($barangs as $item)
                 <tr>
-                    <td>{{ $loop->iteration + ($dataInventaris->currentPage() - 1) * $dataInventaris->perPage() }}</td>
+                    <td>{{ $loop->iteration + ($barangs->currentPage() - 1) * $barangs->perPage() }}</td>
                     <td>{{ $item->kode_barang }}</td>
                     <td>{{ $item->nama_barang }}</td>
                     <td>{{ $item->ruangan->nama_ruangan ?? '-' }}</td>
@@ -146,18 +146,18 @@
     </div>
     <nav aria-label="Page navigation example">
         <ul class="pagination justify-content-center">
-            <li class="page-item {{ $dataInventaris->onFirstPage() ? 'disabled' : '' }}">
-                <a class="page-link" href="{{ $dataInventaris->previousPageUrl() }}" tabindex="-1">Previous</a>
+            <li class="page-item {{ $barangs->onFirstPage() ? 'disabled' : '' }}">
+                <a class="page-link" href="{{ $barangs->previousPageUrl() }}" tabindex="-1">Previous</a>
             </li>
 
-            @for ($i = 1; $i <= $dataInventaris->lastPage(); $i++)
-                <li class="page-item {{ $dataInventaris->currentPage() == $i ? 'active' : '' }}">
-                    <a class="page-link" href="{{ $dataInventaris->url($i) }}">{{ $i }}</a>
+            @for ($i = 1; $i <= $barangs->lastPage(); $i++)
+                <li class="page-item {{ $barangs->currentPage() == $i ? 'active' : '' }}">
+                    <a class="page-link" href="{{ $barangs->url($i) }}">{{ $i }}</a>
                 </li>
                 @endfor
 
-                <li class="page-item {{ $dataInventaris->hasMorePages() ? '' : 'disabled' }}">
-                    <a class="page-link" href="{{ $dataInventaris->nextPageUrl() }}">Next</a>
+                <li class="page-item {{ $barangs->hasMorePages() ? '' : 'disabled' }}">
+                    <a class="page-link" href="{{ $barangs->nextPageUrl() }}">Next</a>
                 </li>
         </ul>
     </nav>
