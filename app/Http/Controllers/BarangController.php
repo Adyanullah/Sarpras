@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\DB;
 
 class BarangController extends Controller
 {
@@ -42,6 +43,7 @@ class BarangController extends Controller
         // return view('inventaris.app', compact('dataInventaris', 'ruangan', 'barangs'));
         $ruangan = Ruangan::all();
         $barangs = Barang::with('ruangan', 'barangDetail')
+            ->select('barang_id', DB::raw('COUNT(*) as total_unit'))
             ->groupBy('barang_id')
             ->paginate(8)
             ->appends($request->query());
