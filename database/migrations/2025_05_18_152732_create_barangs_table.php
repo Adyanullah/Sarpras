@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('barangs', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('barang_id')->constrained('barang_details')->onDelete('cascade');
+            $table->foreignId('barang_id')->constrained('barang_masters')->onDelete('cascade');
             $table->string('kode_barang')->unique();
             $table->year('tahun_perolehan')->nullable();
             $table->enum('sumber_dana', ['BOS', 'DAK', 'Hibah']);

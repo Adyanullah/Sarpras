@@ -33,17 +33,30 @@ Route::middleware('auth')->group(function () {
 
     // Kelola Barang
     Route::get('/inventaris', [BarangController::class, 'index'])->middleware('role:1,2,3,4')->name('inventaris.index');
-    Route::post('/inventaris/tambah', [BarangController::class, 'store'])->name('inventaris.store');
+    Route::get('/inventaris/unit/{id}', [BarangController::class, 'unit'])->name('inventaris.unit');
     Route::get('/inventaris/detail/{id}', [BarangController::class, 'show'])->name('inventaris.detail');
-    Route::put('/inventaris/detail/{id}', [BarangController::class, 'update'])->name('inventaris.update');
-    Route::delete('/inventaris/hapus/{id}', [BarangController::class, 'destroy'])->name('inventaris.destroy');
-    Route::delete('/inventaris/ajukanHapus/{id}', [BarangController::class, 'destroyApp'])->name('inventaris.destroy.app');
+    Route::post('/inventaris/unit/aksi', [BarangController::class, 'aksi'])->name('inventaris.aksi');
 
-    Route::post('/inventaris/pengadaan', [BarangController::class, 'pengadaan'])->name('inventaris.pengadaan');
-    Route::post('/inventaris/pengadaan/baru', [BarangController::class, 'pengadaanBaru'])->name('inventaris.pengadaan.baru');
+    Route::get('/tes-qr', function () {
+    $barang = \App\Models\Barang::first();
+    return view('inventaris.qr', [
+        'barangs' => collect([$barang]),
+        'ukuran' => 'kecil',
+    ]);
+});
+    Route::get('/inventaris/qr-cetak/{ukuran}', [BarangController::class, 'cetakQR'])->name('inventaris.qr.cetak');
 
-    Route::get('/barang/scan/result/{kode}', [BarangController::class, 'scanResult']);
-    Route::view('/scan', 'inventaris.scan');
+
+    // Route::post('/inventaris/tambah', [BarangController::class, 'store'])->name('inventaris.store');
+    // Route::put('/inventaris/detail/{id}', [BarangController::class, 'update'])->name('inventaris.update');
+    // Route::delete('/inventaris/hapus/{id}', [BarangController::class, 'destroy'])->name('inventaris.destroy');
+    // Route::delete('/inventaris/ajukanHapus/{id}', [BarangController::class, 'destroyApp'])->name('inventaris.destroy.app');
+
+    // Route::post('/inventaris/pengadaan', [BarangController::class, 'pengadaan'])->name('inventaris.pengadaan');
+    // Route::post('/inventaris/pengadaan/baru', [BarangController::class, 'pengadaanBaru'])->name('inventaris.pengadaan.baru');
+
+    // Route::get('/barang/scan/result/{kode}', [BarangController::class, 'scanResult']);
+    // Route::view('/scan', 'inventaris.scan');
 
     // Ruangan
     Route::get('/ruang', [DataRuanganController::class, 'index'])->middleware('role:1');

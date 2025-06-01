@@ -1,5 +1,17 @@
 <x-layout>
-    <h1 class="mb-4 fw-bold">Detail Barang</h1>
+    <div class="row">
+        <div class="col-12">
+            <div class="page-title-box">
+                <h4 class="mb-0 fw-bold">Detail Barang</h4>
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a href="javascript: void(0);">Sarpras</a></li>
+                    <li class="breadcrumb-item active"><a href="{{ route('inventaris.index') }}">Data Barang</a></li>
+                    <li class="breadcrumb-item active"><a href="{{ back()->getTargetUrl() }}">Unit Satuan</a></li>
+                    <li class="breadcrumb-item active">Detail Barang</li>
+                </ol>
+            </div>
+        </div>
+    </div>
     <div class="row g-4">
         <!-- Kolom Kiri -->
         <div class="col-md-6">
@@ -8,40 +20,29 @@
                     <table class="table table-bordered">
                         <tbody>
                             <tr><th>Kode Barang</th><td>{{ $item->kode_barang }}</td></tr>
-                            <tr><th>Nama Barang</th><td>{{ $item->nama_barang }}</td></tr>
-                            <tr><th>Jenis Barang</th><td>{{ $item->jenis_barang }}</td></tr>
-                            <tr><th>Merk / Spesifikasi</th><td>{{ $item->merk_barang }}</td></tr>
+                            <tr><th>Nama Barang</th><td>{{ $item->barangMaster->nama_barang }}</td></tr>
+                            <tr><th>Jenis Barang</th><td>{{ $item->barangMaster->jenis_barang }}</td></tr>
+                            <tr><th>Merk / Spesifikasi</th><td>{{ $item->barangMaster->merk_barang }}</td></tr>
                             <tr><th>Tahun Perolehan</th><td>{{ $item->tahun_perolehan }}</td></tr>
                             <tr><th>Sumber Dana</th><td>{{ $item->sumber_dana }}</td></tr>
                             <tr>
-                                <th>Harga Perolehan</th>
-                                <td>{{ $item->harga_perolehan == 0 ? '-' : 'Rp. ' . number_format($item->harga_perolehan, 0, ',', '.') }}</td>
+                                <th>Harga Satuan</th>
+                                <td>{{ $item->harga_unit == 0 ? '-' : 'Rp. ' . number_format($item->harga_unit, 0, ',', '.') }}</td>
                             </tr>
-                            <tr><th>CV Pengadaan</th><td>{{ $item->cv_pengadaan }}</td></tr>
-                            <tr><th>Jumlah Barang</th>
-                                <td>
-                                    {{ $item->jumlah_barang }}
-                                    @if ($perawatan > 0)
-                                        - <span class="text-warning">  ({{ $perawatan }} dalam perawatan)</span>
-                                        @endif
-                                    @if ($peminjaman > 0)
-                                        - <span class="text-warning">  ({{ $peminjaman }} dalam peminjaman)</span>    
-                                    @endif
-                                </td>
-                            </tr>
+                            <tr><th>Supplier</th><td>{{ $item->cv_pengadaan }}</td></tr>
                             <tr><th>Lokasi</th><td>{{ $item->ruangan->nama_ruangan }}</td></tr>
                             <tr><th>Kondisi</th><td>{{ $item->kondisi_barang }}</td></tr>
                             <tr><th>Kepemilikan</th><td>{{ $item->kepemilikan_barang }}</td></tr>
-                            <tr><th>Penanggung Jawab</th><td>{{ $item->penanggung_jawab }}</td></tr>
+                            <tr><th>Penanggung Jawab</th><td>{{ $item->ruangan->penanggung_jawab ?? '-' }}</td></tr>
                         </tbody>
                     </table>
                     @if (in_array(auth()->user()->role, [1]))
                         <div class="d-flex justify-content-end gap-2 mt-3">
-                            <button class="btn btn-warning px-2 py-1" data-bs-toggle="modal" data-bs-target="#editData">Edit</button>
+                            {{-- <button class="btn btn-warning px-2 py-1" data-bs-toggle="modal" data-bs-target="#editData">Edit</button>
                             @include('inventaris.popup.edit_data')
 
                             <button class="btn btn-danger px-2 py-1" data-bs-toggle="modal" data-bs-target="#deleteModal">Drop</button>
-                            @include('inventaris.popup.confirmation_delete', ['modalId' => '', 'item' => $item])
+                            @include('inventaris.popup.confirmation_delete', ['modalId' => '', 'item' => $item]) --}}
                         </div>
                     @endif
                 </div>
@@ -52,7 +53,7 @@
         <div class="col-md-6">
             <div class="card shadow-sm rounded-3 mb-3">
                 <div class="card-body text-center">
-                    <img src="{{ asset($item->gambar_barang) }}" class="img-fluid rounded" alt="Gambar Barang">
+                    <img src="{{ asset($item->barangMaster->gambar_barang) }}" class="img-fluid rounded" alt="Gambar Barang">
                 </div>
             </div>
 

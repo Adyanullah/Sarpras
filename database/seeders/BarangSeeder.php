@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 use App\Models\Barang;
-use App\Models\BarangDetail;
+use App\Models\BarangMaster;
 use App\Models\Ruangan;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -14,7 +14,7 @@ class BarangSeeder extends Seeder
      */
     public function run(): void
     {
-        $barangDetails = BarangDetail::all();
+        $barangDetails = BarangMaster::all();
         $ruangans = Ruangan::all();
 
         if ($barangDetails->isEmpty() || $ruangans->isEmpty()) {
@@ -38,7 +38,6 @@ class BarangSeeder extends Seeder
             $hargaUnit = fake()->numberBetween(50000, 3000000);
             $cv = fake()->company;
             $ruanganId = $ruangans->random()->id;
-            $kondisi = fake()->randomElement($kondisiList);
             $pemilik = fake()->randomElement($pemilikList);
 
             // Inisialisasi counter untuk kode_barang unik
@@ -57,7 +56,7 @@ class BarangSeeder extends Seeder
                     'harga_unit' => $hargaUnit,
                     'cv_pengadaan' => $cv,
                     'ruangan_id' => $ruanganId,
-                    'kondisi_barang' => $kondisi,
+                    'kondisi_barang' => fake()->randomElement($kondisiList),
                     'kepemilikan_barang' => $pemilik,
                 ]);
             }

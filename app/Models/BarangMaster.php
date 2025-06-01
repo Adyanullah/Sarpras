@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class BarangDetail extends Model
+class BarangMaster extends Model
 {
     public function barang()
     {

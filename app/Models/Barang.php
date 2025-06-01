@@ -11,9 +11,9 @@ class Barang extends Model
     {
         return $this->belongsTo(Ruangan::class, 'ruangan_id');
     }
-    public function barangDetail()
+    public function barangMaster()
     {
-        return $this->belongsTo(BarangDetail::class, 'barang_id');
+        return $this->belongsTo(BarangMaster::class, 'barang_id');
     }
     
     public function peminjaman()
