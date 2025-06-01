@@ -55,8 +55,8 @@ Route::middleware('auth')->group(function () {
     // Route::post('/inventaris/pengadaan', [BarangController::class, 'pengadaan'])->name('inventaris.pengadaan');
     // Route::post('/inventaris/pengadaan/baru', [BarangController::class, 'pengadaanBaru'])->name('inventaris.pengadaan.baru');
 
-    // Route::get('/barang/scan/result/{kode}', [BarangController::class, 'scanResult']);
-    // Route::view('/scan', 'inventaris.scan');
+    Route::get('/barang/scan/result/{kode}', [BarangController::class, 'scanResult']);
+    Route::view('/scan', 'inventaris.scan');
 
     // Ruangan
     Route::get('/ruang', [DataRuanganController::class, 'index'])->middleware('role:1');

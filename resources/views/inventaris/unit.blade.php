@@ -63,10 +63,12 @@
                 </button>
                 <ul class="dropdown-menu bg-primary" style=" min-width: 100%;">
                     <li>
-                        <button type="submit" class="dropdown-item text-white" name="aksi" value="cetak_qr_kecil">Ukuran Kecil</button>
+                        <button type="submit" class="dropdown-item text-white" name="aksi"
+                            value="cetak_qr_kecil">Ukuran Kecil</button>
                     </li>
                     <li>
-                        <button type="submit" class="dropdown-item text-white" name="aksi" value="cetak_qr_besar">Ukuran Besar</button>
+                        <button type="submit" class="dropdown-item text-white" name="aksi"
+                            value="cetak_qr_besar">Ukuran Besar</button>
                     </li>
                 </ul>
             </div>
@@ -170,18 +172,35 @@
                 const deleteBtn = document.getElementById('trigger-delete');
                 const hiddenInput = document.getElementById('selected-ids');
 
+                function updateSelectAllCheckbox() {
+                    const total = checkboxes.length;
+                    const checked = [...checkboxes].filter(cb => cb.checked).length;
+
+                    if (checked === 0) {
+                        selectAll.checked = false;
+                        selectAll.indeterminate = false;
+                    } else if (checked === total) {
+                        selectAll.checked = true;
+                        selectAll.indeterminate = false;
+                    } else {
+                        selectAll.checked = false;
+                        selectAll.indeterminate = true;
+                    }
+                }
+
                 function toggleDeleteButton() {
-                    const anyChecked = [...checkboxes].some(checkbox => checkbox.checked);
+                    const anyChecked = [...checkboxes].some(cb => cb.checked);
                     deleteBtn.disabled = !anyChecked;
+                    updateSelectAllCheckbox();
                 }
 
                 checkboxes.forEach(cb => cb.addEventListener('change', toggleDeleteButton));
+
                 selectAll.addEventListener('change', function() {
                     checkboxes.forEach(cb => cb.checked = this.checked);
                     toggleDeleteButton();
                 });
 
-                // Saat tombol ditekan, isi hidden input dengan ID terpilih
                 deleteBtn.addEventListener('click', function() {
                     const selectedIds = [...checkboxes]
                         .filter(cb => cb.checked)

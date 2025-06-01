@@ -117,6 +117,15 @@ class BarangController extends Controller
         return redirect()->back()->with('success', 'Pengajuan penghapusan berhasil dikirim.');
     }
 
+    public function scanResult($kode)
+    {
+        $item = Barang::where('kode_barang', $kode)->firstOrFail();
+        $qr = $item->kode_barang;
+
+        $qrCode = QrCode::size(200)->generate($qr);
+        return view('inventaris.detail', compact('item'));
+    }
+
     // public function cetakQR($ukuran)
     // {
     //     $barangs = Barang::with('barangMaster')->get();
@@ -125,14 +134,6 @@ class BarangController extends Controller
     //     return $pdf->download('qr_barang.pdf');
     // }
 
-    // public function scanResult($kode)
-    // {
-    //     $item = Barang::where('kode_barang', $kode)->firstOrFail();
-    //     $qr = $item->kode_barang;
-
-    //     $qrCode = QrCode::size(200)->generate($qr);
-    //     return view('inventaris.detail', compact('item'));
-    // }
 
     // public function store(Request $request)
     // {
