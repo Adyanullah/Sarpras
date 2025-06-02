@@ -1,25 +1,22 @@
-@if (session('modal_error'))
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var modalId = @json(session('modal_error'));
-            var errorModal = new bootstrap.Modal(document.getElementById(modalId), {
-                keyboard: false
-            });
-            errorModal.show();
-        });
-    </script>
-@endif
 <div class="modal fade" id="PengadaanBaru" tabindex="-1" aria-labelledby="exampleModalCenteredScrollableTitle"
     aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-        <form class="modal-content" action="{{ route('barang-requests.store') }}" method="post" enctype="multipart/form-data">
+        <form class="modal-content" action="{{ route('pengadaan.store') }}" method="post" enctype="multipart/form-data">
             @csrf
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalCenteredScrollableTitle">Tambah Data</h5>
+                <h5 class="modal-title" id="exampleModalCenteredScrollableTitle">Tambah Barang Baru</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <input type="hidden" name="tipe_pengajuan" value="baru">
+                <div class="mb-3">
+                    <label for="kode_barang" class="form-label">Kode Barang</label>
+                    <input type="text" class="form-control" id="kode_barang" name="kode_barang"
+                        value="{{ old('kode_barang') }}">
+                </div>
+                @error('kode_barang')
+                    <div class="alert alert-danger mt-2">{{ $message }}</div>
+                @enderror
                 <div class="mb-3">
                     <label for="nama_barang" class="form-label">Nama Barang</label>
                     <input type="text" class="form-control" id="nama_barang" name="nama_barang"
@@ -29,7 +26,7 @@
                     <div class="alert alert-danger mt-2">{{ $message }}</div>
                 @enderror
                 <div class="mb-3">
-                    <label for="jenis_barang" class="form-label">Jenis Barang</label>
+                    <label for="jenis_barang" class="form-label">Jenis Barang (Opsional)</label>
                     <input type="text" class="form-control" id="jenis_barang" name="jenis_barang"
                         value="{{ old('jenis_barang') }}">
                 </div>
@@ -37,7 +34,7 @@
                     <div class="alert alert-danger mt-2">{{ $message }}</div>
                 @enderror
                 <div class="mb-3">
-                    <label for="merk_barang" class="form-label">Merk/Spesifikasi</label>
+                    <label for="merk_barang" class="form-label">Merk/Spesifikasi (Opsional)</label>
                     <input type="text" class="form-control" id="merk_barang" name="merk_barang"
                         value="{{ old('merk_barang') }}">
                 </div>
@@ -56,9 +53,9 @@
                     <label for="sumber_dana" class="form-label">Sumber Dana</label>
                     <select class="form-select" id="sumber_dana" name="sumber_dana">
                         <option selected disabled>Piliih Sumber Dana</option>
-                        <option value="bos">BOS</option>
-                        <option value="dak">DAK</option>
-                        <option value="hibah">Hibah</option>
+                        <option value="BOS">BOS</option>
+                        <option value="DAK">DAK</option>
+                        <option value="Hibah">Hibah</option>
                     </select>
                 </div>
                 <div class="mb-3">
@@ -92,16 +89,7 @@
                     <div class="alert alert-danger mt-2">{{ $message }}</div>
                 @enderror
                 <div class="mb-3">
-                    <label for="kondisi_barang" class="form-label">Kondisi</label>
-                    <select class="form-select" id="kondisi_barang" name="kondisi_barang">
-                        <option selected disabled>Pilih Kondisi</option>
-                        <option value="Baik">Baik</option>
-                        <option value="Rusak">Rusak</option>
-                        <option value="Berat">Rusak Berat</option>
-                    </select>
-                </div>
-                <div class="mb-3">
-                    <label for="kepemilikan_barang" class="form-label">Kepemilikan</label>
+                    <label for="kepemilikan_barang" class="form-label">Kepemilikan (Opsional)</label>
                     <select class="form-select" id="kepemilikan_barang" name="kepemilikan_barang">
                         <option selected disabled>Pilih Kepemilikan</option>
                         <option value="sekolah">Milik Sekolah</option>
@@ -110,14 +98,6 @@
                     </select>
                 </div>
                 @error('kepemilikan_barang')
-                    <div class="alert alert-danger mt-2">{{ $message }}</div>
-                @enderror
-                <div class="mb-3">
-                    <label for="penanggung_jawab" class="form-label">Penanggung Jawab</label>
-                    <input type="text" class="form-control" id="penanggung_jawab" name="penanggung_jawab"
-                        value="{{ old('penanggung_jawab') }}">
-                </div>
-                @error('penanggung_jawab')
                     <div class="alert alert-danger mt-2">{{ $message }}</div>
                 @enderror
                 <div class="mb-3">

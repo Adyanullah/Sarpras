@@ -25,8 +25,8 @@
                                 data-bs-target="#PengadaanBaru">Barang baru</a></li>
                     </ul>
                 </div>
-                {{-- @include('inventaris.popup.pengadaan')
-                    @include('inventaris.popup.pengadaan_baru') --}}
+                @include('inventaris.popup.pengadaan')
+                @include('inventaris.popup.pengadaan_baru')
             @endif
         </div>
         <div class="col-md-6 text-end">

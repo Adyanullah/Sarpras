@@ -37,14 +37,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/inventaris/detail/{id}', [BarangController::class, 'show'])->name('inventaris.detail');
     Route::post('/inventaris/unit/aksi', [BarangController::class, 'aksi'])->name('inventaris.aksi');
 
-    Route::get('/tes-qr', function () {
-    $barang = \App\Models\Barang::first();
-    return view('inventaris.qr', [
-        'barangs' => collect([$barang]),
-        'ukuran' => 'kecil',
-    ]);
-});
     Route::get('/inventaris/qr-cetak/{ukuran}', [BarangController::class, 'cetakQR'])->name('inventaris.qr.cetak');
+    Route::get('/barang/scan/result/{kode}', [BarangController::class, 'scanResult']);
+    Route::view('/scan', 'inventaris.scan');
 
 
     // Route::post('/inventaris/tambah', [BarangController::class, 'store'])->name('inventaris.store');
@@ -55,8 +50,6 @@ Route::middleware('auth')->group(function () {
     // Route::post('/inventaris/pengadaan', [BarangController::class, 'pengadaan'])->name('inventaris.pengadaan');
     // Route::post('/inventaris/pengadaan/baru', [BarangController::class, 'pengadaanBaru'])->name('inventaris.pengadaan.baru');
 
-    Route::get('/barang/scan/result/{kode}', [BarangController::class, 'scanResult']);
-    Route::view('/scan', 'inventaris.scan');
 
     // Ruangan
     Route::get('/ruang', [DataRuanganController::class, 'index'])->middleware('role:1');
@@ -65,9 +58,9 @@ Route::middleware('auth')->group(function () {
 
     //pengadaan
     Route::get('/pengadaan', [PengadaanController::class, 'index'])->middleware('role:1,3');
-    Route::get('/pengajuan/tambah-jumlah', [PengadaanController::class, 'createTambahJumlah'])->name('barang-requests.tambah-jumlah');
-    Route::get('/pengajuan/tambah-baru', [PengadaanController::class, 'createTambahBaru'])->name('barang-requests.tambah-baru');
-    Route::post('/pengajuan/store', [PengadaanController::class, 'store'])->name('barang-requests.store');
+    // Route::get('/pengajuan/tambah-jumlah', [PengadaanController::class, 'createTambahJumlah'])->name('barang-requests.tambah-jumlah');
+    // Route::get('/pengajuan/tambah-baru', [PengadaanController::class, 'createTambahBaru'])->name('barang-requests.tambah-baru');
+    Route::post('/pengajuan/store', [PengadaanController::class, 'store'])->name('pengadaan.store');
     Route::put('/pengadaan/update/{id}', [PengadaanController::class, 'update'])->name('pengadaan.update');
     Route::delete('/pengadaan/{id}', [PengadaanController::class, 'destroy'])->name('pengadaan.destroy');
 

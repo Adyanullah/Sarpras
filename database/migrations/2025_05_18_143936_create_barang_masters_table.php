@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('kode_barang')->unique();
             $table->string('nama_barang');
-            $table->string('jenis_barang');
-            $table->string('merk_barang');
+            $table->string('jenis_barang')->nullable();
+            $table->string('merk_barang')->nullable();
             $table->text('gambar_barang')->nullable();
             $table->timestamps();
         });

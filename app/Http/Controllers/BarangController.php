@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 use App\Models\Ruangan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
-use PDF;
+use Barryvdh\DomPDF\Facade\Pdf;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\DB;
@@ -125,15 +125,6 @@ class BarangController extends Controller
         $qrCode = QrCode::size(200)->generate($qr);
         return view('inventaris.detail', compact('item'));
     }
-
-    // public function cetakQR($ukuran)
-    // {
-    //     $barangs = Barang::with('barangMaster')->get();
-
-    //     $pdf = PDF::loadView('inventaris.qr_pdf', compact('barangs', 'ukuran'));
-    //     return $pdf->download('qr_barang.pdf');
-    // }
-
 
     // public function store(Request $request)
     // {
