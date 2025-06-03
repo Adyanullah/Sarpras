@@ -16,14 +16,17 @@
         @foreach ($barangs->chunk(2) as $row)
             <tr>
                 @foreach ($row as $barang)
-                    <td width="50%">
+                    <td width="25%">
                         <div class="qr">
                             {!! QrCode::format('svg')->size($ukuran == 'kecil' ? 100 : 200)->generate($barang->kode_barang) !!}
+                            testing
                         </div>
-                        <div class="info">
+                    </td>
+                    <td>
+                        <div class="info" width="25%">
                             <strong>{{ $barang->barangMaster->nama_barang }}</strong><br>
-                            Sumber: {{ $barang->sumber_dana }}<br>
-                            Tahun: {{ $barang->tahun_perolehan }}
+                            Sumber  : {{ $barang->sumber_dana }}<br>
+                            Tahun   : {{ $barang->tahun_perolehan }}
                         </div>
                     </td>
                 @endforeach

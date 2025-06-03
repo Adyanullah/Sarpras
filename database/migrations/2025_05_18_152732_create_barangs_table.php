@@ -22,6 +22,7 @@ return new class extends Migration
             $table->foreignId('ruangan_id')->constrained('ruangans')->onDelete('cascade');
             $table->enum('kondisi_barang',['baik','rusak','berat'])->default('baik');
             $table->string('kepemilikan_barang');
+            $table->integer('sedia')->default(0);
             $table->timestamps();
         });
     }

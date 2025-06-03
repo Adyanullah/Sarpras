@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('penghapusan', function (Blueprint $table) {
+        Schema::create('mutasi_items', function (Blueprint $table) {
             $table->id();
-            $table->text('keterangan')->nullable();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->enum('status_ajuan',['pending','disetujui','ditolak'])->default('pending');
+            $table->foreignId('barang_id')->constrained('barangs')->onDelete('cascade');
+            $table->foreignId('mutasi_id')->constrained('mutasis')->onDelete('cascade');
+            $table->enum('status_mutasi', ['selesai', 'belum'])->default('belum');
             $table->timestamps();
         });
     }
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('penghapusan');
+        Schema::dropIfExists('mutasi_items');
     }
 };

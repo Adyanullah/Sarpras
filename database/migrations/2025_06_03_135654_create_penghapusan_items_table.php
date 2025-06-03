@@ -11,11 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('penghapusan', function (Blueprint $table) {
+        Schema::create('penghapusan_items', function (Blueprint $table) {
             $table->id();
-            $table->text('keterangan')->nullable();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->enum('status_ajuan',['pending','disetujui','ditolak'])->default('pending');
+            $table->foreignId('barang_id')->constrained('barangs')->onDelete('cascade');
+            $table->foreignId('penghapusan_id')->constrained('penghapusan')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -25,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('penghapusan');
+        Schema::dropIfExists('penghapusan_items');
     }
 };

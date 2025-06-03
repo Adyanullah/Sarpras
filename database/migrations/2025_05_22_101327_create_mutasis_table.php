@@ -15,11 +15,8 @@ return new class extends Migration
             $table->id();
             $table->date('tanggal_mutasi');
             $table->string('nama_mutasi');
-            $table->foreignId('barang_id')->constrained('barangs')->onDelete('cascade');
-            $table->integer('jumlah_barang');
             $table->integer('tujuan');
             $table->text('keterangan')->nullable();
-            $table->enum('status_mutasi', ['Batal', 'pending', 'Dikirim'])->default('pending');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->enum('status_ajuan',['pending','disetujui','ditolak'])->default('pending');
             $table->timestamps();

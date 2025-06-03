@@ -1,4 +1,4 @@
-@if (session('modal_error') === 'TambahPeminjaman')
+{{-- @if (session('modal_error') === 'TambahPeminjaman')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Tutup modal lain jika ada
@@ -17,7 +17,7 @@
         }
     });
 </script>
-@endif
+@endif --}}
 <div class="modal fade" id="TambahPeminjaman" tabindex="-1" aria-labelledby="TambahPeminjamanLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <form class="modal-content" action="{{ route('peminjaman.store') }}" method="POST">
@@ -61,7 +61,7 @@
                         <option selected disabled>-- Pilih Barang --</option>
                         @foreach ($barangs as $barang)
                             <option value="{{ $barang->id }}" {{ old('barang_id') == $barang->id ? 'selected' : '' }}>
-                                {{ $barang->nama_barang }} - {{ $barang->ruangan->nama_ruangan }} - Total: {{ $barang->jumlah_barang }}
+                                {{ $barang->barangMaster->nama_barang }} - {{ $barang->ruangan->nama_ruangan }} - Total: 
                             </option>
                         @endforeach
                     </select>

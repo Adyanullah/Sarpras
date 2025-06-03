@@ -12,7 +12,6 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\PenghapusanController;
 use App\Http\Controllers\BarangRusakController;
 use App\Http\Controllers\PengadaanController;
-use App\Models\Pengadaan;
 use App\Models\Perawatan;
 // use Dflydev\DotAccessData\Data;
 use Illuminate\Support\Facades\Route;
@@ -40,6 +39,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/inventaris/qr-cetak/{ukuran}', [BarangController::class, 'cetakQR'])->name('inventaris.qr.cetak');
     Route::get('/barang/scan/result/{kode}', [BarangController::class, 'scanResult']);
     Route::view('/scan', 'inventaris.scan');
+    Route::get('/qr', function () {
+        return view('inventaris.qr');
+    });
 
 
     // Route::post('/inventaris/tambah', [BarangController::class, 'store'])->name('inventaris.store');

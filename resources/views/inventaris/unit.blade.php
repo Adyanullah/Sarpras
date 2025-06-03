@@ -57,11 +57,34 @@
         <div class="col-md-6 d-flex mb-3">
             @csrf
             <div class="btn-group me-2">
-                <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
+                <button type="button" class="btn btn-primary dropdown-toggle" id="trigger-ajuan" disabled data-bs-toggle="dropdown"
                     aria-expanded="false">
-                    <i class="bi bi-printer"></i> Cetak QR
+                    <i class="bi bi-plus-circle me-2"></i>Pengajuan
                 </button>
                 <ul class="dropdown-menu bg-primary" style=" min-width: 100%;">
+                    <li>
+                        <button type="button" class="dropdown-item text-white" data-bs-toggle="modal"
+                        data-bs-target="#TambahPeminjaman" value="cetak_qr_kecil">Peminjaman</button>
+                    </li>
+                    {{-- @include('peminjaman.popup.peminjaman') --}}
+                    <li>
+                        <button type="button" class="dropdown-item text-white" data-bs-toggle="modal"
+                data-bs-target="#TambahPeminjaman"
+                            value="cetak_qr_besar">Perawatan</button>
+                    </li>
+                    <li>
+                        <button type="button" class="dropdown-item text-white" data-bs-toggle="modal"
+                data-bs-target="#TambahPeminjaman"
+                            value="cetak_qr_besar">Pemindahan</button>
+                    </li>
+                </ul>
+            </div>
+            <div class="btn-group me-2">
+                <button type="button" class="btn btn-secondary dropdown-toggle" id="trigger-cetak" disabled data-bs-toggle="dropdown"
+                    aria-expanded="false">
+                    <i class="bi bi-printer me-2"></i>Cetak QR
+                </button>
+                <ul class="dropdown-menu bg-secondary" style=" min-width: 100%;">
                     <li>
                         <button type="submit" class="dropdown-item text-white" name="aksi"
                             value="cetak_qr_kecil">Ukuran Kecil</button>
@@ -74,10 +97,10 @@
             </div>
             <button type="button" class="btn btn-danger" id="trigger-delete" disabled data-bs-toggle="modal"
                 data-bs-target="#hapusModal">
-                <i class="bi bi-trash"></i> Hapus Terpilih
+                <i class="bi bi-trash me-2"></i>Hapus Terpilih
             </button>
         </div>
-        @include('inventaris.popup.ajuan_penghapusan')
+        @include('inventaris.popup.penghapusan')
         @if (session('success'))
             <div class="alert alert-success alert-dismissible fade show" role="alert">
                 <strong>Berhasil!</strong> {{ session('success') }}
@@ -170,6 +193,8 @@
                 const checkboxes = document.querySelectorAll('.row-checkbox');
                 const selectAll = document.getElementById('select-all');
                 const deleteBtn = document.getElementById('trigger-delete');
+                const cetakBtn = document.getElementById('trigger-cetak');
+                const ajuanBtn = document.getElementById('trigger-ajuan');
                 const hiddenInput = document.getElementById('selected-ids');
 
                 function updateSelectAllCheckbox() {
@@ -188,17 +213,19 @@
                     }
                 }
 
-                function toggleDeleteButton() {
+                function toggleButton() {
                     const anyChecked = [...checkboxes].some(cb => cb.checked);
                     deleteBtn.disabled = !anyChecked;
+                    cetakBtn.disabled = !anyChecked;
+                    ajuanBtn.disabled = !anyChecked;
                     updateSelectAllCheckbox();
                 }
 
-                checkboxes.forEach(cb => cb.addEventListener('change', toggleDeleteButton));
+                checkboxes.forEach(cb => cb.addEventListener('change', toggleButton));
 
                 selectAll.addEventListener('change', function() {
                     checkboxes.forEach(cb => cb.checked = this.checked);
-                    toggleDeleteButton();
+                    toggleButton();
                 });
 
                 deleteBtn.addEventListener('click', function() {
@@ -208,7 +235,7 @@
                     hiddenInput.value = selectedIds.join(',');
                 });
 
-                toggleDeleteButton();
+                toggleButton();
             });
         </script>
     @endpush
