@@ -6,5 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class PenghapusanItem extends Model
 {
-    //
+    protected $guarded = ['id'];
+    public function barang()
+    {
+        return $this->belongsTo(Barang::class, 'barang_id');
+    }
+
+    public function penghapusan()
+    {
+        return $this->belongsTo(Penghapusan::class, 'penghapusan_id');
+    }
 }

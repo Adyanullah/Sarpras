@@ -1,4 +1,4 @@
-@if (session('modal_error') === 'modalMutasiBarang')
+{{-- @if (session('modal_error') === 'TambahMutasi')
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             // Tutup modal terbuka lainnya
@@ -9,29 +9,31 @@
             document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
 
             // Tampilkan modal tambah mutasi
-            var modalElement = document.getElementById('modalMutasiBarang');
+            var modalElement = document.getElementById('TambahMutasi');
             if (modalElement) {
                 var myModal = new bootstrap.Modal(modalElement, { keyboard: false });
                 myModal.show();
             }
         });
     </script>
-@endif
-<div class="modal fade" id="modalMutasiBarang" tabindex="-1" aria-labelledby="modalMutasiLabel" aria-hidden="true">
+@endif --}}
+<div class="modal fade" id="TambahMutasi" tabindex="-1" aria-labelledby="modalMutasiLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-        <form action="{{ route('mutasi.store') }}" method="POST" class="modal-content">
+        <form action="{{ route('inventaris.aksi') }}" method="POST" class="modal-content">
             @csrf
+        {{-- <div class="modal-content"> --}}
 
             <!-- Header -->
             <div class="modal-header">
-                <h5 class="modal-title" id="modalMutasiLabel">Form Mutasi Barang</h5>
+                <h5 class="modal-title" id="modalMutasiLabel">Ajukan Mutasi Barang</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
             <!-- Body -->
             <div class="modal-body">
                 <div class="row g-3">
-
+                    <input type="hidden" name="selected_ids" id="mutasi-selected-ids" value="">
+                    <input type="hidden" name="action_type" value="mutasi">
                     <div class="col-md-12">
                         <label for="tanggal_mutasi" class="form-label">Tanggal Mutasi</label>
                         <input type="date" name="tanggal_mutasi" class="form-control" id="tanggal_mutasi"
@@ -46,31 +48,6 @@
                         <input type="text" name="nama_mutasi" class="form-control" id="nama_mutasi"
                             placeholder="Contoh: Mutasi ke ruang B" value="{{ old('nama_mutasi') }}">
                         @error('nama_mutasi')
-                            <div class="alert alert-danger mt-2">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <div class="col-md-12">
-                        <label for="barang_id" class="form-label">Nama Barang</label>
-                        <select name="barang_id" id="barang_id" class="form-select">
-                            <option disabled selected>-- Pilih Barang --</option>
-                            @foreach ($barangs as $barang)
-                                <option value="{{ $barang->id }}"
-                                    {{ old('barang_id') == $barang->id ? 'selected' : '' }}>
-                                    {{ $barang->nama_barang }} - {{ $barang->ruangan->nama_ruangan }} - Total : {{ $barang->jumlah_barang }}
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('barang_id')
-                            <div class="alert alert-danger mt-2">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <div class="col-md-12">
-                        <label for="jumlah_barang" class="form-label">Jumlah</label>
-                        <input type="number" name="jumlah_barang" class="form-control" id="jumlah_barang"
-                            placeholder="Jumlah barang yang ingin dimutasi" value="{{ old('jumlah_barang') }}">
-                        @error('jumlah_barang')
                             <div class="alert alert-danger mt-2">{{ $message }}</div>
                         @enderror
                     </div>
@@ -105,8 +82,9 @@
             <!-- Footer -->
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kembali</button>
-                <button type="submit" class="btn btn-primary">Simpan Data</button>
+                <button type="submit" class="btn btn-primary">Ajukan Data</button>
             </div>
         </form>
+        {{-- </div> --}}
     </div>
 </div>

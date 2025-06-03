@@ -2,12 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\AjuanPenghapusan;
 use App\Models\Barang;
 use App\Models\BarangMaster;
+use App\Models\Mutasi;
+use App\Models\MutasiItem;
 use App\Models\Peminjaman;
+use App\Models\PeminjamanItem;
 use App\Models\Penghapusan;
+use App\Models\PenghapusanItem;
 use App\Models\Perawatan;
+use App\Models\PerawatanItem;
 use Illuminate\Http\Request;
 use App\Models\Ruangan;
 use Illuminate\Support\Facades\Auth;
@@ -89,32 +93,209 @@ class BarangController extends Controller
             // , 'perawatan', 'peminjaman'
         ));
     }
+    // public function aksi(Request $request)
+    // {
+    //     $ids = $request->selected_ids;
+    //     if (!$ids || count($ids) === 0) {
+    //         return redirect()->back()->with('error', 'Tidak ada barang yang dipilih.');
+    //     }
+
+    //     if ($request->aksi === 'cetak_qr_kecil' || $request->aksi === 'cetak_qr_besar') {
+    //         $barangs = Barang::with('barangMaster')->whereIn('id', $ids)->get();
+    //         $ukuran = $request->aksi === 'cetak_qr_kecil' ? 'kecil' : 'besar';
+
+    //         $pdf = Pdf::loadView('inventaris.qr', compact('barangs', 'ukuran'));
+    //         return $pdf->download('stiker_qr.pdf');
+    //     }
+
+    //     // Jika bukan cetak, berarti pengajuan penghapusan
+    //     foreach ($ids as $id) {
+    //         Penghapusan::create([
+    //             'barang_id' => $id,
+    //             'keterangan' => $request->keterangan,
+    //             'user_id' => Auth::id(),
+    //             'status_ajuan' => 'pending'
+    //         ]);
+    //     }
+
+    //     return redirect()->back()->with('success', 'Pengajuan penghapusan berhasil dikirim.');
+    // }
+
     public function aksi(Request $request)
     {
-        $ids = $request->selected_ids;
-        if (!$ids || count($ids) === 0) {
-            return redirect()->back()->with('error', 'Tidak ada barang yang dipilih.');
+        // 1. Ambil selected IDs (berbentuk string "1,2,5,…"), ubah jadi array
+        $idsCsv = $request->input('selected_ids', '');
+        $ids = [];
+        if (!empty($idsCsv)) {
+            // explode dan filter agar tidak ada elemen kosong
+            $ids = array_filter(explode(',', $idsCsv), function($v) {
+                return is_numeric($v);
+            });
         }
 
-        if ($request->aksi === 'cetak_qr_kecil' || $request->aksi === 'cetak_qr_besar') {
-            $barangs = Barang::with('barangMaster')->whereIn('id', $ids)->get();
-            $ukuran = $request->aksi === 'cetak_qr_kecil' ? 'kecil' : 'besar';
-
-            $pdf = Pdf::loadView('inventaris.qr', compact('barangs', 'ukuran'));
-            return $pdf->download('stiker_qr.pdf');
+        // 2. Pastikan ada setidaknya satu ID yang dipilih
+        if (empty($ids)) {
+            return redirect()->back()
+                ->with('error', 'Tidak ada barang terpilih.');
         }
 
-        // Jika bukan cetak, berarti pengajuan penghapusan
-        foreach ($ids as $id) {
-            Penghapusan::create([
-                'barang_id' => $id,
-                'keterangan' => $request->keterangan,
-                'user_id' => Auth::id(),
-                'status_ajuan' => 'pending'
+        // 3. Action type: "delete", "peminjaman", "perawatan", atau "mutasi"
+        $action = $request->input('action_type');
+
+        switch ($action) {
+            case 'delete':
+                return $this->handleDelete($request, $ids);
+
+            case 'peminjaman':
+                return $this->handlePeminjaman($request, $ids);
+
+            case 'perawatan':
+                return $this->handlePerawatan($request, $ids);
+
+            case 'mutasi':
+                return $this->handleMutasi($request, $ids);
+
+            default:
+                return redirect()->back()
+                    ->with('error', 'Aksi tidak dikenal.');
+        }
+    }
+
+    /**
+     * Hapus semua barang yang ID‐nya ada di $ids
+     */
+    protected function handleDelete(Request $request,array $ids)
+    {
+        $request->validate([
+            'keterangan_penghapusan' => 'required|string|max:255',
+        ]);
+
+        // Buat data pengajuan penghapusan
+        $penghapusan = Penghapusan::create([
+            'tanggal_pengajuan' => now(),
+            'keterangan' => $request->input('keterangan_penghapusan'),
+            'status' => 'diajukan', // misal: status bisa 'diajukan', 'disetujui', 'ditolak'
+            'user_id' => Auth::id(), // jika ingin menyimpan siapa yang mengajukan
+        ]);
+
+        // Simpan item-item yang diajukan untuk dihapus
+        foreach ($ids as $barang_id) {
+            PenghapusanItem::create([
+                'penghapusan_id' => $penghapusan->id,
+                'barang_id' => $barang_id,
             ]);
         }
 
-        return redirect()->back()->with('success', 'Pengajuan penghapusan berhasil dikirim.');
+        return redirect()->route('inventaris.index')
+            ->with('success', 'Pengajuan penghapusan berhasil dibuat untuk barang terpilih.');
+    }
+
+    /**
+     * Tangani pengajuan Peminjaman
+     */
+    protected function handlePeminjaman(Request $request, array $ids)
+    {
+        // Validasi form Peminjaman
+        $request->validate([
+            'tanggal_peminjaman'   => 'required|date',
+            'tanggal_pengembalian' => 'required|date|after_or_equal:tanggal_peminjaman',
+            'nama_peminjam'        => 'required|string|max:255',
+            // 'keterangan' boleh kosong
+        ]);
+
+        // Simpan ke tabel peminjaman
+        $peminjaman = Peminjaman::create([
+            'tanggal_peminjaman'   => $request->input('tanggal_peminjaman'),
+            'tanggal_pengembalian' => $request->input('tanggal_pengembalian'),
+            'nama_peminjam'        => $request->input('nama_peminjam'),
+            'keterangan'           => $request->input('keterangan'),
+            'user_id'              => Auth::id(),
+            'status_ajuan'         => 'pending',
+        ]);
+
+        // Buat entri PeminjamanItem untuk setiap barang terpilih
+        foreach ($ids as $barangId) {
+            PeminjamanItem::create([
+                'barang_id'      => $barangId,
+                'peminjaman_id'  => $peminjaman->id,
+                'status_peminjaman' => 'Dipinjam',
+            ]);
+        }
+
+        return redirect()->route('inventaris.index')
+                         ->with('success', 'Pengajuan peminjaman berhasil dikirim.');
+    }
+
+    /**
+     * Tangani pengajuan Perawatan
+     */
+    protected function handlePerawatan(Request $request, array $ids)
+    {
+        // Validasi form Perawatan
+        $request->validate([
+            'tanggal_perawatan' => 'required|date',
+            'jenis_perawatan'   => 'required|string|max:255',
+            'biaya_perawatan'   => 'nullable|integer|min:0',
+            // 'keterangan' boleh kosong
+        ]);
+
+        // Simpan ke tabel perawatans
+        $perawatan = Perawatan::create([
+            'tanggal_perawatan' => $request->input('tanggal_perawatan'),
+            'jenis_perawatan'   => $request->input('jenis_perawatan'),
+            'biaya_perawatan'   => $request->input('biaya_perawatan'),
+            'keterangan'        => $request->input('keterangan'),
+            'user_id'           => Auth::id(),
+            'status_ajuan'      => 'pending',
+        ]);
+
+        // Buat entri PerawatanItem untuk setiap barang terpilih
+        foreach ($ids as $barangId) {
+            PerawatanItem::create([
+                'barang_id'       => $barangId,
+                'perawatan_id'    => $perawatan->id,
+                'status_perawatan'=> 'belum',
+            ]);
+        }
+
+        return redirect()->route('inventaris.index')
+                         ->with('success', 'Pengajuan perawatan berhasil dikirim.');
+    }
+
+    /**
+     * Tangani pengajuan Mutasi
+     */
+    protected function handleMutasi(Request $request, array $ids)
+    {
+        // Validasi form Mutasi
+        $request->validate([
+            'tanggal_mutasi' => 'required|date',
+            'nama_mutasi'    => 'required|string|max:255',
+            'tujuan'         => 'required|integer|exists:ruangans,id',
+            // 'keterangan' boleh kosong
+        ]);
+
+        // Simpan ke tabel mutasis
+        $mutasi = Mutasi::create([
+            'tanggal_mutasi' => $request->input('tanggal_mutasi'),
+            'nama_mutasi'    => $request->input('nama_mutasi'),
+            'tujuan'         => $request->input('tujuan'),
+            'keterangan'     => $request->input('keterangan'),
+            'user_id'        => Auth::id(),
+            'status_ajuan'   => 'pending',
+        ]);
+
+        // Buat entri MutasiItem untuk setiap barang terpilih
+        foreach ($ids as $barangId) {
+            MutasiItem::create([
+                'barang_id'   => $barangId,
+                'mutasi_id'   => $mutasi->id,
+                'status_mutasi'=> 'belum',
+            ]);
+        }
+
+        return redirect()->route('inventaris.index')
+                         ->with('success', 'Pengajuan mutasi berhasil dikirim.');
     }
 
     public function scanResult($kode)

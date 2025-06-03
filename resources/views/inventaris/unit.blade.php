@@ -53,123 +53,123 @@
             </a>
         </div>
     </div>
-    <form method="POST" action="{{ route('inventaris.aksi') }}">
-        <div class="col-md-6 d-flex mb-3">
-            @csrf
-            <div class="btn-group me-2">
-                <button type="button" class="btn btn-primary dropdown-toggle" id="trigger-ajuan" disabled data-bs-toggle="dropdown"
-                    aria-expanded="false">
-                    <i class="bi bi-plus-circle me-2"></i>Pengajuan
-                </button>
-                <ul class="dropdown-menu bg-primary" style=" min-width: 100%;">
-                    <li>
-                        <button type="button" class="dropdown-item text-white" data-bs-toggle="modal"
-                        data-bs-target="#TambahPeminjaman" value="cetak_qr_kecil">Peminjaman</button>
-                    </li>
-                    {{-- @include('peminjaman.popup.peminjaman') --}}
-                    <li>
-                        <button type="button" class="dropdown-item text-white" data-bs-toggle="modal"
-                data-bs-target="#TambahPeminjaman"
-                            value="cetak_qr_besar">Perawatan</button>
-                    </li>
-                    <li>
-                        <button type="button" class="dropdown-item text-white" data-bs-toggle="modal"
-                data-bs-target="#TambahPeminjaman"
-                            value="cetak_qr_besar">Pemindahan</button>
-                    </li>
-                </ul>
-            </div>
-            <div class="btn-group me-2">
-                <button type="button" class="btn btn-secondary dropdown-toggle" id="trigger-cetak" disabled data-bs-toggle="dropdown"
-                    aria-expanded="false">
-                    <i class="bi bi-printer me-2"></i>Cetak QR
-                </button>
-                <ul class="dropdown-menu bg-secondary" style=" min-width: 100%;">
-                    <li>
-                        <button type="submit" class="dropdown-item text-white" name="aksi"
-                            value="cetak_qr_kecil">Ukuran Kecil</button>
-                    </li>
-                    <li>
-                        <button type="submit" class="dropdown-item text-white" name="aksi"
-                            value="cetak_qr_besar">Ukuran Besar</button>
-                    </li>
-                </ul>
-            </div>
-            <button type="button" class="btn btn-danger" id="trigger-delete" disabled data-bs-toggle="modal"
-                data-bs-target="#hapusModal">
-                <i class="bi bi-trash me-2"></i>Hapus Terpilih
+    <div class="col-md-6 d-flex mb-3">
+        @csrf
+        <div class="btn-group me-2">
+            <button type="button" class="btn btn-primary dropdown-toggle" id="trigger-ajuan" disabled
+                data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-plus-circle me-2"></i>Pengajuan
             </button>
+            <ul class="dropdown-menu bg-primary" style=" min-width: 100%;">
+                <li>
+                    <button type="button" id="btn-peminjaman" class="dropdown-item text-white" data-bs-toggle="modal"
+                        data-bs-target="#TambahPeminjaman">Peminjaman</button>
+                </li>
+                <li>
+                    <button type="button" id="btn-perawatan" class="dropdown-item text-white" data-bs-toggle="modal"
+                        data-bs-target="#TambahPerawatan">Perawatan</button>
+                </li>
+                <li>
+                    <button type="button" id="btn-mutasi" class="dropdown-item text-white" data-bs-toggle="modal"
+                        data-bs-target="#TambahMutasi">Pemindahan</button>
+                </li>
+            </ul>
         </div>
-        @include('inventaris.popup.penghapusan')
-        @if (session('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <strong>Berhasil!</strong> {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif
-        @if (session('error'))
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <strong>Gagal!</strong> {{ session('error') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif
-        <div class="table-responsive">
-            <table id="dataTable" class="table table-bordered table-striped align-middle">
-                <thead class="table-light">
+        <div class="btn-group me-2">
+            <button type="button" class="btn btn-secondary dropdown-toggle" id="trigger-cetak" disabled
+                data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-printer me-2"></i>Cetak QR
+            </button>
+            <ul class="dropdown-menu bg-secondary" style=" min-width: 100%;">
+                <li>
+                    <button type="submit" class="dropdown-item text-white" name="aksi" value="cetak_qr_kecil">Ukuran
+                        Kecil</button>
+                </li>
+                <li>
+                    <button type="submit" class="dropdown-item text-white" name="aksi" value="cetak_qr_besar">Ukuran
+                        Besar</button>
+                </li>
+            </ul>
+        </div>
+        <button type="button" class="btn btn-danger" id="trigger-delete" disabled data-bs-toggle="modal"
+            data-bs-target="#hapusModal">
+            <i class="bi bi-trash me-2"></i>Hapus Terpilih
+        </button>
+    </div>
+    {{-- <input type="hidden" name="selected_ids" id="selected-ids" value="">
+    <input type="hidden" name="action_type" id="action-type" value=""> --}}
+    @include('peminjaman.popup.peminjaman')
+    @include('perawatan.popup.perawatan')
+    @include('mutasi.popup.mutasi')
+    @include('inventaris.popup.penghapusan')
+    @if (session('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <strong>Berhasil!</strong> {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+    @if (session('error'))
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>Gagal!</strong> {{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+    <div class="table-responsive">
+        <table id="dataTable" class="table table-bordered table-striped align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th scope="col">
+                        <input type="checkbox" id="select-all">
+                    </th>
+                    <th scope="col">No</th>
+                    <th scope="col">Kode Barang</th>
+                    <th scope="col">Nama Barang</th>
+                    <th scope="col">Merk</th>
+                    <th scope="col">Sumber Dana</th>
+                    <th scope="col">Tahun Perolehan</th>
+                    <th scope="col">Kondisi</th>
+                    <th scope="col">Lokasi</th>
+                    <th scope="col">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse ($barangs as $item)
                     <tr>
-                        <th scope="col">
-                            <input type="checkbox" id="select-all">
-                        </th>
-                        <th scope="col">No</th>
-                        <th scope="col">Kode Barang</th>
-                        <th scope="col">Nama Barang</th>
-                        <th scope="col">Merk</th>
-                        <th scope="col">Sumber Dana</th>
-                        <th scope="col">Tahun Perolehan</th>
-                        <th scope="col">Kondisi</th>
-                        <th scope="col">Lokasi</th>
-                        <th scope="col">Aksi</th>
+                        <td>
+                            <input type="checkbox" class="row-checkbox" name="selected_ids[]"
+                                value="{{ $item->id }}">
+                        </td>
+                        <td>{{ $loop->iteration + ($barangs->currentPage() - 1) * $barangs->perPage() }}</td>
+                        <td>{{ $item->kode_barang }}</td>
+                        <td>{{ $item->barangMaster->nama_barang }}</td>
+                        <td>{{ $item->barangMaster->merk_barang }}</td>
+                        <td>{{ $item->sumber_dana }}</td>
+                        <td>{{ $item->tahun_perolehan }}</td>
+                        <td>
+                            @if ($item->kondisi_barang == 'baik')
+                                Baik
+                            @elseif ($item->kondisi_barang == 'rusak')
+                                Rusak Ringan
+                            @elseif ($item->kondisi_barang == 'berat')
+                                Rusak Berat
+                            @endif
+                        </td>
+                        <td>{{ $item->ruangan->nama_ruangan }}</td>
+                        <td class="text-center align-middle">
+                            <div class="d-flex justify-content-center gap-2 p-0">
+                                <a class="btn btn-primary px-2 py-1 m-0"
+                                    href="{{ route('inventaris.detail', $item->id) }}">
+                                    Detail
+                                </a>
+                            </div>
+                        </td>
                     </tr>
-                </thead>
-                <tbody>
-                    @forelse ($barangs as $item)
-                        <tr>
-                            <td>
-                                <input type="checkbox" class="row-checkbox" name="selected_ids[]"
-                                    value="{{ $item->id }}">
-                            </td>
-                            <td>{{ $loop->iteration + ($barangs->currentPage() - 1) * $barangs->perPage() }}</td>
-                            <td>{{ $item->kode_barang }}</td>
-                            <td>{{ $item->barangMaster->nama_barang }}</td>
-                            <td>{{ $item->barangMaster->merk_barang }}</td>
-                            <td>{{ $item->sumber_dana }}</td>
-                            <td>{{ $item->tahun_perolehan }}</td>
-                            <td>
-                                @if ($item->kondisi_barang == 'baik')
-                                    Baik
-                                @elseif ($item->kondisi_barang == 'rusak')
-                                    Rusak Ringan
-                                @elseif ($item->kondisi_barang == 'berat')
-                                    Rusak Berat
-                                @endif
-                            </td>
-                            <td>{{ $item->ruangan->nama_ruangan }}</td>
-                            <td class="text-center align-middle">
-                                <div class="d-flex justify-content-center gap-2 p-0">
-                                    <a class="btn btn-primary px-2 py-1 m-0"
-                                        href="{{ route('inventaris.detail', $item->id) }}">
-                                        Detail
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
-                    @empty
-                        Data Kosong
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-    </form>
+                @empty
+                    Data Kosong
+                @endforelse
+            </tbody>
+        </table>
+    </div>
     <nav aria-label="Page navigation example">
         <ul class="pagination justify-content-center">
             <li class="page-item {{ $barangs->onFirstPage() ? 'disabled' : '' }}">
@@ -193,13 +193,28 @@
                 const checkboxes = document.querySelectorAll('.row-checkbox');
                 const selectAll = document.getElementById('select-all');
                 const deleteBtn = document.getElementById('trigger-delete');
-                const cetakBtn = document.getElementById('trigger-cetak');
                 const ajuanBtn = document.getElementById('trigger-ajuan');
-                const hiddenInput = document.getElementById('selected-ids');
 
+                // Hidden inputs di form utama (ditaruh di luar modal) untuk delete:
+                const globalSelectedIdsInput = document.getElementById('selected-ids');
+
+                // Hidden inputs untuk masing‐masing modal:
+                const hapusSelectedIds = document.getElementById('hapus-selected-ids');
+                const peminjamanSelectedIds = document.getElementById('peminjaman-selected-ids');
+                const perawatanSelectedIds = document.getElementById('perawatan-selected-ids');
+                const mutasiSelectedIds = document.getElementById('mutasi-selected-ids');
+
+                // Helper: Ambil semua ID barang yang dicentang sebagai array of string
+                function getCheckedIds() {
+                    return Array.from(checkboxes)
+                        .filter(cb => cb.checked)
+                        .map(cb => cb.value);
+                }
+
+                // Update tombol disabled/indeterminate
                 function updateSelectAllCheckbox() {
                     const total = checkboxes.length;
-                    const checked = [...checkboxes].filter(cb => cb.checked).length;
+                    const checked = getCheckedIds().length;
 
                     if (checked === 0) {
                         selectAll.checked = false;
@@ -213,29 +228,49 @@
                     }
                 }
 
-                function toggleButton() {
-                    const anyChecked = [...checkboxes].some(cb => cb.checked);
+                // Enable/disable tombol Hapus & Ajuan berdasarkan ada/tidaknya checkbox tercentang
+                function toggleButtons() {
+                    const anyChecked = getCheckedIds().length > 0;
                     deleteBtn.disabled = !anyChecked;
-                    cetakBtn.disabled = !anyChecked;
                     ajuanBtn.disabled = !anyChecked;
                     updateSelectAllCheckbox();
                 }
 
-                checkboxes.forEach(cb => cb.addEventListener('change', toggleButton));
+                // Event listener untuk setiap checkbox baris
+                checkboxes.forEach(cb => cb.addEventListener('change', toggleButtons));
 
+                // Event untuk checkbox “Pilih Semua”
                 selectAll.addEventListener('change', function() {
                     checkboxes.forEach(cb => cb.checked = this.checked);
-                    toggleButton();
+                    toggleButtons();
                 });
 
+                // Saat tombol “Hapus Terpilih” diklik → isi hidden input modal hapus
                 deleteBtn.addEventListener('click', function() {
-                    const selectedIds = [...checkboxes]
-                        .filter(cb => cb.checked)
-                        .map(cb => cb.value);
-                    hiddenInput.value = selectedIds.join(',');
+                    const ids = getCheckedIds();
+                    hapusSelectedIds.value = ids.join(',');
                 });
 
-                toggleButton();
+                // Saat dropdown “Peminjaman” dipilih → isi hidden input modal peminjaman
+                document.getElementById('btn-peminjaman').addEventListener('click', function() {
+                    const ids = getCheckedIds();
+                    peminjamanSelectedIds.value = ids.join(',');
+                });
+
+                // Saat dropdown “Perawatan” dipilih → isi hidden input modal perawatan
+                document.getElementById('btn-perawatan').addEventListener('click', function() {
+                    const ids = getCheckedIds();
+                    perawatanSelectedIds.value = ids.join(',');
+                });
+
+                // Saat dropdown “Mutasi” dipilih → isi hidden input modal mutasi
+                document.getElementById('btn-mutasi').addEventListener('click', function() {
+                    const ids = getCheckedIds();
+                    mutasiSelectedIds.value = ids.join(',');
+                });
+
+                // Inisialisasi state tombol
+                toggleButtons();
             });
         </script>
     @endpush

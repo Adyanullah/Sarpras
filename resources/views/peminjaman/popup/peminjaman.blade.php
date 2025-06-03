@@ -20,14 +20,18 @@
 @endif --}}
 <div class="modal fade" id="TambahPeminjaman" tabindex="-1" aria-labelledby="TambahPeminjamanLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-        <form class="modal-content" action="{{ route('peminjaman.store') }}" method="POST">
+        <form class="modal-content" action="{{ route('inventaris.aksi') }}" method="POST">
+        {{-- <div class="modal-content"> --}}
             @csrf
             <div class="modal-header">
-                <h5 class="modal-title" id="TambahPeminjamanLabel">Tambah Peminjaman Barang</h5>
+                <h5 class="modal-title" id="TambahPeminjamanLabel">Ajukan Peminjaman Barang</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
             <div class="modal-body px-3">
+                
+                <input type="hidden" name="selected_ids" id="peminjaman-selected-ids" value="">
+                <input type="hidden" name="action_type" value="peminjaman">
                 <div class="mb-3">
                     <label for="tanggal_peminjaman" class="form-label">Tanggal Peminjaman</label>
                     <input type="date" class="form-control" id="tanggal_peminjaman" name="tanggal_peminjaman"
@@ -56,30 +60,6 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="barang_id" class="form-label">Pilih Barang</label>
-                    <select class="form-select" id="barang_id" name="barang_id">
-                        <option selected disabled>-- Pilih Barang --</option>
-                        @foreach ($barangs as $barang)
-                            <option value="{{ $barang->id }}" {{ old('barang_id') == $barang->id ? 'selected' : '' }}>
-                                {{ $barang->barangMaster->nama_barang }} - {{ $barang->ruangan->nama_ruangan }} - Total: 
-                            </option>
-                        @endforeach
-                    </select>
-                    @error('barang_id')
-                        <div class="alert alert-danger mt-2">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <div class="mb-3">
-                    <label for="jumlah_barang" class="form-label">Jumlah Barang</label>
-                    <input type="number" class="form-control" id="jumlah_barang" name="jumlah_barang"
-                        value="{{ old('jumlah_barang') }}">
-                    @error('jumlah_barang')
-                        <div class="alert alert-danger mt-2">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <div class="mb-3">
                     <label for="keterangan" class="form-label">Keterangan</label>
                     <input type="text" class="form-control" id="keterangan" name="keterangan"
                         value="{{ old('keterangan') }}">
@@ -91,8 +71,9 @@
 
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kembali</button>
-                <button type="submit" class="btn btn-primary">Simpan Data</button>
+                <button type="submit" class="btn btn-primary">Ajukan Data</button>
             </div>
         </form>
+        {{-- </div> --}}
     </div>
 </div>

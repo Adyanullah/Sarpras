@@ -19,38 +19,25 @@
     </script>
 @endif
 
-<div class="modal fade" id="modalPerawatanBarang" tabindex="-1" aria-labelledby="modalPerawatanLabel" aria-hidden="true">
+<div class="modal fade" id="TambahPerawatan" tabindex="-1" aria-labelledby="modalPerawatanLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-        <form class="modal-content" action="{{ route('perawatan.store') }}" method="POST">
+        <form class="modal-content" action="{{ route('inventaris.aksi') }}" method="POST">
             @csrf
+        {{-- <div class="modal-content"> --}}
 
             <div class="modal-header">
-                <h5 class="modal-title" id="modalPerawatanLabel">Form Perawatan Barang</h5>
+                <h5 class="modal-title" id="modalPerawatanLabel">Ajukan Perawatan Barang</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
             <div class="modal-body">
                 <div class="row g-3">
-
+                    <input type="hidden" name="selected_ids" id="perawatan-selected-ids" value="">
+                    <input type="hidden" name="action_type" value="perawatan">
                     <div class="col-md-12">
                         <label for="tanggal_perawatan" class="form-label">Tanggal Perawatan</label>
                         <input type="date" class="form-control" id="tanggal_perawatan" name="tanggal_perawatan" value="{{ old('tanggal_perawatan') }}" required>
                         @error('tanggal_perawatan')
-                            <div class="alert alert-danger mt-2">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <div class="col-md-12">
-                        <label for="barang_id" class="form-label">Nama Barang</label>
-                        <select class="form-select" id="barang_id" name="barang_id" required>
-                            <option value="">-- Pilih Barang --</option>
-                            @foreach($barang as $barang)
-                                <option value="{{ $barang->id }}" {{ old('barang_id') == $barang->id ? 'selected' : '' }}>
-                                    {{ $barang->nama_barang }} - {{ $barang->ruangan->nama_ruangan }} - Kondisi {{ $barang->kondisi_barang }} - Jumlah {{ $barang->jumlah_barang }}
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('barang_id')
                             <div class="alert alert-danger mt-2">{{ $message }}</div>
                         @enderror
                     </div>
@@ -72,14 +59,6 @@
                     </div>
 
                     <div class="col-md-12">
-                        <label for="jumlah" class="form-label">Jumlah Barang</label>
-                        <input type="number" class="form-control" id="jumlah" name="jumlah" placeholder="Masukkan Jumlah Barang" min="1" value="{{ old('jumlah') }}">
-                        @error('jumlah')
-                            <div class="alert alert-danger mt-2">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <div class="col-md-12">
                         <label for="keterangan" class="form-label">Keterangan</label>
                         <textarea class="form-control" id="keterangan" name="keterangan" rows="3" placeholder="Contoh: Membersihkan debu pada komponen internal">{{ old('keterangan') }}</textarea>
                         @error('keterangan')
@@ -92,9 +71,10 @@
 
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kembali</button>
-                <button type="submit" class="btn btn-primary">Simpan Data</button>
+                <button type="submit" class="btn btn-primary">Ajukan Data</button>
             </div>
         </form>
+        {{-- </div> --}}
     </div>
 </div>
 

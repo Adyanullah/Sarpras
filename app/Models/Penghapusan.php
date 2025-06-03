@@ -9,12 +9,12 @@ class Penghapusan extends Model
     
     protected $guarded = ['id'];
     protected $table = 'penghapusan';
-    public function barang()
-    {
-        return $this->belongsTo(Barang::class, 'barang_id');
-    }
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+    public function penghapusanItem()
+    {
+        return $this->hasMany(PenghapusanItem::class);
     }
 }
