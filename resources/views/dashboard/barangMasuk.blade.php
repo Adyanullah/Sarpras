@@ -18,7 +18,7 @@
                     <tr>
                         <td>{{ $loop->iteration + ($dataInventaris->currentPage() - 1) * $dataInventaris->perPage() }}</td>
                         <td>{{ $item->kode_barang }}</td>
-                        <td>{{ $item->nama_barang }}</td>
+                        <td>{{ $item->barangMaster->nama_barang }}</td>
                         <td>{{ $item->ruangan->nama_ruangan ?? '-' }}</td>
                         <td>
                             @if ($item->kondisi_barang == 'baik')

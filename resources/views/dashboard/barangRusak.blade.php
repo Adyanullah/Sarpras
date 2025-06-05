@@ -26,7 +26,6 @@
                 <th scope="col">Nama Barang</th>
                 <th scope="col">Lokasi</th>
                 <th scope="col">Kondisi</th>
-                <th scope="col">Jumlah</th>
                 <th scope="col">Gambar</th>
                 <th scope="col">Aksi</th>
             </tr>
@@ -37,7 +36,7 @@
             <tr>
                 <td>{{ $loop->iteration + ($dataInventaris->currentPage() - 1) * $dataInventaris->perPage()}}</td>
                 <td>{{ $item->kode_barang }}</td>
-                <td>{{ $item->nama_barang }}</td>
+                <td>{{ $item->barangMaster->nama_barang }}</td>
                 <td>{{ $item->ruangan->nama_ruangan ?? '-' }}</td>
                 <td>
                     @if ($item->kondisi_barang == 'rusak')
@@ -46,7 +45,6 @@
                     Rusak Berat
                     @endif
                 </td>
-                <td>{{ $item->jumlah_barang }}</td>
                 <td>
                     <a type="button" data-bs-toggle="modal" data-bs-target="#ImageModal{{ $loop->iteration }}">
                         <img src="{{ asset($item->gambar_barang) }}" alt="image" class="img-fluid avatar-md rounded" />

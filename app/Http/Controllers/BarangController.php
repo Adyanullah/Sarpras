@@ -430,13 +430,13 @@ class BarangController extends Controller
     //     return redirect('/inventaris')->with('success', 'Ajuan penghapusan berhasil diajukan.');
     // }
 
-    // public function barangMasuk()
-    // {
-    //     $latestYear = Barang::max('tahun_perolehan');
+    public function barangMasuk()
+    {
+        $latestYear = Barang::max('tahun_perolehan');
 
-    //     $dataInventaris = Barang::where('tahun_perolehan', $latestYear)
-    //         ->paginate(10);
+        $dataInventaris = Barang::where('tahun_perolehan', $latestYear)
+            ->paginate(10);
 
-    //     return view('dashboard.barangMasuk', compact('dataInventaris', 'latestYear'));
-    // }
+        return view('dashboard.barangMasuk', compact('dataInventaris', 'latestYear'));
+    }
 }
