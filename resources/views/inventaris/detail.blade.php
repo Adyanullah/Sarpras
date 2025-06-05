@@ -38,6 +38,12 @@
                     </table>
                     @if (in_array(auth()->user()->role, [1]))
                         <div class="d-flex justify-content-end gap-2 mt-3">
+                            @include('inventaris.popup.dropdown')
+                            @include('peminjaman.popup.peminjaman')
+                            @include('perawatan.popup.perawatan')
+                            @include('mutasi.popup.mutasi')
+
+                            <button class="btn btn-warning px-2 py-1" >Barang Rusak</button>
                             {{-- <button class="btn btn-warning px-2 py-1" data-bs-toggle="modal" data-bs-target="#editData">Edit</button>
                             @include('inventaris.popup.edit_data')
 

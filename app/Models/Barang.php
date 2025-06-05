@@ -15,27 +15,27 @@ class Barang extends Model
     {
         return $this->belongsTo(BarangMaster::class, 'barang_id');
     }
-    
-    public function peminjaman()
-    {
-        return $this->hasMany(Peminjaman::class, 'barang_id');
-    }
-
-    public function perawatan()
-    {
-        return $this->hasMany(Perawatan::class, 'barang_id');
-    }
-
-    public function mutasi()
-    {
-        return $this->hasMany(Mutasi::class, 'barang_id');
-    }
-    public function penghapusan()
-    {
-        return $this->hasMany(Penghapusan::class, 'barang_id');
-    }
     public function pengadaan()
     {
         return $this->hasMany(Pengadaan::class, 'barang_id');
+    }
+    
+    public function peminjamanItem()
+    {
+        return $this->hasMany(PeminjamanItem::class);
+    }
+
+    public function perawatanItem()
+    {
+        return $this->hasMany(PerawatanItem::class, 'barang_id');
+    }
+
+    public function mutasiItem()
+    {
+        return $this->hasMany(MutasiItem::class, 'barang_id');
+    }
+    public function penghapusanItem()
+    {
+        return $this->hasMany(PenghapusanItem::class, 'barang_id');
     }
 }

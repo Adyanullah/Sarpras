@@ -69,8 +69,8 @@ class BarangController extends Controller
 
     public function show($id)
     {
-        $item = Barang::with(['ruangan', 'perawatan'])->findOrFail($id);
-        $ruangans = Ruangan::all();
+        $item = Barang::with(['ruangan', 'perawatanItem'])->findOrFail($id);
+        $ruangan = Ruangan::all();
         // $peminjaman = Peminjaman::where('status_peminjaman', 'Dipinjam')
         //     ->whereHas('ajuan', function ($query) {
         //         $query->where('status', 'disetujui');
@@ -89,7 +89,7 @@ class BarangController extends Controller
         return view('inventaris.detail', compact(
             'item',
             'qrCode',
-            'ruangans'
+            'ruangan'
             // , 'perawatan', 'peminjaman'
         ));
     }
@@ -106,16 +106,6 @@ class BarangController extends Controller
 
     //         $pdf = Pdf::loadView('inventaris.qr', compact('barangs', 'ukuran'));
     //         return $pdf->download('stiker_qr.pdf');
-    //     }
-
-    //     // Jika bukan cetak, berarti pengajuan penghapusan
-    //     foreach ($ids as $id) {
-    //         Penghapusan::create([
-    //             'barang_id' => $id,
-    //             'keterangan' => $request->keterangan,
-    //             'user_id' => Auth::id(),
-    //             'status_ajuan' => 'pending'
-    //         ]);
     //     }
 
     //     return redirect()->back()->with('success', 'Pengajuan penghapusan berhasil dikirim.');

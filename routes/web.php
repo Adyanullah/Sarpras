@@ -33,7 +33,7 @@ Route::middleware('auth')->group(function () {
     // Kelola Barang
     Route::get('/inventaris', [BarangController::class, 'index'])->middleware('role:1,2,3,4')->name('inventaris.index');
     Route::get('/inventaris/unit/{id}', [BarangController::class, 'unit'])->name('inventaris.unit');
-    Route::get('/inventaris/detail/{id}', [BarangController::class, 'show'])->name('inventaris.detail');
+    Route::get('/inventaris/unit/{id}/detail', [BarangController::class, 'show'])->name('inventaris.detail');
     Route::post('/inventaris/unit/aksi', [BarangController::class, 'aksi'])->name('inventaris.aksi');
 
     Route::get('/inventaris/qr-cetak/{ukuran}', [BarangController::class, 'cetakQR'])->name('inventaris.qr.cetak');
