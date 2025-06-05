@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Barang;
 
-
 class BarangRusakController extends Controller
 {
     public function index(Request $request)
@@ -20,7 +19,8 @@ class BarangRusakController extends Controller
             $query->where('tahun_perolehan', $request->tahun);
         }
 
-        $dataInventaris = $query->get();
+        // PAGINATION, jangan get()
+        $dataInventaris = $query->paginate(20)->withQueryString();
 
         // Ambil daftar tahun perolehan untuk filter dropdown
         $tahunList = Barang::select('tahun_perolehan')

@@ -71,4 +71,21 @@
                 @endforelse
             </tbody>
         </table>
+        <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+            <li class="page-item {{ $dataInventaris->onFirstPage() ? 'disabled' : '' }}">
+                <a class="page-link" href="{{ $dataInventaris->previousPageUrl() }}" tabindex="-1">Previous</a>
+            </li>
+
+            @for ($i = 1; $i <= $dataInventaris->lastPage(); $i++)
+                <li class="page-item {{ $dataInventaris->currentPage() == $i ? 'active' : '' }}">
+                    <a class="page-link" href="{{ $dataInventaris->url($i) }}">{{ $i }}</a>
+                </li>
+                @endfor
+
+                <li class="page-item {{ $dataInventaris->hasMorePages() ? '' : 'disabled' }}">
+                    <a class="page-link" href="{{ $dataInventaris->nextPageUrl() }}">Next</a>
+                </li>
+        </ul>
+    </nav>
 </x-layout>

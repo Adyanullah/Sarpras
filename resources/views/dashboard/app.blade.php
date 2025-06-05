@@ -6,7 +6,7 @@
                 <div class="card-body overflow-hidden position-relative">
                     <iconify-icon icon="mdi:package-variant-closed" class="fs-36 text-info"></iconify-icon>
                     <h3 class="mb-0 fw-bold mt-3 mb-1">{{ $totalBarang }}</h3>
-                    <p class="text-muted">Total Jenis Barang</p>
+                    <p class="text-muted">Total Barang</p>
                     <a class="text-reset fw-semibold fs-12" href="/inventaris">View More</a>
                     <i class="ri-archive-line widget-icon"></i>
                 </div>
