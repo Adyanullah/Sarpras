@@ -76,8 +76,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/laporan/peminjaman/excel', [PeminjamanController::class, 'exportExcel'])->name('peminjaman.exportExcel');
 
     // Ajuan
-    Route::get('/verifikasiAjuan', [AjuanController::class, 'index'])->middleware('role:1,2');
-    Route::put('/verifikasiAjuan/update/{type}/{id}/{status}', [AjuanController::class, 'UpdateStatus'])->name('ajuan.updateStatus');
+    // Route::get('/verifikasiAjuan', [AjuanController::class, 'index'])->middleware('role:1,2');
+    // Route::put('/verifikasiAjuan/update/{type}/{id}/{status}', [AjuanController::class, 'UpdateStatus'])->name('ajuan.updateStatus');
+    
+    Route::get('/verifikasiAjuan', [AjuanController::class, 'index'])->name('waka.verifikasi.index');
+    Route::put('/verifikasiAjuan/{type}/{id}/{status}', 
+                [AjuanController::class, 'updateStatus'])
+         ->name('ajuan.updateStatus');
 
     // Perawatan
     Route::get('/perawatan', [PerawatanController::class, 'index'])->middleware('role:1,3');

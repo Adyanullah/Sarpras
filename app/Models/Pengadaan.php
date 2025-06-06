@@ -12,9 +12,9 @@ class Pengadaan extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function barang()
+    public function barangMaster()
     {
-        return $this->belongsTo(Barang::class);
+        return $this->belongsTo(BarangMaster::class);
     }
 
     public function ruangan()

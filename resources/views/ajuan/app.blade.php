@@ -1,13 +1,18 @@
 <x-layout>
     <h4 class="mb-4">Verifikasi Ajuan</h4>
 
+    {{-- Kartu Ringkasan Jumlah Ajuan --}}
     <div class="container my-4">
         <div class="row g-3">
             <div class="col-md-3">
                 <div class="card text-center shadow-sm border-0">
                     <div class="card-body">
                         <h6 class="text-muted">Total Ajuan</h6>
-                        <h4><span class="badge bg-primary">{{ $dataAjuan->count() }}</span></h4>
+                        <h4>
+                            <span class="badge bg-primary">
+                                {{ $dataAjuan->count() }}
+                            </span>
+                        </h4>
                     </div>
                 </div>
             </div>
@@ -15,7 +20,11 @@
                 <div class="card text-center shadow-sm border-0">
                     <div class="card-body">
                         <h6 class="text-muted">Menunggu</h6>
-                        <h4><span class="badge bg-warning">{{ $dataAjuan->where('status', 'pending')->count() }}</span></h4>
+                        <h4>
+                            <span class="badge bg-warning">
+                                {{ $dataAjuan->where('status', 'pending')->count() }}
+                            </span>
+                        </h4>
                     </div>
                 </div>
             </div>
@@ -23,7 +32,11 @@
                 <div class="card text-center shadow-sm border-0">
                     <div class="card-body">
                         <h6 class="text-muted">Disetujui</h6>
-                        <h4><span class="badge bg-success">{{ $dataAjuan->where('status', 'disetujui')->count() }}</span></h4>
+                        <h4>
+                            <span class="badge bg-success">
+                                {{ $dataAjuan->where('status', 'disetujui')->count() }}
+                            </span>
+                        </h4>
                     </div>
                 </div>
             </div>
@@ -31,15 +44,18 @@
                 <div class="card text-center shadow-sm border-0">
                     <div class="card-body">
                         <h6 class="text-muted">Ditolak</h6>
-                        <h4><span class="badge bg-danger">{{ $dataAjuan->where('status', 'ditolak')->count() }}</span></h4>
+                        <h4>
+                            <span class="badge bg-danger">
+                                {{ $dataAjuan->where('status', 'ditolak')->count() }}
+                            </span>
+                        </h4>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-
-    <!-- Filter -->
+    {{-- Filter (placeholder saja) --}}
     <div class="row g-3 mb-4">
         <div class="col-md-3">
             <select class="form-select">
@@ -48,38 +64,41 @@
                 <option>Pengadaan</option>
                 <option>Perawatan</option>
                 <option>Penghapusan</option>
+                <option>Mutasi</option>
             </select>
         </div>
         <div class="col-md-3">
             <select class="form-select">
                 <option selected>Semua Status</option>
-                <option>Menunggu</option>
-                <option>Disetujui</option>
-                <option>Ditolak</option>
+                <option>pending</option>
+                <option>disetujui</option>
+                <option>ditolak</option>
             </select>
         </div>
         <div class="col-md-3">
             <input type="text" class="form-control" placeholder="Cari nama pengaju/barang...">
         </div>
         <div class="col-md-3">
-            <button class="btn btn-primary w-100"><i class="ri-search-line me-1"></i>Filter</button>
+            <button class="btn btn-primary w-100">
+                <i class="ri-search-line me-1"></i>Filter
+            </button>
         </div>
     </div>
-    
-    <!-- Pesan -->
+
+    {{-- Pesan Flash --}}
     @if (session()->has('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             <strong>Berhasil!</strong> {{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     @elseif (session()->has('error'))
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
             <strong>Gagal!</strong> {{ session('error') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     @endif
 
-    <!-- Tabel -->
+    {{-- Tabel Daftar Ajuan --}}
     <div class="table-responsive">
         <table class="table table-bordered table-striped align-middle">
             <thead class="table-light">
@@ -94,32 +113,115 @@
                 </tr>
             </thead>
             <tbody>
-                @forelse ( $dataAjuan as $item )
+                @forelse ($dataAjuan as $item)
                     <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $item['created_at'] }}</td>
                         <td>{{ $item['pengaju'] }}</td>
                         <td>{{ $item['jenis'] }}</td>
                         <td>{{ $item['barang'] }} - {{ $item['jumlah'] }} Unit</td>
-                        <td><span class="badge @if ($item['status'] == 'pending') bg-warning @elseif ($item['status'] == 'disetujui') bg-success @elseif ($item['status'] == 'ditolak') bg-danger
-                        @endif ">{{ $item['status'] }}</span></td>
                         <td>
-                            <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#modalDetail{{ $loop->iteration }}"><i
-                                    class="ri-eye-line"></i> Detail</button>
+                            <span class="badge 
+                                @if ($item['status'] == 'pending') bg-warning 
+                                @elseif ($item['status'] == 'disetujui') bg-success 
+                                @elseif ($item['status'] == 'ditolak') bg-danger 
+                                @endif
+                            ">
+                                {{ $item['status'] }}
+                            </span>
                         </td>
-                        @include('ajuan.popup.detail')
+                        <td>
+                            {{-- Tombol Detail → Memicu Modal --}}
+                            <button class="btn btn-sm btn-info" data-bs-toggle="modal"
+                                data-bs-target="#modalDetail{{ $loop->iteration }}">
+                                <i class="ri-eye-line"></i> Detail
+                            </button>
+
+                            {{-- Modal Detail Ajuan --}}
+                            <div class="modal fade" id="modalDetail{{ $loop->iteration }}" tabindex="-1"
+                                aria-labelledby="modalDetailLabel{{ $loop->iteration }}" aria-hidden="true">
+                                <div class="modal-dialog modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="modalDetailLabel{{ $loop->iteration }}">
+                                                Detail Ajuan
+                                            </h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <dl class="row">
+                                                <dt class="col-sm-4">Nama Pengaju</dt>
+                                                <dd class="col-sm-8">{{ $item['pengaju'] }}</dd>
+
+                                                <dt class="col-sm-4">Unit Asal</dt>
+                                                <dd class="col-sm-8">{{ $item['ruangan'] }}
+                                                    {{-- Jika Mutasi, tampilkan “ke {tambahan}” --}}
+                                                    @if ($item['jenis'] === 'Mutasi' && $item['tambahan'])
+                                                        &nbsp;→ ke {{ $item['tambahan'] }}
+                                                    @endif
+                                                </dd>
+
+                                                <dt class="col-sm-4">Jenis Ajuan</dt>
+                                                <dd class="col-sm-8">{{ $item['jenis'] }}</dd>
+
+                                                <dt class="col-sm-4">Barang</dt>
+                                                <dd class="col-sm-8">
+                                                    {{ $item['jumlah'] }} Unit {{ $item['barang'] }}
+                                                </dd>
+
+                                                <dt class="col-sm-4">Keperluan / Keterangan</dt>
+                                                <dd class="col-sm-8">{{ $item['keterangan'] }}</dd>
+
+                                                <dt class="col-sm-4">Tanggal Pengajuan</dt>
+                                                <dd class="col-sm-8">{{ $item['created_at'] }}</dd>
+                                            </dl>
+
+                                            <hr>
+                                            <label for="catatanVerif" class="form-label">Catatan Verifikasi</label>
+                                            <textarea class="form-control" id="catatanVerif" rows="2"
+                                                placeholder="(Opsional) Tambahkan alasan jika ditolak…">
+                                            </textarea>
+                                        </div>
+                                        <div class="modal-footer">
+                                            {{-- Tombol Tolak --}}
+                                            <form action="{{ route('ajuan.updateStatus', [
+                                                'type'   => $item['model_type'],
+                                                'id'     => $item['id'],
+                                                'status' => 'Ditolak'
+                                            ]) }}" method="POST" class="d-inline">
+                                                @csrf
+                                                @method('PUT')
+                                                <button class="btn btn-danger px-2 py-1"
+                                                    onclick="return confirm('Yakin ingin menolak ajuan ini?')">
+                                                    Tolak
+                                                </button>
+                                            </form>
+
+                                            {{-- Tombol Setujui --}}
+                                            <form action="{{ route('ajuan.updateStatus', [
+                                                'type'   => $item['model_type'],
+                                                'id'     => $item['id'],
+                                                'status' => 'Disetujui'
+                                            ]) }}" method="POST" class="d-inline">
+                                                @csrf
+                                                @method('PUT')
+                                                <button class="btn btn-success px-2 py-1"
+                                                    onclick="return confirm('Yakin ingin menyetujui ajuan ini?')">
+                                                    Setujui
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
                     </tr>
-                    
                 @empty
-                    <td colspan="7" class="text-center">Belum ada ajuan</td>
+                    <tr>
+                        <td colspan="7" class="text-center">Belum ada ajuan</td>
+                    </tr>
                 @endforelse
             </tbody>
         </table>
     </div>
-
-    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script> -->
-    </body>
-
-    </html>
-
 </x-layout>

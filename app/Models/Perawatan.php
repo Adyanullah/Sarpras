@@ -13,7 +13,7 @@ class Perawatan extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function perawatanItem()
+    public function items()
     {
         return $this->hasMany(PerawatanItem::class);
     }

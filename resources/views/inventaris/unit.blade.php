@@ -151,7 +151,7 @@
                     <td class="text-center align-middle">
                         <div class="d-flex justify-content-center gap-2 p-0">
                             <a class="btn btn-primary px-2 py-1 m-0"
-                                href="{{ route('inventaris.detail', $item->id) }}">
+                                href="{{ route('inventaris.detail', $item->kode_barang) }}">
                                 Detail
                             </a>
                         </div>

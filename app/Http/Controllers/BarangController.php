@@ -26,27 +26,6 @@ class BarangController extends Controller
 
     public function index(Request $request)
     {
-        // $query = Barang::with('ruangan')->where('jumlah_barang', '>', 0);
-        // $barangs = Barang::with('ruangan')->get();
-
-        // // Filter berdasarkan ruangan_id
-        // if ($request->filled('ruangan_id')) {
-        //     $query->where('ruangan_id', $request->ruangan_id);
-        // }
-
-        // // Filter berdasarkan keyword pencarian
-        // if ($request->filled('search')) {
-        //     $query->where(function ($q) use ($request) {
-        //         $q->where('kode_barang', 'like', '%' . $request->search . '%')
-        //             ->orWhere('nama_barang', 'like', '%' . $request->search . '%');
-        //     });
-        // }
-
-        // // Ambil hasil dengan pagination
-        // $dataInventaris = $query->paginate(8)->appends($request->query());
-
-        // $ruangan = Ruangan::all();
-        // return view('inventaris.app', compact('dataInventaris', 'ruangan', 'barangs'));
         $ruangan = Ruangan::all();
         $barangs = Barang::with('ruangan', 'barangMaster')
             ->select('barang_id', DB::raw('COUNT(*) as total_unit'))
@@ -97,7 +76,7 @@ class BarangController extends Controller
 
     public function show($id)
     {
-        $item = Barang::with(['ruangan', 'perawatanItem'])->findOrFail($id);
+        $item = Barang::with(['ruangan', 'perawatanItem'])->where('kode_barang', $id)->firstOrFail();
         $ruangan = Ruangan::all();
         // $peminjaman = Peminjaman::where('status_peminjaman', 'Dipinjam')
         //     ->whereHas('ajuan', function ($query) {

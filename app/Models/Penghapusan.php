@@ -13,7 +13,7 @@ class Penghapusan extends Model
     {
         return $this->belongsTo(User::class);
     }
-    public function penghapusanItem()
+    public function items()
     {
         return $this->hasMany(PenghapusanItem::class);
     }

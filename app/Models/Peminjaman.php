@@ -12,7 +12,7 @@ class Peminjaman extends Model
     {
         return $this->belongsTo(User::class);
     }
-    public function peminjamanItem()
+    public function items()
     {
         return $this->hasMany(PeminjamanItem::class);
     }
