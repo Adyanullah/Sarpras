@@ -3,7 +3,7 @@
     <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#modalPerawatanBarang">
         <i class="bi bi-plus-circle me-2"></i>Tambah Perawatan
     </button>
-    @include('perawatan.popup.tambah')
+    @include('perawatan.popup.perawatan')
     <!-- Table -->
     <div class="table-responsive">
         <table id="tabelPerawatan" class="table table-bordered table-striped align-middle">
@@ -26,22 +26,22 @@
                     <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $item->tanggal_perawatan }}</td>
-                        <td>{{ $item->barang->nama_barang }}</td>
-                        <td>{{ $item->barang->ruangan->nama_ruangan }}</td>
+                        <td>{{ $item->perawatanItem[0]->barang->barangMaster->nama_barang }}</td>
+                        <td>{{ $item->perawatanItem[0]->barang->ruangan->nama_ruangan }}</td>
                         <td>{{ $item->jenis_perawatan }}</td>
                         <td>{{ $item->jumlah ?? '-' }}</td>
                         <td>{{ $item->biaya_perawatan == 0 ? '-' : 'Rp. ' . number_format($item->biaya_perawatan, 0, ',', '.') }}</td>
                         <td>{{ $item->keterangan ?? '-' }}</td>
-                        <td><span class="badge @if ($item->ajuan[0]->status == 'pending') bg-warning @elseif ($item->ajuan[0]->status == 'disetujui') bg-success
-                        @endif">{{ $item->ajuan[0]->status }}</span></td>
+                        <td><span class="badge @if ($item->status_ajuan == 'pending') bg-warning @elseif ($item->status_ajuan == 'disetujui') bg-success
+                        @endif">{{ $item->status_ajuan }}</span></td>
                         <td>
                             <div class="d-flex gap-1">
-                                @if ($item->ajuan[0]->status == 'disetujui')
+                                @if ($item->status_ajuan == 'disetujui')
                                     <button type="button" class="btn btn-primary px-2 py-1" data-bs-toggle="modal" data-bs-target="#modalSelesai{{ $item->id }}">
                                         Selesai
                                     </button>
                                     @include('perawatan.popup.selesai')
-                                @elseif ($item->ajuan[0]->status == 'pending')
+                                @elseif ($item->status_ajuan == 'pending')
                                     <button type="button" class="btn btn-primary px-2 py-1" data-bs-toggle="modal" data-bs-target="#editPerawatan{{ $item->id }}">
                                         Edit
                                     </button>

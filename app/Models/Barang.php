@@ -22,7 +22,7 @@ class Barang extends Model
     
     public function peminjamanItem()
     {
-        return $this->hasMany(PeminjamanItem::class);
+        return $this->hasMany(PeminjamanItem::class, 'barang_id');
     }
 
     public function perawatanItem()

@@ -29,7 +29,6 @@ class AjuanController extends Controller
             $namaBarang = $p->tipe_pengajuan === 'tambah'
                 ? optional($p->barangMaster)->nama_barang
                 : $p->nama_barang;
-
             $ruanganAsal = optional($p->ruangan)->nama_ruangan ?? '-';
             // (tidak ada "tujuan" untuk pengadaan)
             $dataAjuan->push([
@@ -37,31 +36,30 @@ class AjuanController extends Controller
                 'created_at' => $p->created_at->format('d M Y'),
                 'pengaju'    => $p->user->name,
                 'jenis'      => 'Pengadaan',
-                'barang'     => $namaBarang,
+                'barang'     => $p->nama_barang,
                 'jumlah'     => $p->jumlah,
                 'status'     => $p->status,
                 'ruangan'    => $ruanganAsal,
-                'tambahan'   => null,                // tidak digunakan di pengadaan
+                'tambahan'   => null,               
                 'model_type' => 'pengadaan',
                 'keterangan' => $p->catatan ?? '-',
             ]);
         }
 
         // 2. Peminjaman (status_ajuan = pending)
-        $peminjamans = Peminjaman::with(['user'])->where('status_ajuan', 'pending')->get();
+        $peminjamans = Peminjaman::with(['user', 'peminjamanItem.barang'])->where('status_ajuan', 'pending')->get();
         foreach ($peminjamans as $p) {
-            // Gabungkan semua nama barang dari item-itemnya (misalnya: "Kursi, Meja")
-            $namaBarang = $p->items->pluck('barang.nama_barang')->unique()->implode(', ');
-
+            
+            $namaBarang = $p->peminjamanItem->first()->barang->barangMaster->nama_barang;
             $dataAjuan->push([
                 'id'         => $p->id,
                 'created_at' => $p->created_at->format('d M Y'),
                 'pengaju'    => $p->user->name,
                 'jenis'      => 'Peminjaman',
                 'barang'     => $namaBarang,
-                'jumlah'     => $p->items->count(),
+                'jumlah'     => $p->peminjamanItem->count(),
                 'status'     => $p->status_ajuan,
-                'ruangan'    => '-',                  // tidak relevan di peminjaman
+                'ruangan'    => '-',
                 'tambahan'   => null,
                 'model_type' => 'peminjaman',
                 'keterangan' => $p->keterangan ?? '-',
@@ -71,17 +69,16 @@ class AjuanController extends Controller
         // 3. Perawatan (status_ajuan = pending)
         $perawatans = Perawatan::with(['user'])->where('status_ajuan', 'pending')->get();
         foreach ($perawatans as $p) {
-            $namaBarang = $p->items->pluck('barang.nama_barang')->unique()->implode(', ');
-
+            $namaBarang = $p->pewaratanItem->first()->barang->barangMaster->nama_barang;
             $dataAjuan->push([
                 'id'         => $p->id,
                 'created_at' => $p->created_at->format('d M Y'),
                 'pengaju'    => $p->user->name,
                 'jenis'      => 'Perawatan',
                 'barang'     => $namaBarang,
-                'jumlah'     => $p->items->count(),
+                'jumlah'     => $p->pewaratanItem->count(),
                 'status'     => $p->status_ajuan,
-                'ruangan'    => '-',                  // tidak relevan di perawatan
+                'ruangan'    => '-',
                 'tambahan'   => null,
                 'model_type' => 'perawatan',
                 'keterangan' => $p->keterangan ?? '-',
@@ -91,7 +88,7 @@ class AjuanController extends Controller
         // 4. Mutasi (status_ajuan = pending)
         $mutasis = Mutasi::with(['user'])->where('status_ajuan', 'pending')->get();
         foreach ($mutasis as $m) {
-            $namaBarang = $m->items->pluck('barang.nama_barang')->unique()->implode(', ');
+            $namaBarang = $m->items->first()->barang->barangMaster->nama_barang;
             $ruanganAsal = $m->items->first() 
                 ? optional($m->items->first()->barang->ruangan)->nama_ruangan 
                 : '-';
@@ -106,7 +103,7 @@ class AjuanController extends Controller
                 'jumlah'     => $m->items->count(),
                 'status'     => $m->status_ajuan,
                 'ruangan'    => $ruanganAsal,
-                'tambahan'   => $ruanganTujuan, // akan ditampilkan sebagai "ke {tambahan}"
+                'tambahan'   => $ruanganTujuan,
                 'model_type' => 'mutasi',
                 'keterangan' => $m->keterangan ?? '-',
             ]);
@@ -115,7 +112,7 @@ class AjuanController extends Controller
         // 5. Penghapusan (status = pending)
         $penghapusans = Penghapusan::with(['user'])->where('status_ajuan', 'pending')->get();
         foreach ($penghapusans as $p) {
-            $namaBarang = $p->items->pluck('barang.nama_barang')->unique()->implode(', ');
+            $namaBarang = $p->items->first()->barang->barangMaster->nama_barang;
 
             $dataAjuan->push([
                 'id'         => $p->id,
@@ -124,7 +121,7 @@ class AjuanController extends Controller
                 'jenis'      => 'Penghapusan',
                 'barang'     => $namaBarang,
                 'jumlah'     => $p->items->count(),
-                'status'     => $p->status,
+                'status'     => $p->status_ajuan,
                 'ruangan'    => '-',                  // tidak relevan di penghapusan
                 'tambahan'   => null,
                 'model_type' => 'penghapusan',
