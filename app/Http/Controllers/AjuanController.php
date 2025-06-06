@@ -29,18 +29,20 @@ class AjuanController extends Controller
             $namaBarang = $p->tipe_pengajuan === 'tambah'
                 ? optional($p->barangMaster)->nama_barang
                 : $p->nama_barang;
+            // dd($namaBarang);
+            $jenis = 'Pengadaan ' . ($p->tipe_pengajuan === 'baru' ? 'Baru' : 'Tambah');
             $ruanganAsal = optional($p->ruangan)->nama_ruangan ?? '-';
             // (tidak ada "tujuan" untuk pengadaan)
             $dataAjuan->push([
                 'id'         => $p->id,
                 'created_at' => $p->created_at->format('d M Y'),
                 'pengaju'    => $p->user->name,
-                'jenis'      => 'Pengadaan',
-                'barang'     => $p->nama_barang,
+                'jenis'      => $jenis,
+                'barang'     => $namaBarang,
                 'jumlah'     => $p->jumlah,
                 'status'     => $p->status,
                 'ruangan'    => $ruanganAsal,
-                'tambahan'   => null,               
+                'tambahan'   => null,
                 'model_type' => 'pengadaan',
                 'keterangan' => $p->catatan ?? '-',
             ]);
@@ -49,7 +51,7 @@ class AjuanController extends Controller
         // 2. Peminjaman (status_ajuan = pending)
         $peminjamans = Peminjaman::with(['user', 'peminjamanItem.barang'])->where('status_ajuan', 'pending')->get();
         foreach ($peminjamans as $p) {
-            
+
             $namaBarang = $p->peminjamanItem->first()->barang->barangMaster->nama_barang;
             $dataAjuan->push([
                 'id'         => $p->id,
@@ -89,8 +91,8 @@ class AjuanController extends Controller
         $mutasis = Mutasi::with(['user'])->where('status_ajuan', 'pending')->get();
         foreach ($mutasis as $m) {
             $namaBarang = $m->mutasiItem->first()->barang->barangMaster->nama_barang;
-            $ruanganAsal = $m->mutasiItem->first() 
-                ? optional($m->mutasiItem->first()->barang->ruangan)->nama_ruangan 
+            $ruanganAsal = $m->mutasiItem->first()
+                ? optional($m->mutasiItem->first()->barang->ruangan)->nama_ruangan
                 : '-';
             $ruanganTujuan = $m->tujuan; // diasumsikan angka ID ruangan; bisa cari nama jika relasi ada
 
@@ -228,7 +230,7 @@ class AjuanController extends Controller
                 case 'penghapusan':
                     $ajuan = Penghapusan::with('penghapusanItem')->findOrFail($id);
                     if ($status === 'Disetujui') {
-                        $ajuan->status = 'disetujui';
+                        $ajuan->status_ajuan = 'disetujui';
                         foreach ($ajuan->penghapusanItem as $item) {
                             $barang = $item->barang;
                             if ($barang) {
@@ -237,7 +239,7 @@ class AjuanController extends Controller
                             }
                         }
                     } else {
-                        $ajuan->status = 'ditolak';
+                        $ajuan->status_ajuan = 'ditolak';
                     }
                     $ajuan->save();
                     break;
@@ -245,7 +247,6 @@ class AjuanController extends Controller
 
             DB::commit();
             return redirect()->back()->with('success', 'Ajuan telah di' . strtolower($status) . '.');
-
         } catch (\Throwable $e) {
             DB::rollBack();
             return redirect()->back()->with('error', 'Gagal memproses ajuan: ' . $e->getMessage());
@@ -257,48 +258,55 @@ class AjuanController extends Controller
      */
     protected function approvePengadaan(Pengadaan $p)
     {
-        // Jika tipe 'tambah', pakai barangMaster yang ada
         if ($p->tipe_pengajuan === 'tambah' && $p->barang_master_id) {
-            $master = BarangMaster::findOrFail($p->barang_master_id);
-            for ($i = 0; $i < $p->jumlah; $i++) {
-                Barang::create([
-                    'barang_id'         => $master->id,
-                    // asumsi generate kode unik (Anda bisa sesuaikan logika)
-                    'kode_barang'       => $master->kode_barang . '_' . strtoupper(\Str::random(4)),
-                    'tahun_perolehan'   => $p->tahun_perolehan,
-                    'sumber_dana'       => $p->sumber_dana,
-                    'harga_unit'        => $p->harga_perolehan,
-                    'cv_pengadaan'      => $p->cv_pengadaan,
-                    'ruangan_id'        => $p->ruangan_id,
-                    'kondisi_barang'    => $p->kondisi_barang ?? 'baik',
-                    'kepemilikan_barang'=> $p->kepemilikan_barang ?? $master->kepemilikan_barang,
-                    'sedia'             => 1,
-                ]);
-            }
-        }
-        // Jika tipe 'baru', buat master baru lalu tambah barang
-        elseif ($p->tipe_pengajuan === 'baru') {
+            $master = BarangMaster::with('barang')->findOrFail($p->barang_master_id);
+            $this->createBarangFromPengadaan($master, $p);
+        } elseif ($p->tipe_pengajuan === 'baru') {
             $newMaster = BarangMaster::create([
                 'kode_barang' => $p->kode_barang,
                 'nama_barang' => $p->nama_barang,
-                'jenis_barang'=> $p->jenis_barang,
+                'jenis_barang' => $p->jenis_barang,
                 'merk_barang' => $p->merk_barang,
             ]);
-            for ($i = 0; $i < $p->jumlah; $i++) {
-                Barang::create([
-                    'barang_id'         => $newMaster->id,
-                    'kode_barang'       => $newMaster->kode_barang . '_' . strtoupper(\Str::random(4)),
-                    'tahun_perolehan'   => $p->tahun_perolehan,
-                    'sumber_dana'       => $p->sumber_dana,
-                    'harga_unit'        => $p->harga_perolehan,
-                    'cv_pengadaan'      => $p->cv_pengadaan,
-                    'ruangan_id'        => $p->ruangan_id,
-                    'kondisi_barang'    => $p->kondisi_barang ?? 'baik',
-                    'kepemilikan_barang'=> $p->kepemilikan_barang,
-                    'sedia'             => 1,
-                ]);
-            }
+            $this->createBarangFromPengadaan($newMaster, $p);
         }
-        // selain itu, tidak ada aksi
+    }
+
+    protected function createBarangFromPengadaan(BarangMaster $master, Pengadaan $p)
+    {
+        $prefix = $master->kode_barang;
+
+        // Ambil kode terakhir dari barang dengan prefix tersebut
+        $lastBarang = Barang::where('kode_barang', 'like', $prefix . '-%')
+            ->orderByDesc('kode_barang')
+            ->first();
+
+        $lastNumber = 0;
+        if ($lastBarang) {
+            $lastNumber = (int) str_replace($prefix . '-', '', $lastBarang->kode_barang);
+        }
+        
+        $nextNumber = $lastNumber + 1;
+
+        for ($i = 0; $i < $p->jumlah; $i++) {
+            $kodeBarangBaru = $this->generateKodeBarang($prefix, $nextNumber++);
+            Barang::create([
+                'barang_id'          => $master->id,
+                'kode_barang'        => $kodeBarangBaru,
+                'tahun_perolehan'    => $p->tahun_perolehan ?? date('Y'),
+                'sumber_dana'        => $p->sumber_dana,
+                'harga_unit'         => $p->harga_perolehan,
+                'cv_pengadaan'       => $p->cv_pengadaan,
+                'ruangan_id'         => $p->ruangan_id,
+                'kondisi_barang'     => $p->kondisi_barang ?? 'baik',
+                'kepemilikan_barang' => $p->kepemilikan_barang ?? $master->kepemilikan_barang,
+                'sedia'              => 1,
+            ]);
+        }
+    }
+
+    protected function generateKodeBarang(string $prefix, int $number): string
+    {
+        return $prefix . '-' . str_pad($number, 5, '0', STR_PAD_LEFT);
     }
 }

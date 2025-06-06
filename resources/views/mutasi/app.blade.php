@@ -1,11 +1,4 @@
 <x-layout>
-
-    <!-- Tombol Tambah Mutasi -->
-    <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#modalMutasiBarang">
-        <i class="bi bi-plus-circle me-2"></i>Tambah Pemindahan
-    </button>
-    @include('mutasi.popup.mutasi')
-
     <!-- Tabel Data Mutasi -->
     <div class="table-responsive">
         <table id="tabelMutasi" class="table table-bordered table-striped align-middle">
@@ -56,7 +49,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="9" class="text-center">Data mutasi kosong</td>
+                        <td colspan="9" class="text-center">Tidak ada pengajuan</td>
                     </tr>
                 @endforelse
             </tbody>

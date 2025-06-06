@@ -12,6 +12,7 @@ use Illuminate\Validation\ValidationException;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use App\Exports\PerawatanExport;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 
 class PerawatanController extends Controller
@@ -19,54 +20,32 @@ class PerawatanController extends Controller
     public function index()
     {
         $barang = Barang::with('ruangan')->get();
-        $dataPerawatan = Perawatan::with('perawatanItem.barang.ruangan', 'user')->where('status_ajuan', 'pending')->get();
+        $dataPerawatan = Perawatan::with('perawatanItem.barang.ruangan', 'user')->where('status_ajuan', '!=', 'ditolak')->get();
         return view('perawatan.app', compact('dataPerawatan', 'barang'));
     }
 
     public function UpdateStatus(Request $request, $id)
     {
-        $perawatan = Perawatan::with('barang')->find($id);
+        $perawatan = Perawatan::with('perawatanItem.barang')->find($id);
+
         $validated = $request->validate([
             'kondisi_barang' => 'required|in:baik,rusak,berat',
-            'status' => 'nullable|string',
+            'status' => 'nullable|in:selesai,belum',
         ]);
-        $barang = Barang::findOrFail($perawatan->barang_id);
-        $barangTujuan = Barang::where('nama_barang', $barang->nama_barang)
-            ->where('ruangan_id', $barang->ruangan_id)
-            ->where('merk_barang', $barang->merk_barang)
-            ->first();
-
-        if ($barangTujuan->kondisi_barang === $validated['kondisi_barang'] || $barangTujuan->jumlah_barang == 0) {
-            $barangTujuan->jumlah_barang += $perawatan->jumlah;
-            $barang->update($validated);
-            $barangTujuan->save();
-        } else {
-            Barang::create([
-                'kode_barang' => 'BRG-' . strtoupper(Str::random(6)),
-                'kode_asal' => $barang->kode_barang,
-                'nama_barang' => $barang->nama_barang,
-                'jenis_barang' => $barang->jenis_barang,
-                'merk_barang' => $barang->merk_barang,
-                'tahun_perolehan' => $barang->tahun_perolehan,
-                'sumber_dana' => $barang->sumber_dana,
-                'harga_perolehan' => $barang->harga_perolehan,
-                'cv_pengadaan' => $barang->cv_pengadaan,
-                'jumlah_barang' => $perawatan->jumlah,
-                'ruangan_id' => $barang->ruangan_id,
-                'kondisi_barang' => $validated['kondisi_barang'],
-                'kepemilikan_barang' => $barang->kepemilikan_barang,
-                'penanggung_jawab' => $barang->penanggung_jawab,
-                'gambar_barang' => $barang->gambar_barang,
-            ]);
-        }
 
         if ($perawatan) {
-            $perawatan->status = $validated['status'];
+            $perawatan->status_ajuan = $validated['status'];
             $perawatan->save();
-            return redirect()->back();
+
+            $barangIds = $perawatan->perawatanItem->pluck('barang_id');
+            Barang::whereIn('id', $barangIds)->update([
+                'kondisi_barang' => $validated['kondisi_barang']
+            ]);
+
+            return redirect()->back()->with('success', 'Status dan kondisi barang berhasil diperbarui.');
         }
-        return response()->json(['success' => false]);
-        redirect()->back();
+
+        return redirect()->back()->with('error', 'Perawatan tidak ditemukan.');
     }
 
     public function store(Request $request)
@@ -148,7 +127,7 @@ class PerawatanController extends Controller
     public function laporan(Request $request)
     {
         $search = $request->input('search');
-        $query = Perawatan::with('barang.ruangan', 'ajuan');
+        $query = Perawatan::with('perawatanItem.barang.ruangan', 'user');
 
         // Fitur pencarian berdasarkan nama barang
         if ($request->has('search') && $request->search != '') {
@@ -166,7 +145,7 @@ class PerawatanController extends Controller
     public function exportPDF($bulan)
     {
         $tanggalMulai = Carbon::now()->subMonths($bulan);
-        $dataPerawatan = Perawatan::with('barang.ruangan', 'ajuan')
+        $dataPerawatan = Perawatan::with('perawatanItem.barang.ruangan', 'user')
             ->where('tanggal_perawatan', '>=', $tanggalMulai)
             ->get();
 

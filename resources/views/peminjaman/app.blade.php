@@ -1,8 +1,4 @@
 <x-layout>
-    <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#TambahPeminjaman">
-        <i class="bi bi-plus-circle me-2"></i>Tambah Peminjaman
-    </button>
-    @include('peminjaman.popup.peminjaman')
     <!-- Notifikasi -->
     @if (session()->has('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -49,8 +45,7 @@
                     <td>
                         <div class="d-flex gap-1">
                             @if ($item->status_ajuan == 'disetujui')
-                            <form
-                                action="{{ route('peminjaman.updateStatus', [
+                            <form action="{{ route('peminjaman.updateStatus', [
                                             'id' => $item->id, 
                                             'status' => 'Dikembalikan', 
                                             'jumlah_barang' => $item->jumlah_barang, 
@@ -63,7 +58,7 @@
                                     onclick="return confirm('Yakin ingin mengembalikan?')">Kembalikan</button>
                             </form>
     
-                            <form
+                            {{-- <form
                                 action="{{ route('peminjaman.updateStatus', [
                                             'id' => $item->id, 
                                             'status' => 'Hilang',
@@ -75,7 +70,7 @@
                                 @method('PUT')
                                 <button class="btn btn-danger px-2 py-1"
                                     onclick="return confirm('Yakin barang ini hilang?')">Hilang</button>
-                            </form>
+                            </form> --}}
                             @elseif ($item->status_ajuan == 'pending')
                                 {{-- <button type="button" class="btn btn-primary px-2 py-1" data-bs-toggle="modal" data-bs-target="#editPeminjaman{{ $item->id }}">
                                     Edit
@@ -91,7 +86,7 @@
                     </td>
                 </tr>
                 @empty
-                    <td colspan="9" class="text-center">Tidak ada data peminjaman</td>
+                    <td colspan="9" class="text-center">Tidak ada pengajuan</td>
                 @endforelse
             </tbody>
         </table>

@@ -21,7 +21,7 @@
                     @error('kondisi_barang')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
-                    <input type="hidden" name="status" value="Selesai">
+                    <input type="hidden" name="status" value="selesai">
                 </div>
             </div>
             <div class="modal-footer">

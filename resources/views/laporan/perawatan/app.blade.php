@@ -60,16 +60,16 @@
                     <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $data->tanggal_perawatan }}</td>
-                        <td>{{ $data->barang->nama_barang }}</td>
-                        <td>{{ $data->barang->ruangan->nama_ruangan }}</td>
+                        <td>{{ $data->perawatanItem[0]->barang->barangMaster->nama_barang }}</td>
+                        <td>{{ $data->perawatanItem[0]->barang->ruangan->nama_ruangan }}</td>
                         <td>{{ $data->jenis_perawatan }}</td>
-                        <td>{{ $data->jumlah ?? '-' }}</td>
-                        <td>{{ number_format($data->biaya, 0, ',', '.') }}</td>
+                        <td>{{ $data->perawatanItem->count() ?? '-' }}</td>
+                        <td>{{ number_format($data->biaya_perawatan, 0, ',', '.') }}</td>
                         <td>{{ $data->keterangan ?? '-'}}</td>
                         <td>
-                            @if ($data->ajuan[0]->status == 'pending')
+                            @if ($data->status_ajuan == 'pending')
                                 <span class="badge bg-warning">belum disetujui</span>
-                            @elseif ($data->ajuan[0]->status == 'disetujui')
+                            @elseif ($data->status_ajuan == 'disetujui')
                                 @if ($data->status == 'belum')
                                     <span class="badge bg-warning">Diperbaiki</span>
                                 @else

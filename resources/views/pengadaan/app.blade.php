@@ -47,7 +47,9 @@
                         @include('pengadaan.popup.detail')
                     </tr>
                 @empty
-                    
+                    <tr>
+                        <td colspan="9" class="text-center">Tidak ada pengajuan</td>
+                    </tr>
                 @endforelse
             </tbody>
         </table>

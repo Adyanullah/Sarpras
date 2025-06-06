@@ -27,8 +27,8 @@
                 <tr>
                     <td>{{ $loop->iteration }}</td>
                     <td>{{ $item->tanggal_perawatan }}</td>
-                    <td>{{ $item->barang->nama_barang }}</td>
-                    <td>{{ $item->barang->ruangan->nama_ruangan }}</td>
+                    <td>{{ $item->perawatanItem[0]->barang->barangMaster->nama_barang }}</td>
+                    <td>{{ $item->perawatanItem[0]->barang->ruangan->nama_ruangan }}</td>
                     <td>{{ $item->jenis_perawatan }}</td>
                     <td>{{ $item->jumlah ?? '-' }}</td>
                     <td>{{ number_format($item->biaya_perawatan, 0, ',', '.') }}</td>

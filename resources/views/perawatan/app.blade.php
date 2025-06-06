@@ -1,9 +1,4 @@
 <x-layout>
-
-    <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#modalPerawatanBarang">
-        <i class="bi bi-plus-circle me-2"></i>Tambah Perawatan
-    </button>
-    @include('perawatan.popup.perawatan')
     <!-- Table -->
     <div class="table-responsive">
         <table id="tabelPerawatan" class="table table-bordered table-striped align-middle">

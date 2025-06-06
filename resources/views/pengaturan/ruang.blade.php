@@ -23,7 +23,7 @@
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $ruang->kode_ruangan }}</td>
                         <td>{{ $ruang->nama_ruangan }}</td>
-                        <td>{{ $ruang->data_barang_count }}</td>
+                        <td>{{ $ruang->barang_count ?? 0 }}</td>
                         <td>
                             <button type="button" data-bs-toggle="modal"
                                 data-bs-target="#editRuang{{ $loop->iteration }}"

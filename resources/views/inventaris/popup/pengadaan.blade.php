@@ -73,6 +73,14 @@
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
                 </div>
+                <div class="col-md-12 mb-3">
+                    <label for="kepemilikan_barang" class="form-label">Kepemilikan Barang</label>
+                    <input type="text" name="kepemilikan_barang" class="form-control" id="kepemilikan_barang"
+                        placeholder="Harga Satuan" step="0.01" value="{{ old('kepemilikan_barang') }}">
+                    @error('kepemilikan_barang')
+                        <div class="alert alert-danger mt-2">{{ $message }}</div>
+                    @enderror
+                </div>
 
                 <div class="col-md-12 mb-3">
                     <label for="cv_pengadaan" class="form-label">Supplier</label>

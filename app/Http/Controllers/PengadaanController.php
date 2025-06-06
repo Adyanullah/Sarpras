@@ -207,7 +207,7 @@ class PengadaanController extends Controller
     }
 
     public function laporan(){
-        $pengadaans = Pengadaan::all();
+        $pengadaans = Pengadaan::with('barangMaster')->get();
         return view('laporan.pengadaan.app', compact('pengadaans'));
     }
 

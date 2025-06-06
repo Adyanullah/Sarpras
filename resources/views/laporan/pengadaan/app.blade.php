@@ -62,9 +62,9 @@
                     <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $pengadaan->created_at->format('Y-m-d') }}</td>
-                        <td>{{ $pengadaan->nama_barang }}</td>
-                        <td>{{ $pengadaan->jenis_barang }}</td>
-                        <td>{{ $pengadaan->merk_barang }}</td>
+                        <td>{{ $pengadaan->nama_barang ?? $pengadaan->barangMaster->nama_barang }}</td>
+                        <td>{{ $pengadaan->jenis_barang ?? $pengadaan->barangMaster->jenis_barang }}</td>
+                        <td>{{ $pengadaan->merk_barang ?? $pengadaan->barangMaster->merk_barang }}</td>
                         <td>{{ $pengadaan->jumlah }} Unit</td>
                         <td>{{ $pengadaan->sumber_dana }}</td>
                         <td>{{ $pengadaan->cv_pengadaan }}</td>
