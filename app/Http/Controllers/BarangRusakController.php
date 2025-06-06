@@ -16,18 +16,16 @@ class BarangRusakController extends Controller
         }
 
         if ($request->filled('tahun')) {
-            $query->where('tahun_perolehan', $request->tahun);
+            $query->whereYear('tahun_perolehan', $request->tahun);
         }
 
-        // PAGINATION, jangan get()
-        $dataInventaris = $query->paginate(20)->withQueryString();
+        $dataInventaris = $query->distinct()->paginate(20)->withQueryString();
 
-        // Ambil daftar tahun perolehan untuk filter dropdown
-        $tahunList = Barang::select('tahun_perolehan')
+        $tahunList = Barang::selectRaw('YEAR(tahun_perolehan) as tahun')
             ->whereIn('kondisi_barang', ['rusak', 'berat'])
             ->distinct()
-            ->orderBy('tahun_perolehan', 'desc')
-            ->pluck('tahun_perolehan');
+            ->orderBy('tahun', 'desc')
+            ->pluck('tahun');
 
         return view('dashboard.barangRusak', compact('dataInventaris', 'tahunList'));
     }

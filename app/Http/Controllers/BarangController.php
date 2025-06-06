@@ -60,11 +60,39 @@ class BarangController extends Controller
         return view('inventaris.app', compact('barangs', 'ruangan'));
     }
 
-    public function unit($id)
+    public function unit(Request $request, $id)
     {
         $ruangan = Ruangan::all();
-        $barangs = Barang::with('ruangan', 'barangMaster')->where('barang_id', $id)->paginate(12);
-        return view('inventaris.unit', compact('barangs', 'ruangan'));
+
+        $query = Barang::with('ruangan', 'barangMaster')
+            ->where('barang_id', $id);
+
+        if ($request->filled('ruangan_id')) {
+            $query->where('ruangan_id', $request->ruangan_id);
+        }
+
+        if ($request->filled('kondisi_barang')) {
+            $query->where('kondisi_barang', $request->kondisi_barang);
+        }
+
+        if ($request->filled('tahun')) {
+            $query->whereYear('tahun_perolehan', $request->tahun);
+        }
+
+        if ($request->filled('sumber_dana')) {
+            $query->where('sumber_dana', $request->sumber_dana);
+        }
+
+        $barangs = $query->paginate(12);
+
+        $barang = Barang::where('id', $id)->first();
+
+        $tahunList = Barang::selectRaw('YEAR(tahun_perolehan) as tahun')
+            ->distinct()
+            ->orderBy('tahun', 'desc')
+            ->pluck('tahun');
+
+        return view('inventaris.unit', compact('barangs', 'ruangan', 'tahunList', 'barang'));
     }
 
     public function show($id)
@@ -118,7 +146,7 @@ class BarangController extends Controller
         $ids = [];
         if (!empty($idsCsv)) {
             // explode dan filter agar tidak ada elemen kosong
-            $ids = array_filter(explode(',', $idsCsv), function($v) {
+            $ids = array_filter(explode(',', $idsCsv), function ($v) {
                 return is_numeric($v);
             });
         }
@@ -154,7 +182,7 @@ class BarangController extends Controller
     /**
      * Hapus semua barang yang ID‐nya ada di $ids
      */
-    protected function handleDelete(Request $request,array $ids)
+    protected function handleDelete(Request $request, array $ids)
     {
         $request->validate([
             'keterangan_penghapusan' => 'required|string|max:255',
@@ -213,7 +241,7 @@ class BarangController extends Controller
         }
 
         return redirect()->route('inventaris.index')
-                         ->with('success', 'Pengajuan peminjaman berhasil dikirim.');
+            ->with('success', 'Pengajuan peminjaman berhasil dikirim.');
     }
 
     /**
@@ -244,12 +272,12 @@ class BarangController extends Controller
             PerawatanItem::create([
                 'barang_id'       => $barangId,
                 'perawatan_id'    => $perawatan->id,
-                'status_perawatan'=> 'belum',
+                'status_perawatan' => 'belum',
             ]);
         }
 
         return redirect()->route('inventaris.index')
-                         ->with('success', 'Pengajuan perawatan berhasil dikirim.');
+            ->with('success', 'Pengajuan perawatan berhasil dikirim.');
     }
 
     /**
@@ -280,12 +308,12 @@ class BarangController extends Controller
             MutasiItem::create([
                 'barang_id'   => $barangId,
                 'mutasi_id'   => $mutasi->id,
-                'status_mutasi'=> 'belum',
+                'status_mutasi' => 'belum',
             ]);
         }
 
         return redirect()->route('inventaris.index')
-                         ->with('success', 'Pengajuan mutasi berhasil dikirim.');
+            ->with('success', 'Pengajuan mutasi berhasil dikirim.');
     }
 
     public function scanResult($kode)

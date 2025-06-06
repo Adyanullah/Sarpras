@@ -12,7 +12,7 @@ class DashboardController extends Controller
     public function index()
     {
         $totalBarang = Barang::count();
-        $barangRusak = Barang::where('kondisi_barang', 'rusak')->count();
+        $barangRusak = Barang::whereIn('kondisi_barang', ['rusak','berat'])->count();
         // $barangBaru2025 = Barang::where('tahun_perolehan',now()->year())->count();
         $tahunSekarang = date('Y');
         $barangBaru2025 = Barang::where('tahun_perolehan', $tahunSekarang)->count();
@@ -27,7 +27,7 @@ class DashboardController extends Controller
         // Ambil jumlah barang rusak per tahun
         $barangRusakPerTahun = DB::table('barangs')
             ->select('tahun_perolehan', DB::raw('count(*) as total'))
-            ->where('kondisi_barang', 'rusak')
+            ->whereIn('kondisi_barang', ['rusak','berat'])
             ->groupBy('tahun_perolehan')
             ->pluck('total', 'tahun_perolehan');
 

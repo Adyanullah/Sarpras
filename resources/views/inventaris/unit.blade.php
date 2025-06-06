@@ -12,47 +12,59 @@
         </div>
     </div>
     <div class="row mb-3">
-        <div class="col-md-10">
-            <form method="GET" action="{{ route('inventaris.index') }}">
-                <div class="row align-items-center">
-                    <div class="col-md-3">
-                        <select class="form-select" id="ruangan_id" name="ruangan_id">
-                            <option selected disabled>Pilih Lokasi</option>
-                            @foreach ($ruangan as $item)
-                                <option value="{{ $item->id }}">{{ $item->nama_ruangan }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <select class="form-select" id="konsisi_barang" name="konsisi_barang">
-                            <option selected disabled>Pilih Kondisi</option>
-                            <option value="baik">Baik</option>
-                            <option value="rusak">Rusak Ringan</option>
-                            <option value="berat">Rusak Berat</option>
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <select class="form-select" id="sumber_dana" name="sumber_dana">
-                            <option selected disabled>Pilih Sumber Dana</option>
-                            <option value="baik">BOS</option>
-                            <option value="rusak">DAK</option>
-                            <option value="berat">Hibah</option>
-                        </select>
-                    </div>
-                    <div class="col-md-2">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="ri-search-line me-1"></i>Filter
-                        </button>
-                    </div>
+    <div class="col-md-10">
+        <form method="GET" action="{{ route('inventaris.unit', $barang->id) }}">
+            <div class="row align-items-center">
+                <div class="col-md-3">
+                    <select class="form-select" id="ruangan_id" name="ruangan_id">
+                        <option value="" disabled {{ request('ruangan_id') ? '' : 'selected' }}>Pilih Lokasi</option>
+                        @foreach ($ruangan as $item)
+                            <option value="{{ $item->id }}" {{ request('ruangan_id') == $item->id ? 'selected' : '' }}>
+                                {{ $item->nama_ruangan }}
+                            </option>
+                        @endforeach
+                    </select>
                 </div>
-            </form>
-        </div>
-        <div class="col-md-2 text-end">
-            <a href="/scan" class="btn btn-outline-primary d-inline-flex align-items-center">
-                <i class="bi bi-qr-code-scan me-2"></i> Scan QR
-            </a>
-        </div>
+
+                <div class="col-md-2">
+                    <select class="form-select" id="kondisi_barang" name="kondisi_barang">
+                        <option value="" disabled {{ request('kondisi_barang') ? '' : 'selected' }}>Pilih Kondisi</option>
+                        <option value="baik" {{ request('kondisi_barang') == 'baik' ? 'selected' : '' }}>Baik</option>
+                        <option value="rusak" {{ request('kondisi_barang') == 'rusak' ? 'selected' : '' }}>Rusak Ringan</option>
+                        <option value="berat" {{ request('kondisi_barang') == 'berat' ? 'selected' : '' }}>Rusak Berat</option>
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <select name="tahun" class="form-select">
+                        <option value="" {{ request('tahun') ? '' : 'selected' }}>-- Pilih Tahun --</option>
+                        @foreach ($tahunList as $tahun)
+                            <option value="{{ $tahun }}" {{ request('tahun') == $tahun ? 'selected' : '' }}>
+                                {{ $tahun }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <select class="form-select" id="sumber_dana" name="sumber_dana">
+                        <option value="" disabled {{ request('sumber_dana') ? '' : 'selected' }}>Pilih Sumber Dana</option>
+                        <option value="BOS" {{ request('sumber_dana') == 'BOS' ? 'selected' : '' }}>BOS</option>
+                        <option value="DAK" {{ request('sumber_dana') == 'DAK' ? 'selected' : '' }}>DAK</option>
+                        <option value="Hibah" {{ request('sumber_dana') == 'Hibah' ? 'selected' : '' }}>Hibah</option>
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="ri-search-line me-1"></i>Filter
+                    </button>
+                </div>
+            </div>
+        </form>
     </div>
+</div>
+
     <div class="col-md-6 d-flex mb-3">
         @csrf
         @include('inventaris.popup.dropdown')
@@ -84,16 +96,16 @@
     @include('mutasi.popup.mutasi')
     @include('inventaris.popup.penghapusan')
     @if (session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <strong>Berhasil!</strong> {{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <strong>Berhasil!</strong> {{ session('success') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
     @endif
     @if (session('error'))
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <strong>Gagal!</strong> {{ session('error') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong>Gagal!</strong> {{ session('error') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
     @endif
     <div class="table-responsive">
         <table id="dataTable" class="table table-bordered table-striped align-middle">
@@ -115,38 +127,38 @@
             </thead>
             <tbody>
                 @forelse ($barangs as $item)
-                    <tr>
-                        <td>
-                            <input type="checkbox" class="row-checkbox" name="selected_ids[]"
-                                value="{{ $item->id }}">
-                        </td>
-                        <td>{{ $loop->iteration + ($barangs->currentPage() - 1) * $barangs->perPage() }}</td>
-                        <td>{{ $item->kode_barang }}</td>
-                        <td>{{ $item->barangMaster->nama_barang }}</td>
-                        <td>{{ $item->barangMaster->merk_barang }}</td>
-                        <td>{{ $item->sumber_dana }}</td>
-                        <td>{{ $item->tahun_perolehan }}</td>
-                        <td>
-                            @if ($item->kondisi_barang == 'baik')
-                                Baik
-                            @elseif ($item->kondisi_barang == 'rusak')
-                                Rusak Ringan
-                            @elseif ($item->kondisi_barang == 'berat')
-                                Rusak Berat
-                            @endif
-                        </td>
-                        <td>{{ $item->ruangan->nama_ruangan }}</td>
-                        <td class="text-center align-middle">
-                            <div class="d-flex justify-content-center gap-2 p-0">
-                                <a class="btn btn-primary px-2 py-1 m-0"
-                                    href="{{ route('inventaris.detail', $item->id) }}">
-                                    Detail
-                                </a>
-                            </div>
-                        </td>
-                    </tr>
+                <tr>
+                    <td>
+                        <input type="checkbox" class="row-checkbox" name="selected_ids[]"
+                            value="{{ $item->id }}">
+                    </td>
+                    <td>{{ $loop->iteration + ($barangs->currentPage() - 1) * $barangs->perPage() }}</td>
+                    <td>{{ $item->kode_barang }}</td>
+                    <td>{{ $item->barangMaster->nama_barang }}</td>
+                    <td>{{ $item->barangMaster->merk_barang }}</td>
+                    <td>{{ $item->sumber_dana }}</td>
+                    <td>{{ $item->tahun_perolehan }}</td>
+                    <td>
+                        @if ($item->kondisi_barang == 'baik')
+                        Baik
+                        @elseif ($item->kondisi_barang == 'rusak')
+                        Rusak Ringan
+                        @elseif ($item->kondisi_barang == 'berat')
+                        Rusak Berat
+                        @endif
+                    </td>
+                    <td>{{ $item->ruangan->nama_ruangan }}</td>
+                    <td class="text-center align-middle">
+                        <div class="d-flex justify-content-center gap-2 p-0">
+                            <a class="btn btn-primary px-2 py-1 m-0"
+                                href="{{ route('inventaris.detail', $item->id) }}">
+                                Detail
+                            </a>
+                        </div>
+                    </td>
+                </tr>
                 @empty
-                    Data Kosong
+                Data Kosong
                 @endforelse
             </tbody>
         </table>
@@ -161,99 +173,99 @@
                 <li class="page-item {{ $barangs->currentPage() == $i ? 'active' : '' }}">
                     <a class="page-link" href="{{ $barangs->url($i) }}">{{ $i }}</a>
                 </li>
-            @endfor
+                @endfor
 
-            <li class="page-item {{ $barangs->hasMorePages() ? '' : 'disabled' }}">
-                <a class="page-link" href="{{ $barangs->nextPageUrl() }}">Next</a>
-            </li>
+                <li class="page-item {{ $barangs->hasMorePages() ? '' : 'disabled' }}">
+                    <a class="page-link" href="{{ $barangs->nextPageUrl() }}">Next</a>
+                </li>
         </ul>
     </nav>
     @push('scripts')
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                const checkboxes = document.querySelectorAll('.row-checkbox');
-                const selectAll = document.getElementById('select-all');
-                const deleteBtn = document.getElementById('trigger-delete');
-                const ajuanBtn = document.getElementById('trigger-ajuan');
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const checkboxes = document.querySelectorAll('.row-checkbox');
+            const selectAll = document.getElementById('select-all');
+            const deleteBtn = document.getElementById('trigger-delete');
+            const ajuanBtn = document.getElementById('trigger-ajuan');
 
-                // Hidden inputs di form utama (ditaruh di luar modal) untuk delete:
-                const globalSelectedIdsInput = document.getElementById('selected-ids');
+            // Hidden inputs di form utama (ditaruh di luar modal) untuk delete:
+            const globalSelectedIdsInput = document.getElementById('selected-ids');
 
-                // Hidden inputs untuk masing‐masing modal:
-                const hapusSelectedIds = document.getElementById('hapus-selected-ids');
-                const peminjamanSelectedIds = document.getElementById('peminjaman-selected-ids');
-                const perawatanSelectedIds = document.getElementById('perawatan-selected-ids');
-                const mutasiSelectedIds = document.getElementById('mutasi-selected-ids');
+            // Hidden inputs untuk masing‐masing modal:
+            const hapusSelectedIds = document.getElementById('hapus-selected-ids');
+            const peminjamanSelectedIds = document.getElementById('peminjaman-selected-ids');
+            const perawatanSelectedIds = document.getElementById('perawatan-selected-ids');
+            const mutasiSelectedIds = document.getElementById('mutasi-selected-ids');
 
-                // Helper: Ambil semua ID barang yang dicentang sebagai array of string
-                function getCheckedIds() {
-                    return Array.from(checkboxes)
-                        .filter(cb => cb.checked)
-                        .map(cb => cb.value);
+            // Helper: Ambil semua ID barang yang dicentang sebagai array of string
+            function getCheckedIds() {
+                return Array.from(checkboxes)
+                    .filter(cb => cb.checked)
+                    .map(cb => cb.value);
+            }
+
+            // Update tombol disabled/indeterminate
+            function updateSelectAllCheckbox() {
+                const total = checkboxes.length;
+                const checked = getCheckedIds().length;
+
+                if (checked === 0) {
+                    selectAll.checked = false;
+                    selectAll.indeterminate = false;
+                } else if (checked === total) {
+                    selectAll.checked = true;
+                    selectAll.indeterminate = false;
+                } else {
+                    selectAll.checked = false;
+                    selectAll.indeterminate = true;
                 }
+            }
 
-                // Update tombol disabled/indeterminate
-                function updateSelectAllCheckbox() {
-                    const total = checkboxes.length;
-                    const checked = getCheckedIds().length;
+            // Enable/disable tombol Hapus & Ajuan berdasarkan ada/tidaknya checkbox tercentang
+            function toggleButtons() {
+                const anyChecked = getCheckedIds().length > 0;
+                deleteBtn.disabled = !anyChecked;
+                ajuanBtn.disabled = !anyChecked;
+                updateSelectAllCheckbox();
+            }
 
-                    if (checked === 0) {
-                        selectAll.checked = false;
-                        selectAll.indeterminate = false;
-                    } else if (checked === total) {
-                        selectAll.checked = true;
-                        selectAll.indeterminate = false;
-                    } else {
-                        selectAll.checked = false;
-                        selectAll.indeterminate = true;
-                    }
-                }
+            // Event listener untuk setiap checkbox baris
+            checkboxes.forEach(cb => cb.addEventListener('change', toggleButtons));
 
-                // Enable/disable tombol Hapus & Ajuan berdasarkan ada/tidaknya checkbox tercentang
-                function toggleButtons() {
-                    const anyChecked = getCheckedIds().length > 0;
-                    deleteBtn.disabled = !anyChecked;
-                    ajuanBtn.disabled = !anyChecked;
-                    updateSelectAllCheckbox();
-                }
-
-                // Event listener untuk setiap checkbox baris
-                checkboxes.forEach(cb => cb.addEventListener('change', toggleButtons));
-
-                // Event untuk checkbox “Pilih Semua”
-                selectAll.addEventListener('change', function() {
-                    checkboxes.forEach(cb => cb.checked = this.checked);
-                    toggleButtons();
-                });
-
-                // Saat tombol “Hapus Terpilih” diklik → isi hidden input modal hapus
-                deleteBtn.addEventListener('click', function() {
-                    const ids = getCheckedIds();
-                    hapusSelectedIds.value = ids.join(',');
-                });
-
-                // Saat dropdown “Peminjaman” dipilih → isi hidden input modal peminjaman
-                document.getElementById('btn-peminjaman').addEventListener('click', function() {
-                    const ids = getCheckedIds();
-                    peminjamanSelectedIds.value = ids.join(',');
-                });
-
-                // Saat dropdown “Perawatan” dipilih → isi hidden input modal perawatan
-                document.getElementById('btn-perawatan').addEventListener('click', function() {
-                    const ids = getCheckedIds();
-                    perawatanSelectedIds.value = ids.join(',');
-                });
-
-                // Saat dropdown “Mutasi” dipilih → isi hidden input modal mutasi
-                document.getElementById('btn-mutasi').addEventListener('click', function() {
-                    const ids = getCheckedIds();
-                    mutasiSelectedIds.value = ids.join(',');
-                });
-
-                // Inisialisasi state tombol
+            // Event untuk checkbox “Pilih Semua”
+            selectAll.addEventListener('change', function() {
+                checkboxes.forEach(cb => cb.checked = this.checked);
                 toggleButtons();
             });
-        </script>
+
+            // Saat tombol “Hapus Terpilih” diklik → isi hidden input modal hapus
+            deleteBtn.addEventListener('click', function() {
+                const ids = getCheckedIds();
+                hapusSelectedIds.value = ids.join(',');
+            });
+
+            // Saat dropdown “Peminjaman” dipilih → isi hidden input modal peminjaman
+            document.getElementById('btn-peminjaman').addEventListener('click', function() {
+                const ids = getCheckedIds();
+                peminjamanSelectedIds.value = ids.join(',');
+            });
+
+            // Saat dropdown “Perawatan” dipilih → isi hidden input modal perawatan
+            document.getElementById('btn-perawatan').addEventListener('click', function() {
+                const ids = getCheckedIds();
+                perawatanSelectedIds.value = ids.join(',');
+            });
+
+            // Saat dropdown “Mutasi” dipilih → isi hidden input modal mutasi
+            document.getElementById('btn-mutasi').addEventListener('click', function() {
+                const ids = getCheckedIds();
+                mutasiSelectedIds.value = ids.join(',');
+            });
+
+            // Inisialisasi state tombol
+            toggleButtons();
+        });
+    </script>
     @endpush
 
 </x-layout>
