@@ -4,7 +4,7 @@
     <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#modalMutasiBarang">
         <i class="bi bi-plus-circle me-2"></i>Tambah Pemindahan
     </button>
-    @include('mutasi.popup.tambah')
+    @include('mutasi.popup.mutasi')
 
     <!-- Tabel Data Mutasi -->
     <div class="table-responsive">
@@ -27,19 +27,19 @@
                     <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $item->tanggal_mutasi }}</td>
-                        <td>{{ $item->barang->nama_barang }}</td>
-                        <td>{{ $item->jumlah_barang }}</td>
-                        <td>{{ $item->barang->ruangan->nama_ruangan }}</td>
+                        <td>{{ $item->mutasiItem[0]->barang->barangMaster->nama_barang }}</td>
+                        <td>{{ $item->mutasiItem->count() }}</td>
+                        <td>{{ $item->mutasiItem[0]->barang->ruangan->nama_ruangan }}</td>
                         <td>
                             {{ $ruangans[$item->tujuan] ?? '-' }}
                         </td>
                         <td>{{ $item->keterangan ?? '-' }}</td>
                         <td>
-                            <span class="badge @if ($item->ajuan[0]->status == 'pending') bg-warning  @elseif ($item->ajuan[0]->status == 'disetujui') bg-success @else bg-danger @endif text-white">{{ $item->ajuan[0]->status }}</span>
+                            <span class="badge @if ($item->status_ajuan == 'pending') bg-warning  @elseif ($item->status_ajuan == 'disetujui') bg-success @else bg-danger @endif text-white">{{ $item->status_ajuan }}</span>
                         </td>
                         <td>
                             <div class="d-flex gap-1">
-                                @if ($item->ajuan[0]->status == 'pending')
+                                @if ($item->status_ajuan == 'pending')
                                     
                                     <button type="button" class="btn btn-primary px-2 py-1" data-bs-toggle="modal" data-bs-target="#editMutasi{{ $item->id }}">
                                         Edit

@@ -17,13 +17,13 @@
                     <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $item->created_at->format('Y-m-d') }}</td>
-                        <td>{{ $item->barang->nama_barang }}</td>
-                        <td>{{ $item->jumlah }}</td>
+                        <td>{{ $item->penghapusanItem[0]->barang->barangMaster->nama_barang }}</td>
+                        <td>{{ $item->penghapusanItem->count() }}</td>
                         <td>{{ $item->keterangan }}</td>
-                        <td><span class="badge bg-warning">{{ $item->ajuan[0]->status }}</span></td>
+                        <td><span class="badge bg-warning">{{ $item->status_ajuan }}</span></td>
                         <td>
                             <div class="d-flex gap-1">
-                                @if ($item->ajuan[0]->status == 'pending')
+                                @if ($item->status_ajuan == 'pending')
                                     <button type="button" class="btn btn-primary px-2 py-1" data-bs-toggle="modal" data-bs-target="#editPenghapusan{{ $item->id }}">
                                         Edit
                                     </button>

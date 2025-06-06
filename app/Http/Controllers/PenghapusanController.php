@@ -15,9 +15,7 @@ class PenghapusanController extends Controller
     public function index()
     {
         $barangs = Barang::with('ruangan')->get();
-        $data = Penghapusan::with(['barang.ruangan', 'ajuan'])->whereHas('ajuan', function ($query) {
-            $query->where('status', 'pending');
-        })->get();
+        $data = Penghapusan::with(['penghapusanItem.barang.ruangan', 'user'])->where('status_ajuan', 'pending')->get();
         return view('penghapusan.app', compact('data', 'barangs'));
     }
 

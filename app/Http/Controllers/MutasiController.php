@@ -18,7 +18,7 @@ class MutasiController extends Controller
 {
     public function index()
     {
-        // $barangs = Barang::with(['ruangan'])->where('jumlah_barang', '>', 0)->get();
+        $barangs = Barang::with(['ruangan'])->get();
         $mutasi = Mutasi::with(['mutasiItem.barang.ruangan', 'user'])->where('status_ajuan', 'pending')->get();
         $ruangan = Ruangan::all();
         $ruangans = Ruangan::pluck('nama_ruangan', 'id')->toArray();

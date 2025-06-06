@@ -11,7 +11,7 @@ class Mutasi extends Model
     {
         return $this->belongsTo(User::class);
     }
-    public function items()
+    public function mutasiItem()
     {
         return $this->hasMany(MutasiItem::class);
     }

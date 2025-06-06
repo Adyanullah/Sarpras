@@ -29,7 +29,7 @@
                         <td>{{ $item->perawatanItem[0]->barang->barangMaster->nama_barang }}</td>
                         <td>{{ $item->perawatanItem[0]->barang->ruangan->nama_ruangan }}</td>
                         <td>{{ $item->jenis_perawatan }}</td>
-                        <td>{{ $item->jumlah ?? '-' }}</td>
+                        <td>{{ $item->perawatanItem->count() ?? '-' }}</td>
                         <td>{{ $item->biaya_perawatan == 0 ? '-' : 'Rp. ' . number_format($item->biaya_perawatan, 0, ',', '.') }}</td>
                         <td>{{ $item->keterangan ?? '-' }}</td>
                         <td><span class="badge @if ($item->status_ajuan == 'pending') bg-warning @elseif ($item->status_ajuan == 'disetujui') bg-success
