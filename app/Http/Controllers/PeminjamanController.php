@@ -63,20 +63,30 @@ class PeminjamanController extends Controller
         return redirect('/peminjaman')->with('success', 'Peminjaman berhasil diajukan.');
     }
 
-    public function updateStatus(
-        $id,
-        $status
-    ) {
-        $peminjaman = Peminjaman::findOrFail($id);
-        
+    public function updateStatus(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'status' => 'required|in:Dikembalikan,Hilang,Diperpanjang'
+        ]);
+        $peminjaman = Peminjaman::with('peminjamanItem.barang')->findOrFail($id);
+
         $allowedStatus = ['Dikembalikan', 'Hilang'];
-        if (!in_array($status, $allowedStatus)) {
+        if (!in_array($validated['status'], $allowedStatus)) {
             return back()->with('error', 'Status tidak valid.');
         }
-
-        $peminjaman->status_peminjaman = $status;
         $peminjaman->tanggal_pengembalian = now();
-        $peminjaman->save();
+
+        foreach ($peminjaman->peminjamanItem as $item) {
+            // Update status peminjaman item
+            $item->status_peminjaman = $validated['status'];
+            $item->save();
+
+            // Jika barang dikembalikan, ubah sedia = 1
+            if ($validated['status'] === 'Dikembalikan') {
+                $item->barang->sedia = 1;
+                $item->barang->save();
+            }
+        }
 
         // $barang = Barang::findOrFail($barang_id);
         // if ($status == 'Dikembalikan') {
@@ -133,10 +143,10 @@ class PeminjamanController extends Controller
         }
 
         if (strtotime($validated['tanggal_peminjaman']) > strtotime($validated['tanggal_pengembalian'])) {
-        return redirect()->back()
-            ->withErrors(['tanggal_peminjaman' => 'Tanggal peminjaman tidak boleh lebih dari tanggal pengembalian.'])
-            ->withInput()
-            ->with('modal_error', 'editPeminjaman' . $id);
+            return redirect()->back()
+                ->withErrors(['tanggal_peminjaman' => 'Tanggal peminjaman tidak boleh lebih dari tanggal pengembalian.'])
+                ->withInput()
+                ->with('modal_error', 'editPeminjaman' . $id);
         }
 
         $peminjaman = Peminjaman::findOrFail($id);

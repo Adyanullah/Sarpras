@@ -16,6 +16,7 @@ return new class extends Migration
             $table->date('tanggal_perawatan');
             $table->string('jenis_perawatan');
             $table->integer('biaya_perawatan')->nullable();
+            $table->enum('status_perawatan', ['selesai', 'belum'])->default('belum');   
             $table->text('keterangan')->nullable();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->enum('status_ajuan',['pending','disetujui','ditolak'])->default('pending');

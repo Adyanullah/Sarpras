@@ -72,7 +72,7 @@ Route::middleware('auth')->group(function () {
     Route::put('/peminjaman/{id}', [PeminjamanController::class, 'update'])->name('peminjaman.update');
     Route::get('/peminjaman/{id}', [PeminjamanController::class, 'checkItem'])->name('peminjaman.checkItem');
     Route::delete('/peminjaman/{id}', [PeminjamanController::class, 'destroy'])->name('peminjaman.destroy');
-    Route::put('/peminjaman/{id}/{status}/{jumlah_barang}/{barang_id}', [PeminjamanController::class, 'updateStatus'])->name('peminjaman.updateStatus');
+    Route::put('/peminjaman/{id}/updateStatus', [PeminjamanController::class, 'updateStatus'])->name('peminjaman.updateStatus');
     Route::get('/laporan/peminjaman/pdf', [PeminjamanController::class, 'cetakPDF'])->name('peminjaman.cetakPDF');
     Route::get('/laporan/peminjaman/excel', [PeminjamanController::class, 'exportExcel'])->name('peminjaman.exportExcel');
 

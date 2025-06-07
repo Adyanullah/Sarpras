@@ -169,7 +169,7 @@ class AjuanController extends Controller
                     break;
 
                 case 'peminjaman':
-                    $ajuan = Peminjaman::with('peminjamanItem')->findOrFail($id);
+                    $ajuan = Peminjaman::with('peminjamanItem.barang')->findOrFail($id);
                     if ($status === 'Disetujui') {
                         $ajuan->status_ajuan = 'disetujui';
                         foreach ($ajuan->peminjamanItem as $item) {
