@@ -44,7 +44,7 @@ class BarangController extends Controller
         $ruangan = Ruangan::all();
 
         $query = Barang::with('ruangan', 'barangMaster')
-            ->where('barang_id', $id);
+            ->where('barang_id', $id)->where('sedia',1);
 
         if ($request->filled('ruangan_id')) {
             $query->where('ruangan_id', $request->ruangan_id);

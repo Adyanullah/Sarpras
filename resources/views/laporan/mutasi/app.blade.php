@@ -46,8 +46,8 @@
                 <tr>
                     <th>No</th>
                     <th>Tanggal Mutasi</th>
+                    <th>Kode Barang</th>
                     <th>Nama Barang</th>
-                    <th>Jumlah</th>
                     <th>Dari Unit</th>
                     <th>Ke Unit</th>
                     <th>Keterangan</th>
@@ -58,16 +58,16 @@
                 @forelse ($mutasi as $item)
                 <tr>
                     <td>{{ $loop->iteration }}</td>
-                    <td>{{ $item->tanggal_mutasi }}</td>
-                    <td>{{ $item->barang->nama_barang }}</td>
-                    <td>{{ $item->jumlah_barang }}</td>
+                    <td>{{ $item->mutasi->tanggal_mutasi }}</td>
+                    <td>{{ $item->barang->kode_barang }}</td>
+                    <td>{{ $item->barang->barangMaster->nama_barang }}</td>
                     <td>{{ $item->barang->ruangan->nama_ruangan }}</td>
-                    <td>{{ $ruangans[$item->tujuan] }}</td>
-                    <td>{{ $item->keterangan ?? '-' }}</td>
+                    <td>{{ $ruangans[$item->mutasi->tujuan] }}</td>
+                    <td>{{ $item->mutasi->keterangan ?? '-' }}</td>
                     <td>
-                        @if ($item->ajuan[0]->status == 'pending')
+                        @if ($item->mutasi->status_ajuan == 'pending')
                         <span class="badge bg-warning">Belum disetujui</span>
-                        @elseif ($item->ajuan[0]->status == 'disetujui')
+                        @elseif ($item->status_ajuan == 'disetujui')
                         <span class="badge bg-success">Dipindah</span>
                         @else
                         <span class="badge bg-danger">Ditolak</span>

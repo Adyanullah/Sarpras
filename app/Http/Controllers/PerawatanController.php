@@ -12,6 +12,7 @@ use Illuminate\Validation\ValidationException;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use App\Exports\PerawatanExport;
+use App\Models\PerawatanItem;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -127,7 +128,9 @@ class PerawatanController extends Controller
     public function laporan(Request $request)
     {
         $search = $request->input('search');
-        $query = Perawatan::with('perawatanItem.barang.ruangan', 'user');
+        $query = PerawatanItem::with('barang.ruangan', 'perawatan.user');
+        // $query = PerawatanItem::all();
+        // dd($query->get());
 
         // Fitur pencarian berdasarkan nama barang
         if ($request->has('search') && $request->search != '') {

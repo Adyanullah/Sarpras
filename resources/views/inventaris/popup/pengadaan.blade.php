@@ -68,15 +68,15 @@
                 <div class="col-md-12 mb-3">
                     <label for="harga_perolehan" class="form-label">Harga Satuan</label>
                     <input type="number" name="harga_perolehan" class="form-control" id="harga_perolehan"
-                        placeholder="Harga Satuan" step="0.01" value="{{ old('harga_perolehan') }}">
+                        step="0.01" value="{{ old('harga_perolehan') }}">
                     @error('harga_perolehan')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
                 </div>
                 <div class="col-md-12 mb-3">
-                    <label for="kepemilikan_barang" class="form-label">Kepemilikan Barang</label>
+                    <label for="kepemilikan_barang" class="form-label">Kepemilikan Barang (Opsional)</label>
                     <input type="text" name="kepemilikan_barang" class="form-control" id="kepemilikan_barang"
-                        placeholder="Harga Satuan" step="0.01" value="{{ old('kepemilikan_barang') }}">
+                        placeholder="Contoh : Milik Sekolah" step="0.01" value="{{ old('kepemilikan_barang') }}">
                     @error('kepemilikan_barang')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
@@ -85,7 +85,7 @@
                 <div class="col-md-12 mb-3">
                     <label for="cv_pengadaan" class="form-label">Supplier</label>
                     <input type="text" name="cv_pengadaan" class="form-control" id="cv_pengadaan"
-                        placeholder="Harga Satuan" value="{{ old('cv_pengadaan') }}">
+                         value="{{ old('cv_pengadaan') }}">
                     @error('cv_pengadaan')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror

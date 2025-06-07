@@ -7,6 +7,7 @@ use App\Models\Peminjaman;
 use App\Models\Barang;
 use Illuminate\Http\Request;
 use App\Models\AjuanPeminjaman;
+use App\Models\PeminjamanItem;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Maatwebsite\Excel\Facades\Excel;
 use Carbon\Carbon;
@@ -64,9 +65,7 @@ class PeminjamanController extends Controller
 
     public function updateStatus(
         $id,
-        $status,
-        $jumlah_barang,
-        $barang_id
+        $status
     ) {
         $peminjaman = Peminjaman::findOrFail($id);
         
@@ -74,15 +73,16 @@ class PeminjamanController extends Controller
         if (!in_array($status, $allowedStatus)) {
             return back()->with('error', 'Status tidak valid.');
         }
+
         $peminjaman->status_peminjaman = $status;
         $peminjaman->tanggal_pengembalian = now();
         $peminjaman->save();
 
-        $barang = Barang::findOrFail($barang_id);
-        if ($status == 'Dikembalikan') {
-            $barang->jumlah_barang += $jumlah_barang;
-        }
-        $barang->save();
+        // $barang = Barang::findOrFail($barang_id);
+        // if ($status == 'Dikembalikan') {
+        //     $barang->jumlah_barang += $jumlah_barang;
+        // }
+        // $barang->save();
 
         return back()->with('success', 'Status peminjaman berhasil diperbarui.');
     }
@@ -94,7 +94,7 @@ class PeminjamanController extends Controller
         $search = $request->input('search');
 
         // Query awal dengan relasi
-        $query = Peminjaman::with(['barang.ruangan', 'ajuan']);
+        $query = PeminjamanItem::with(['barang.ruangan', 'peminjaman.user']);
 
         // Filter status jika dipilih
         if ($status) {
@@ -102,14 +102,14 @@ class PeminjamanController extends Controller
         }
 
         // Filter pencarian jika diisi
-        if ($search) {
-            $query->where(function ($q) use ($search) {
-                $q->where('nama_peminjam', 'like', "%{$search}%")
-                    ->orWhereHas('barang', function ($q2) use ($search) {
-                        $q2->where('nama_barang', 'like', "%{$search}%");
-                    });
-            });
-        }
+        // if ($search) {
+        //     $query->where(function ($q) use ($search) {
+        //         $q->where('nama_peminjam', 'like', "%{$search}%")
+        //             ->orWhereHas('barang', function ($q2) use ($search) {
+        //                 $q2->where('nama_barang', 'like', "%{$search}%");
+        //             });
+        //     });
+        // }
         $items = $query->get();
 
         // $items = Peminjaman::with(['barang.ruangan', 'ajuan'])->get();
@@ -120,13 +120,10 @@ class PeminjamanController extends Controller
     {
         try {
             $validated = $request->validate([
-                'tanggal_peminjamanEdit' => 'required|date',
-                'tanggal_pengembalianEdit' => 'required|date',
-                'nama_peminjamEdit' => 'required|string|max:255',
-                'barang_idEdit' => 'required|exists:barangs,id',
-                'jumlah_barangEdit' => 'required|integer|min:1',
-                'status_peminjamanEdit' => 'required|in:Dipinjam,Dikembalikan,Diperpanjang,Hilang',
-                'keteranganEdit' => 'nullable|string|max:255',
+                'tanggal_peminjaman' => 'required|date',
+                'tanggal_pengembalian' => 'required|date',
+                'nama_peminjam' => 'required|string|max:255',
+                'keterangan' => 'nullable|string|max:255',
             ]);
         } catch (ValidationException $e) {
             return redirect()->back()
@@ -135,18 +132,9 @@ class PeminjamanController extends Controller
                 ->with('modal_error', 'editPeminjaman' . $id); // tandai modal edit yang error
         }
 
-        $barang = Barang::findOrFail($validated['barang_id']);
-
-        if ($validated['jumlah_barangEdit'] > $barang->jumlah_barang) {
-            return redirect()->back()
-                ->withErrors(['jumlah_barangEdit' => 'Jumlah barang yang diminta melebihi stok tersedia.'])
-                ->withInput()
-                ->with('modal_error', 'editPeminjaman' . $id);
-        }
-
-        if (strtotime($validated['tanggal_peminjamanEdit']) > strtotime($validated['tanggal_pengembalianEdit'])) {
+        if (strtotime($validated['tanggal_peminjaman']) > strtotime($validated['tanggal_pengembalian'])) {
         return redirect()->back()
-            ->withErrors(['tanggal_peminjamanEdit' => 'Tanggal peminjaman tidak boleh lebih dari tanggal pengembalian.'])
+            ->withErrors(['tanggal_peminjaman' => 'Tanggal peminjaman tidak boleh lebih dari tanggal pengembalian.'])
             ->withInput()
             ->with('modal_error', 'editPeminjaman' . $id);
         }

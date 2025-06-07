@@ -59,12 +59,12 @@
                     </select>
                 </div>
                 <div class="mb-3">
-                    <label for="harga_perolehan" class="form-label">Harga Perolehan</label>
+                    <label for="harga_perolehan" class="form-label">Harga Satuan</label>
                     <input type="number" class="form-control" id="harga_perolehan" name="harga_perolehan"
                         value="{{ old('harga_perolehan') }}">
                 </div>
                 <div class="mb-3">
-                    <label for="cv_pengadaan" class="form-label">CV Pengadaan</label>
+                    <label for="cv_pengadaan" class="form-label">Supplier</label>
                     <input type="text" class="form-control" id="cv_pengadaan" name="cv_pengadaan"
                         value="{{ old('cv_pengadaan') }}">
                 </div>
@@ -88,18 +88,14 @@
                 @error('ruangan_id')
                     <div class="alert alert-danger mt-2">{{ $message }}</div>
                 @enderror
-                <div class="mb-3">
-                    <label for="kepemilikan_barang" class="form-label">Kepemilikan (Opsional)</label>
-                    <select class="form-select" id="kepemilikan_barang" name="kepemilikan_barang">
-                        <option selected disabled>Pilih Kepemilikan</option>
-                        <option value="sekolah">Milik Sekolah</option>
-                        <option value="negara">Milik Negara</option>
-                        <option value="pinjam">Pinjam</option>
-                    </select>
+                <div class="col-md-12 mb-3">
+                    <label for="kepemilikan_barang" class="form-label">Kepemilikan Barang (Opsional)</label>
+                    <input type="text" name="kepemilikan_barang" class="form-control" id="kepemilikan_barang"
+                        placeholder="Contoh : Milik Sekolah" step="0.01" value="{{ old('kepemilikan_barang') }}">
+                    @error('kepemilikan_barang')
+                        <div class="alert alert-danger mt-2">{{ $message }}</div>
+                    @enderror
                 </div>
-                @error('kepemilikan_barang')
-                    <div class="alert alert-danger mt-2">{{ $message }}</div>
-                @enderror
                 <div class="mb-3">
                     <label for="gambar_barang" class="form-label">Upload foto</label>
                     <input type="file" accept="image/*" class="form-control" id="gambar_barang" name="gambar_barang"

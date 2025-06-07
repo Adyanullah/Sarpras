@@ -29,7 +29,6 @@ class AjuanController extends Controller
             $namaBarang = $p->tipe_pengajuan === 'tambah'
                 ? optional($p->barangMaster)->nama_barang
                 : $p->nama_barang;
-            // dd($namaBarang);
             $jenis = 'Pengadaan ' . ($p->tipe_pengajuan === 'baru' ? 'Baru' : 'Tambah');
             $ruanganAsal = optional($p->ruangan)->nama_ruangan ?? '-';
             // (tidak ada "tujuan" untuk pengadaan)

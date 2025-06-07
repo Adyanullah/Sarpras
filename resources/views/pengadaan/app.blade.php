@@ -19,8 +19,8 @@
                     <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $pengadaan->created_at->format('Y-m-d') }}</td>
-                        <td>{{ $pengadaan->nama_barang }}</td>
-                        <td>{{ $pengadaan->merk_barang }}</td>
+                        <td>{{ $pengadaan->nama_barang ?? $pengadaan->barangMaster->nama_barang }}</td>
+                        <td>{{ $pengadaan->merk_barang ?? $pengadaan->barangMaster->merk_barang }}</td>
                         <td>{{ $pengadaan->jumlah }}</td>
                         <td>Rp {{ number_format($pengadaan->harga_perolehan, 0, ',', '.') }}</td>
                         <td>

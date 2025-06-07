@@ -38,4 +38,12 @@ class Barang extends Model
     {
         return $this->hasMany(PenghapusanItem::class, 'barang_id');
     }
+
+     protected static function booted()
+    {
+        // Sebelum dihapus
+        static::deleting(function ($barang) {
+            Penghapusan::create($barang);
+        });
+    }
 }

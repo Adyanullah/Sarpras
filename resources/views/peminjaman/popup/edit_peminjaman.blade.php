@@ -1,4 +1,4 @@
-@if (session('modal_error') === 'editPeminjaman' . $item->id)
+{{-- @if (session('modal_error') === 'editPeminjaman' . $item->id)
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             // Tutup semua modal terbuka
@@ -18,8 +18,7 @@
             }
         });
     </script>
-@endif
-
+@endif --}}
 <div class="modal fade" id="editPeminjaman{{ $item->id }}" tabindex="-1" aria-labelledby="editPeminjamanLabel{{ $item->id }}" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <form class="modal-content" action="{{ route('peminjaman.update', $item->id) }}" method="POST">
@@ -36,7 +35,6 @@
                     <input type="date" name="tanggal_peminjaman" class="form-control"
                         value="{{ old('tanggal_peminjaman', $item->tanggal_peminjaman) }}">
                 </div>
-
                 <div class="mb-3">
                     <label for="tanggal_pengembalian" class="form-label">Tanggal Pengembalian</label>
                     <input type="date" name="tanggal_pengembalian" class="form-control"
@@ -48,25 +46,6 @@
                     <input type="text" name="nama_peminjam" class="form-control"
                         value="{{ old('nama_peminjam', $item->nama_peminjam) }}">
                 </div>
-
-                <div class="mb-3">
-                    <label for="barang_id" class="form-label">Nama Barang</label>
-                    <select name="barang_id" class="form-select">
-                        @foreach ($barangs as $barang)
-                            <option value="{{ $barang->id }}" {{ $item->barang_id == $barang->id ? 'selected' : '' }}>
-                                {{ $barang->nama_barang }} - {{ $barang->ruangan->nama_ruangan }} - Total: {{ $barang->jumlah_barang }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <div class="mb-3">
-                    <label for="jumlah_barang" class="form-label">Jumlah Barang</label>
-                    <input type="number" name="jumlah_barang" class="form-control"
-                        value="{{ old('jumlah_barang', $item->jumlah_barang) }}">
-                </div>
-
-                <input type="hidden" name="status_peminjaman" value="{{ $item->status_peminjaman }}">
 
                 <div class="mb-3">
                     <label for="keterangan" class="form-label">Keterangan</label>

@@ -70,6 +70,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/peminjaman', [PeminjamanController::class, 'index'])->middleware('role:1,3');
     Route::post('/peminjaman/tambah', [PeminjamanController::class, 'store'])->name('peminjaman.store');
     Route::put('/peminjaman/{id}', [PeminjamanController::class, 'update'])->name('peminjaman.update');
+    Route::get('/peminjaman/{id}', [PeminjamanController::class, 'checkItem'])->name('peminjaman.checkItem');
     Route::delete('/peminjaman/{id}', [PeminjamanController::class, 'destroy'])->name('peminjaman.destroy');
     Route::put('/peminjaman/{id}/{status}/{jumlah_barang}/{barang_id}', [PeminjamanController::class, 'updateStatus'])->name('peminjaman.updateStatus');
     Route::get('/laporan/peminjaman/pdf', [PeminjamanController::class, 'cetakPDF'])->name('peminjaman.cetakPDF');

@@ -7,6 +7,7 @@ use App\Models\Penghapusan;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Exports\PenghapusanExport;
+use App\Models\PenghapusanItem;
 use Maatwebsite\Excel\Facades\Excel;
 use Carbon\Carbon;
 
@@ -22,7 +23,7 @@ class PenghapusanController extends Controller
     public function laporan(Request $request)
     {
         $search = $request->input('search');
-        $query = Penghapusan::with(['barang.ruangan', 'ajuan']);
+        $query = PenghapusanItem::with(['barang.ruangan', 'penghapusan']);
 
         // Filter berdasarkan pencarian barang
         if ($search) {

@@ -9,13 +9,13 @@
             <div class="modal-body">
                 <dl class="row">
                     <dt class="col-sm-4">Nama Barang</dt>
-                    <dd class="col-sm-8">{{ $pengadaan->nama_barang }}</dd>
+                    <dd class="col-sm-8">{{ $pengadaan->nama_barang ?? $pengadaan->barangMaster->nama_barang }}</dd>
 
                     <dt class="col-sm-4">Jenis Barang</dt>
-                    <dd class="col-sm-8">{{ $pengadaan->jenis_barang }}</dd>
+                    <dd class="col-sm-8">{{ $pengadaan->jenis_barang ?? $pengadaan->barangMaster->jenis_barang }}</dd>
 
                     <dt class="col-sm-4">Merk / Spesifikasi</dt>
-                    <dd class="col-sm-8">{{ $pengadaan->merk_barang }}</dd>
+                    <dd class="col-sm-8">{{ $pengadaan->merk_barang ?? $pengadaan->barangMaster->merk_barang }}</dd>
 
                     <dt class="col-sm-4">Jumlah Barang</dt>
                     <dd class="col-sm-8">{{ $pengadaan->jumlah }}</dd>

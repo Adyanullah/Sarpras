@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Exports\PengadaanExport;
+use App\Models\BarangMaster;
 use Maatwebsite\Excel\Facades\Excel;
 use Carbon\Carbon;
 
@@ -18,10 +19,11 @@ class PengadaanController extends Controller
 {
     public function index()
     {
-        $pengadaans = Pengadaan::with('user', 'ruangan')->where('status', 'pending')->orderBy('created_at', 'desc')->get();
+        $pengadaans = Pengadaan::with('user', 'ruangan', 'barangMaster')->where('status', 'pending')->orderBy('created_at', 'desc')->get();
         $barangs = Barang::with('ruangan')->get();
+        $master = BarangMaster::with('barang')->get();
         $ruangans = Ruangan::all();
-        return view('pengadaan.app', compact('pengadaans', 'barangs', 'ruangans'));
+        return view('pengadaan.app', compact('pengadaans', 'barangs', 'ruangans', 'master'));
     }
 
     public function store(Request $request)

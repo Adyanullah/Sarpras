@@ -44,8 +44,8 @@
                 <tr>
                     <th>No</th>
                     <th>Tanggal</th>
+                    <th>Kode Barang</th>
                     <th>Nama Barang</th>
-                    <th>Jumlah</th>
                     <th>Alasan Penghapusan</th>
                     <th>Status Pengajuan</th>
                 </tr>
@@ -55,13 +55,13 @@
                     <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $item->created_at->format('Y-m-d') }}</td>
-                        <td>{{ $item->barang->nama_barang }}</td>
-                        <td>{{ $item->jumlah }}</td>
-                        <td>{{ $item->keterangan ?? '-' }}</td>
+                        <td>{{ $item->barang->kode_barang }}</td>
+                        <td>{{ $item->barang->barangMaster->nama_barang }}</td>
+                        <td>{{ $item->penghapusan->keterangan ?? '-' }}</td>
                         <td>
-                            @if ($item->ajuan[0]->status == 'pending')
+                            @if ($item->penghapusan->status_ajuan == 'pending')
                                 <span class="badge bg-warning">Belum disetujui</span>
-                            @elseif ($item->ajuan[0]->status == 'disetujui')
+                            @elseif ($item->penghapusan->status_ajuan == 'disetujui')
                                 <span class="badge bg-success">Disetujui</span>
                             @else
                                 <span class="badge bg-danger">Ditolak</span>

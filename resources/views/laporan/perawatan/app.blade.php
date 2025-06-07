@@ -46,10 +46,10 @@
                 <tr>
                     <th>No</th>
                     <th>Tanggal Perawatan</th>
+                    <th>Kode Barang</th>
                     <th>Nama Barang</th>
                     <th>Unit</th>
                     <th>Jenis Perawatan</th>
-                    <th>Jumlah</th>
                     <th>Biaya (Rp)</th>
                     <th>Keterangan</th>
                     <th>Status</th>
@@ -59,18 +59,18 @@
                 @forelse ($dataPerawatan as $data)
                     <tr>
                         <td>{{ $loop->iteration }}</td>
-                        <td>{{ $data->tanggal_perawatan }}</td>
-                        <td>{{ $data->perawatanItem[0]->barang->barangMaster->nama_barang }}</td>
-                        <td>{{ $data->perawatanItem[0]->barang->ruangan->nama_ruangan }}</td>
-                        <td>{{ $data->jenis_perawatan }}</td>
-                        <td>{{ $data->perawatanItem->count() ?? '-' }}</td>
-                        <td>{{ number_format($data->biaya_perawatan, 0, ',', '.') }}</td>
-                        <td>{{ $data->keterangan ?? '-'}}</td>
+                        <td>{{ $data->perawatan->tanggal_perawatan }}</td>
+                        <td>{{ $data->barang->kode_barang }}</td>
+                        <td>{{ $data->barang->barangMaster->nama_barang }}</td>
+                        <td>{{ $data->barang->ruangan->nama_ruangan }}</td>
+                        <td>{{ $data->perawatan->jenis_perawatan }}</td>
+                        <td>{{ number_format($data->perawatan->biaya_perawatan, 0, ',', '.') }}</td>
+                        <td>{{ $data->perawatan->keterangan ?? '-'}}</td>
                         <td>
-                            @if ($data->status_ajuan == 'pending')
+                            @if ($data->perawatan->status_ajuan == 'pending')
                                 <span class="badge bg-warning">belum disetujui</span>
-                            @elseif ($data->status_ajuan == 'disetujui')
-                                @if ($data->status == 'belum')
+                            @elseif ($data->perawatan->status_ajuan == 'disetujui')
+                                @if ($data->status_perawatan == 'belum')
                                     <span class="badge bg-warning">Diperbaiki</span>
                                 @else
                                     <span class="badge bg-success">Selesai</span>

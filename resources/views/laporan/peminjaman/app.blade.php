@@ -52,10 +52,10 @@
                     <th>No</th>
                     <th>Tanggal Pinjam</th>
                     <th>Batas Pinjam</th>
+                    <th>Kode Barang</th>
                     <th>Nama Peminjam</th>
                     <th>Unit</th>
                     <th>Barang</th>
-                    <th>Jumlah</th>
                     <th>Status</th>
                 </tr>
             </thead>
@@ -63,16 +63,16 @@
                 @forelse ($items as $item)
                 <tr>
                     <td>{{ $loop->iteration }}</td>
-                    <td>{{ $item->tanggal_peminjaman }}</td>
-                    <td>{{ $item->tanggal_pengembalian }}</td>
-                    <td>{{ $item->nama_peminjam }}</td>
+                    <td>{{ $item->peminjaman->tanggal_peminjaman }}</td>
+                    <td>{{ $item->peminjaman->tanggal_pengembalian }}</td>
+                    <td>{{ $item->barang->kode_barang }}</td>
+                    <td>{{ $item->peminjaman->nama_peminjam }}</td>
                     <td>{{ $item->barang->ruangan->nama_ruangan }}</td>
-                    <td>{{ $item->barang->nama_barang }}</td>
-                    <td>{{ $item->jumlah_barang }}</td>
+                    <td>{{ $item->barang->barangMaster->nama_barang }}</td>
                     <td>
-                        @if ($item->ajuan[0]->status == 'pending')
+                        @if ($item->peminjaman->status_ajuan == 'pending')
                         <span class="badge bg-warning">Belum disetujui</span>
-                        @elseif ($item->ajuan[0]->status == 'disetujui')
+                        @elseif ($item->peminjaman->status_ajuan == 'disetujui')
                         @if ($item->status_peminjaman == 'Dipinjam')
                         <span class="badge bg-warning">Dipinjam</span>
                         @elseif ($item->status_peminjaman == 'Dikembalikan')

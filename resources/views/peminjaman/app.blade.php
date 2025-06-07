@@ -45,7 +45,7 @@
                     <td>
                         <div class="d-flex gap-1">
                             @if ($item->status_ajuan == 'disetujui')
-                            <form action="{{ route('peminjaman.updateStatus', [
+                            {{-- <form action="{{ route('peminjaman.updateStatus', [
                                             'id' => $item->id, 
                                             'status' => 'Dikembalikan', 
                                             'jumlah_barang' => $item->jumlah_barang, 
@@ -56,7 +56,7 @@
                                 @method('PUT')
                                 <button class="btn btn-success px-2 py-1"
                                     onclick="return confirm('Yakin ingin mengembalikan?')">Kembalikan</button>
-                            </form>
+                            </form> --}}
     
                             {{-- <form
                                 action="{{ route('peminjaman.updateStatus', [
@@ -72,10 +72,25 @@
                                     onclick="return confirm('Yakin barang ini hilang?')">Hilang</button>
                             </form> --}}
                             @elseif ($item->status_ajuan == 'pending')
-                                {{-- <button type="button" class="btn btn-primary px-2 py-1" data-bs-toggle="modal" data-bs-target="#editPeminjaman{{ $item->id }}">
+                                <button type="button" class="btn btn-primary px-2 py-1" data-bs-toggle="modal" data-bs-target="#editPeminjaman{{ $item->id }}">
                                     Edit
-                                </button> --}}
+                                </button>
                                 @include('peminjaman.popup.edit_peminjaman')
+                                <div id="itemModal" style="display: none;">
+    <div class="modal-content">
+        <table id="modalTable">
+            <thead>
+                <tr>
+                    <th>Nama Barang</th>
+                    <th>Jumlah</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Diisi lewat JS -->
+            </tbody>
+        </table>
+    </div>
+</div>
                                 <form action="{{ route('peminjaman.destroy', $item->id) }}" method="POST">
                                     @csrf
                                     @method('DELETE')
@@ -91,17 +106,4 @@
             </tbody>
         </table>
     </div>
-
-    <!-- Script Pencarian Global -->
-    <script>
-        document.getElementById('globalSearch').addEventListener('keyup', function() {
-            const filter = this.value.toLowerCase();
-            const rows = document.querySelectorAll('#dataPeminjaman tbody tr');
-
-            rows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                row.style.display = text.includes(filter) ? '' : 'none';
-            });
-        });
-    </script>
 </x-layout>

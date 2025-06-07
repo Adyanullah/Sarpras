@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Exports\MutasiExport;
+use App\Models\MutasiItem;
 use Maatwebsite\Excel\Facades\Excel;
 use Carbon\Carbon;
 
@@ -77,7 +78,7 @@ class MutasiController extends Controller
         $search = $request->input('search');
         $ruangans = Ruangan::pluck('nama_ruangan', 'id')->toArray();
 
-        $mutasi = Mutasi::with(['barang.ruangan', 'ajuan'])
+        $mutasi = MutasiItem::with(['barang.ruangan', 'mutasi.user'])
             ->when($search, function ($query, $search) {
                 $query->where(function ($q) use ($search) {
                     $q->whereHas('barang', function ($q2) use ($search) {

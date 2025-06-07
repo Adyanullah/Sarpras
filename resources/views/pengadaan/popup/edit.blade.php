@@ -18,12 +18,16 @@
                             <div class="col-md-6">
                                 <label for="barang_id">Barang</label>
                                 <select class="form-control" name="barang_id">
-                                    @foreach ($barangs as $barang)
-                                        <option value="{{ $barang->id }}" {{ $pengadaan->barang_id == $barang->id ? 'selected' : '' }}>
-                                            {{ $barang->nama_barang }} - {{ $barang->merk_barang }}
+                                    @foreach ($master as $barang)
+                                        <option value="{{ $barang->id }}" {{ $pengadaan->barangMaster->id == $barang->id ? 'selected' : '' }}>
+                                            {{ $barang->kode_barang }} - {{ $barang->nama_barang }} - {{ $barang->merk_barang }}
                                         </option>
                                     @endforeach
                                 </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label>Jumlah</label>
+                                <input type="number" name="jumlah" class="form-control" value="{{ $pengadaan->jumlah }}">
                             </div>
                         @else
                             <div class="col-md-6">
@@ -56,16 +60,12 @@
                                     <option value="berat" {{ $pengadaan->kondisi_barang == 'berat' ? 'selected' : '' }}>Berat</option>
                                 </select>
                             </div>
+                            <div class="col-md-6">
+                                <label>Gambar (opsional)</label>
+                                <input type="file" name="gambar_barang" class="form-control">
+                            </div>
                         @endif
 
-                        <div class="col-md-6">
-                            <label>Jumlah</label>
-                            <input type="number" name="jumlah" class="form-control" value="{{ $pengadaan->jumlah }}">
-                        </div>
-                        <div class="col-md-6">
-                            <label>Gambar (opsional)</label>
-                            <input type="file" name="gambar_barang" class="form-control">
-                        </div>
                     </div>
                 </div>
 
