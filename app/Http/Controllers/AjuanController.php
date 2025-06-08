@@ -15,6 +15,7 @@ use App\Models\Mutasi;
 use App\Models\MutasiItem;
 use App\Models\Penghapusan;
 use App\Models\PenghapusanItem;
+use App\Models\Ruangan;
 use Illuminate\Support\Str;
 
 class AjuanController extends Controller
@@ -88,12 +89,17 @@ class AjuanController extends Controller
 
         // 4. Mutasi (status_ajuan = pending)
         $mutasis = Mutasi::with(['user'])->where('status_ajuan', 'pending')->get();
+        // Ambil semua ID tujuan
+        $tujuanIds = $mutasis->pluck('tujuan')->unique()->filter();
+
+        // Ambil semua data ruangan sekaligus
+        $ruangans = Ruangan::whereIn('id', $tujuanIds)->pluck('nama_ruangan', 'id');
         foreach ($mutasis as $m) {
             $namaBarang = $m->mutasiItem->first()->barang->barangMaster->nama_barang;
             $ruanganAsal = $m->mutasiItem->first()
                 ? optional($m->mutasiItem->first()->barang->ruangan)->nama_ruangan
                 : '-';
-            $ruanganTujuan = $m->tujuan; // diasumsikan angka ID ruangan; bisa cari nama jika relasi ada
+            $ruanganTujuan = $ruangans[$m->tujuan] ?? '-'; // diasumsikan angka ID ruangan; bisa cari nama jika relasi ada
 
             $dataAjuan->push([
                 'id'         => $m->id,
@@ -172,8 +178,8 @@ class AjuanController extends Controller
                     $ajuan = Peminjaman::with('peminjamanItem.barang')->findOrFail($id);
                     if ($status === 'Disetujui') {
                         $ajuan->status_ajuan = 'disetujui';
+                        $ajuan->status_peminjaman = 'Dipinjam';
                         foreach ($ajuan->peminjamanItem as $item) {
-                            $item->status_peminjaman = 'Dipinjam';
                             $item->save();
                             $barang = $item->barang;
                             if ($barang) {
@@ -191,8 +197,8 @@ class AjuanController extends Controller
                     $ajuan = Perawatan::with('perawatanItem')->findOrFail($id);
                     if ($status === 'Disetujui') {
                         $ajuan->status_ajuan = 'disetujui';
+                        $ajuan->status_perawatan = 'selesai';
                         foreach ($ajuan->perawatanItem as $item) {
-                            $item->status_perawatan = 'selesai';
                             $item->save();
                             $barang = $item->barang;
                             if ($barang) {
@@ -211,8 +217,8 @@ class AjuanController extends Controller
                     if ($status === 'Disetujui') {
                         $ajuan->status_ajuan = 'disetujui';
                         $tujuan = $ajuan->tujuan;
+                        $ajuan->status_mutasi = 'selesai';
                         foreach ($ajuan->mutasiItem as $item) {
-                            $item->status_mutasi = 'selesai';
                             $item->save();
                             $barang = $item->barang;
                             if ($barang) {
@@ -233,7 +239,7 @@ class AjuanController extends Controller
                         foreach ($ajuan->penghapusanItem as $item) {
                             $barang = $item->barang;
                             if ($barang) {
-                                $barang->sedia = 0;
+                                $barang->sedia = -1;
                                 $barang->save();
                             }
                         }

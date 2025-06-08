@@ -12,7 +12,7 @@
         </div>
     @endif
     <!-- Tabel Data -->
-    <div class="table-responsive">
+    {{-- <div class="table-responsive"> --}}
         <table id="dataPeminjaman" class="table table-bordered table-striped align-middle">
             <thead class="table-light">
                 <tr>
@@ -86,5 +86,5 @@
                 @endforelse
             </tbody>
         </table>
-    </div>
+    {{-- </div> --}}
 </x-layout>

@@ -152,6 +152,12 @@ class BarangController extends Controller
             case 'mutasi':
                 return $this->handleMutasi($request, $ids);
 
+            case 'cetak_qr_kecil':
+                return $this->handleCetakQr($ids, 'inventaris.kecil');
+
+            case 'cetak_qr_besar':
+                return $this->handleCetakQr($ids, 'inventaris.besar');
+
             default:
                 return redirect()->back()
                     ->with('error', 'Aksi tidak dikenal.');
@@ -293,6 +299,16 @@ class BarangController extends Controller
 
         return redirect()->route('inventaris.index')
             ->with('success', 'Pengajuan mutasi berhasil dikirim.');
+    }
+
+    protected function handleCetakQr(array $ids, string $view)
+    {
+        // ambil barangs yang dipilih
+        $barangs = Barang::whereIn('id', $ids)
+            ->orderBy('kode_barang')
+            ->get();
+
+        return view($view, compact('barangs'));
     }
 
     public function scanResult($kode)

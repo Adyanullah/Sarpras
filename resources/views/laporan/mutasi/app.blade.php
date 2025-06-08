@@ -67,7 +67,7 @@
                     <td>
                         @if ($item->mutasi->status_ajuan == 'pending')
                         <span class="badge bg-warning">Belum disetujui</span>
-                        @elseif ($item->status_ajuan == 'disetujui')
+                        @elseif ($item->mutasi->status_ajuan == 'disetujui')
                         <span class="badge bg-success">Dipindah</span>
                         @else
                         <span class="badge bg-danger">Ditolak</span>

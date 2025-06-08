@@ -99,8 +99,6 @@ class MutasiController extends Controller
             $validated = $request->validate([
                 'tanggal_mutasi'  => 'required|date',
                 'nama_mutasi'     => 'required|string|max:255',
-                'barang_id'       => 'required|exists:barangs,id',
-                'jumlah_barang'   => 'required|integer|min:1',
                 'tujuan'          => 'required|integer',
                 'keterangan'      => 'nullable|string',
             ]);
@@ -111,14 +109,6 @@ class MutasiController extends Controller
                 ->withInput()
                 ->with('modal_error', 'editMutasi' . $id);
         }
-        $barangAsal = Barang::findOrFail($validated['barang_id']);
-        if ($validated['jumlah_barang'] > $barangAsal->jumlah_barang) {
-            return redirect()->back()
-                ->withErrors(['jumlah_barang' => 'Jumlah melebihi stok yang tersedia.'])
-                ->withInput()
-                ->with('modal_error', 'editMutasi' . $id);
-        }
-
         $mutasi = Mutasi::findOrFail($id);
         $mutasi->update($validated);
 

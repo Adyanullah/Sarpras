@@ -21,7 +21,7 @@ class PerawatanController extends Controller
     public function index()
     {
         $barang = Barang::with('ruangan')->get();
-        $dataPerawatan = Perawatan::with('perawatanItem.barang.ruangan', 'user')->where('status_ajuan', '!=', 'ditolak')->get();
+        $dataPerawatan = Perawatan::with('perawatanItem.barang.ruangan', 'user')->where('status_ajuan', '!=', 'ditolak')->where('status_perawatan', 'belum')->get();
         return view('perawatan.app', compact('dataPerawatan', 'barang'));
     }
 
@@ -35,12 +35,13 @@ class PerawatanController extends Controller
         ]);
 
         if ($perawatan) {
-            $perawatan->status_ajuan = $validated['status'];
+            $perawatan->status_perawatan = $validated['status'];
             $perawatan->save();
 
             $barangIds = $perawatan->perawatanItem->pluck('barang_id');
             Barang::whereIn('id', $barangIds)->update([
-                'kondisi_barang' => $validated['kondisi_barang']
+                'kondisi_barang' => $validated['kondisi_barang'],
+                'sedia' => 1
             ]);
 
             return redirect()->back()->with('success', 'Status dan kondisi barang berhasil diperbarui.');
@@ -49,64 +50,18 @@ class PerawatanController extends Controller
         return redirect()->back()->with('error', 'Perawatan tidak ditemukan.');
     }
 
-    public function store(Request $request)
-    {
-        try {
-            $validated = $request->validate([
-                'tanggal_perawatan'  => 'required|date',
-                'barang_id'          => 'required|exists:barangs,id',
-                'jenis_perawatan'    => 'required|string|max:255',
-                'biaya_perawatan'    => 'nullable|integer|min:0',
-                'jumlah'             => 'nullable|integer|min:0',
-                'keterangan'         => 'nullable|string',
-            ]);
-        } catch (ValidationException $e) {
-            return redirect()->back()
-                ->withErrors($e->validator)
-                ->withInput()
-                ->with('modal_error', 'modalPerawatanBarang');
-        }
-
-        $barang = Barang::findOrFail($validated['barang_id']);
-        if (isset($validated['jumlah']) && $validated['jumlah'] > $barang->jumlah_barang) {
-            return redirect()->back()
-                ->withErrors(['jumlah' => 'Jumlah barang yang diminta melebihi stok tersedia.'])
-                ->withInput()
-                ->with('modal_error', 'modalPerawatanBarang');
-        }
-
-        $perawatan = Perawatan::create($validated);
-        AjuanPerawatan::create([
-            'user_id'       => Auth::id(),
-            'perawatan_id'  => $perawatan->id,
-        ]);
-
-        return redirect()->back()->with('success', 'Data perawatan berhasil disimpan.');
-    }
-
     public function update(Request $request, $id)
     {
         try {
             $validated = $request->validate([
                 'tanggal_perawatan' => 'required|date',
-                'barang_id'         => 'required|exists:barangs,id',
                 'jenis_perawatan'   => 'required|string',
                 'biaya_perawatan'   => 'nullable|integer|min:0',
-                'jumlah'            => 'required|integer|min:0',
                 'keterangan'        => 'nullable|string',
-                'status'            => 'required|in:selesai,belum',
             ]);
         } catch (ValidationException $e) {
             return redirect()->back()
                 ->withErrors($e->validator)
-                ->withInput()
-                ->with('modal_error', 'editPerawatan' . $id);
-        }
-
-        $barang = Barang::findOrFail($validated['barang_id']);
-        if (isset($validated['jumlah']) && $validated['jumlah'] > $barang->jumlah_barang) {
-            return redirect()->back()
-                ->withErrors(['jumlah' => 'Jumlah barang yang diminta melebihi stok tersedia.'])
                 ->withInput()
                 ->with('modal_error', 'editPerawatan' . $id);
         }

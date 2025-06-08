@@ -102,7 +102,7 @@ Route::middleware('auth')->group(function () {
 
     // Penghapusan
     Route::get('/penghapusan', [PenghapusanController::class, 'index'])->middleware('role:1,3');
-    Route::post('/penghapusan/{id}/update', [PenghapusanController::class, 'update'])->name('penghapusan.update');
+    Route::put('/penghapusan/{id}/update', [PenghapusanController::class, 'update'])->name('penghapusan.update');
     Route::delete('/penghapusan/{id}', [PenghapusanController::class, 'destroy'])->name('penghapusan.destroy');
 
     // Laporan

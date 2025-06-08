@@ -40,14 +40,10 @@ class PenghapusanController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'barang_id' => 'required|exists:barangs,id',
-            'jumlah' => 'required|integer|min:1',
             'keterangan' => 'nullable|string',
         ]);
 
         $penghapusan = Penghapusan::findOrFail($id);
-        $penghapusan->barang_id = $request->barang_id;
-        $penghapusan->jumlah = $request->jumlah;
         $penghapusan->keterangan = $request->keterangan;
         $penghapusan->save();
 

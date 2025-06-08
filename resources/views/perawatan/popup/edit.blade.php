@@ -1,4 +1,4 @@
-@if (session('modal_error') === 'editPerawatan' . $item->id)
+{{-- @if (session('modal_error') === 'editPerawatan' . $item->id)
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             // Tutup semua modal terbuka
@@ -18,8 +18,7 @@
             }
         });
     </script>
-@endif
-
+@endif --}}
 <div class="modal fade" id="editPerawatan{{ $item->id }}" tabindex="-1" aria-labelledby="editPerawatanLabel{{ $item->id }}" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <form class="modal-content" action="{{ route('perawatan.update', $item->id) }}" method="POST">
@@ -37,20 +36,6 @@
                     <input type="date" id="tanggal_perawatanEdit{{ $item->id }}" name="tanggal_perawatan" class="form-control"
                         value="{{ old('tanggal_perawatan', $item->tanggal_perawatan) }}">
                     @error('tanggal_perawatan')
-                        <div class="alert alert-danger mt-2">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <div class="mb-3">
-                    <label for="barang_idEdit{{ $item->id }}" class="form-label">Nama Barang</label>
-                    <select id="barang_idEdit{{ $item->id }}" name="barang_id" class="form-select">
-                        @foreach ($barang as $barang)
-                            <option value="{{ $barang->id }}" {{ $item->barang_id == $barang->id ? 'selected' : '' }}>
-                                {{ $barang->nama_barang }} - {{ $barang->ruangan->nama_ruangan }} - Kondisi {{ $barang->kondisi_barang }} - Jumlah {{ $barang->jumlah_barang }}
-                            </option>
-                        @endforeach
-                    </select>
-                    @error('barang_id')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
                 </div>
@@ -74,23 +59,12 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="jumlahEdit{{ $item->id }}" class="form-label">Jumlah</label>
-                    <input type="number" id="jumlahEdit{{ $item->id }}" name="jumlah" class="form-control"
-                        value="{{ old('jumlah', $item->jumlah) }}">
-                    @error('jumlah')
-                        <div class="alert alert-danger mt-2">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <div class="mb-3">
                     <label for="keteranganEdit{{ $item->id }}" class="form-label">Keterangan</label>
                     <textarea id="keteranganEdit{{ $item->id }}" name="keterangan" class="form-control" rows="3">{{ old('keterangan', $item->keterangan) }}</textarea>
                     @error('keterangan')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
                 </div>
-
-                <input type="hidden" name="status" value="{{ $item->status }}">
             </div>
 
             <div class="modal-footer">

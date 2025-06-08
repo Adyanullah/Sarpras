@@ -19,7 +19,7 @@ class PeminjamanController extends Controller
     public function index()
     {
         $barangs = Barang::with('ruangan')->get();
-        $items = Peminjaman::with(['peminjamanItem.barang.ruangan', 'user'])->whereNot('status_ajuan', 'ditolak')->get();
+        $items = Peminjaman::with(['peminjamanItem.barang.ruangan', 'user'])->whereNot('status_ajuan', 'ditolak')->where('status_peminjaman', 'Dipinjam')->get();
         // dd($items);
         return view('peminjaman.app', compact('items', 'barangs'));
     }
@@ -75,24 +75,13 @@ class PeminjamanController extends Controller
             return back()->with('error', 'Status tidak valid.');
         }
         $peminjaman->tanggal_pengembalian = now();
-
-        foreach ($peminjaman->peminjamanItem as $item) {
-            // Update status peminjaman item
-            $item->status_peminjaman = $validated['status'];
-            $item->save();
-
-            // Jika barang dikembalikan, ubah sedia = 1
-            if ($validated['status'] === 'Dikembalikan') {
-                $item->barang->sedia = 1;
-                $item->barang->save();
-            }
+        $peminjaman->status_peminjaman = $validated['status'];
+        $peminjaman->save();
+        
+        if ($validated['status'] === 'Dikembalikan') {
+            $barangIds = $peminjaman->peminjamanItem->pluck('barang.id');
+            Barang::whereIn('id', $barangIds)->update(['sedia' => 1]);
         }
-
-        // $barang = Barang::findOrFail($barang_id);
-        // if ($status == 'Dikembalikan') {
-        //     $barang->jumlah_barang += $jumlah_barang;
-        // }
-        // $barang->save();
 
         return back()->with('success', 'Status peminjaman berhasil diperbarui.');
     }

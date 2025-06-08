@@ -70,7 +70,7 @@
                             @if ($data->perawatan->status_ajuan == 'pending')
                                 <span class="badge bg-warning">belum disetujui</span>
                             @elseif ($data->perawatan->status_ajuan == 'disetujui')
-                                @if ($data->status_perawatan == 'belum')
+                                @if ($data->perawatan->status_perawatan == 'belum')
                                     <span class="badge bg-warning">Diperbaiki</span>
                                 @else
                                     <span class="badge bg-success">Selesai</span>

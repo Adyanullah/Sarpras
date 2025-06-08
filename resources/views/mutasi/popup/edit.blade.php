@@ -1,4 +1,4 @@
-@if (session('modal_error') === 'editMutasi' . $item->id)
+{{-- @if (session('modal_error') === 'editMutasi' . $item->id)
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             // Tutup modal aktif lainnya
@@ -17,7 +17,7 @@
             }
         });
     </script>
-@endif
+@endif --}}
 <div class="modal fade" id="editMutasi{{ $item->id }}" tabindex="-1" aria-labelledby="editMutasiLabel{{ $item->id }}" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <form action="{{ route('mutasi.update', $item->id) }}" method="POST" class="modal-content">
@@ -51,32 +51,7 @@
                             <div class="alert alert-danger mt-2">{{ $message }}</div>
                         @enderror
                     </div>
-
-                    <div class="col-md-12">
-                        <label for="barang_id{{ $item->id }}" class="form-label">Nama Barang</label>
-                        <select name="barang_id" id="barang_id{{ $item->id }}" class="form-select">
-                            <option disabled>-- Pilih Barang --</option>
-                            @foreach ($barangs as $barang)
-                                <option value="{{ $barang->id }}"
-                                    {{ $item->barang_id == $barang->id ? 'selected' : '' }}>
-                                    {{ $barang->nama_barang }} - {{ $barang->ruangan->nama_ruangan }} - Total : {{ $barang->jumlah_barang }}
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('barang_id')
-                            <div class="alert alert-danger mt-2">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <div class="col-md-12">
-                        <label for="jumlah_barang{{ $item->id }}" class="form-label">Jumlah</label>
-                        <input type="number" name="jumlah_barang" class="form-control" id="jumlah_barang{{ $item->id }}"
-                            value="{{ old('jumlah_barang', $item->jumlah_barang) }}">
-                        @error('jumlah_barang')
-                            <div class="alert alert-danger mt-2">{{ $message }}</div>
-                        @enderror
-                    </div>
-
+                    
                     <div class="col-md-12">
                         <label for="tujuan{{ $item->id }}" class="form-label">Ke Unit</label>
                         <select name="tujuan" id="tujuan{{ $item->id }}" class="form-select">
