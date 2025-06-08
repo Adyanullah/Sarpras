@@ -4,9 +4,10 @@ namespace App\Exports;
 
 use App\Models\Perawatan;
 use Carbon\Carbon;
-use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\FromArray;
+use Maatwebsite\Excel\Concerns\WithHeadings;
 
-class PerawatanExport implements FromCollection
+class PerawatanExport implements FromArray, WithHeadings
 {
     protected $bulan;
 
@@ -15,11 +16,45 @@ class PerawatanExport implements FromCollection
         $this->bulan = $bulan;
     }
 
-    public function collection()
+    public function array(): array
     {
         $tanggalMulai = Carbon::now()->subMonths($this->bulan);
-        return Perawatan::with('barang.ruangan', 'ajuan')
+        $data = Perawatan::with('perawatanItem.barang.ruangan', 'user')
             ->where('tanggal_perawatan', '>=', $tanggalMulai)
             ->get();
+
+        $result = [];
+        $no = 1;
+
+        foreach ($data as $perawatan) {
+            foreach ($perawatan->perawatanItem as $item) {
+                $result[] = [
+                    $no++,
+                    $perawatan->tanggal_perawatan,
+                    $item->barang->kode_barang ?? '-',
+                    $item->barang->barangMaster->nama_barang ?? '-',
+                    $item->barang->ruangan->nama_ruangan ?? '-',
+                    $perawatan->jenis_perawatan,
+                    $perawatan->biaya_perawatan,
+                    $perawatan->keterangan,
+                ];
+            }
+        }
+
+        return $result;
+    }
+
+    public function headings(): array
+    {
+        return [
+            'No',
+            'Tanggal Perawatan',
+            'Kode Barang',
+            'Nama Barang',
+            'Unit',
+            'Jenis Perawatan',
+            'Biaya (Rp)',
+            'Keterangan',
+        ];
     }
 }

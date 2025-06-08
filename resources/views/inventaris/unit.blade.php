@@ -43,7 +43,7 @@
 
                     <div class="col-md-2">
                         <select name="tahun" class="form-select">
-                            <option value="" {{ request('tahun') ? '' : 'selected' }}>-- Pilih Tahun --</option>
+                            <option value="" {{ request('tahun') ? '' : 'selected' }}>Pilih Tahun</option>
                             @foreach ($tahunList as $tahun)
                                 <option value="{{ $tahun }}"
                                     {{ request('tahun') == $tahun ? 'selected' : '' }}>

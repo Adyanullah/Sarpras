@@ -15,25 +15,23 @@
                 <th>No</th>
                 <th>Tanggal Pinjam</th>
                 <th>Batas Pinjam</th>
+                <th>Kode Barang</th>
                 <th>Nama Peminjam</th>
                 <th>Unit</th>
                 <th>Barang</th>
-                <th>Jumlah</th>
-                <th>Status</th>
             </tr>
         </thead>
         <tbody>
             @foreach ($items as $item)
-            <tr>
-                <td>{{ $loop->iteration }}</td>
-                <td>{{ $item->tanggal_peminjaman }}</td>
-                <td>{{ $item->tanggal_pengembalian }}</td>
-                <td>{{ $item->nama_peminjam }}</td>
-                <td>{{ $item->barang->ruangan->nama_ruangan }}</td>
-                <td>{{ $item->barang->nama_barang }}</td>
-                <td>{{ $item->jumlah_barang }}</td>
-                <td>{{ $item->status_peminjaman }}</td>
-            </tr>
+                <tr>
+                    <td>{{ $loop->iteration }}</td>
+                    <td>{{ $item->peminjaman->tanggal_peminjaman }}</td>
+                    <td>{{ $item->peminjaman->tanggal_pengembalian }}</td>
+                    <td>{{ $item->barang->kode_barang ?? '-' }}</td>
+                    <td>{{ $item->peminjaman->nama_peminjam }}</td>
+                    <td>{{ $item->barang->ruangan->nama_ruangan ?? '-' }}</td>
+                    <td>{{ $item->barang->barangMaster->nama_barang ?? '-' }}</td>
+                </tr>
             @endforeach
         </tbody>
     </table>

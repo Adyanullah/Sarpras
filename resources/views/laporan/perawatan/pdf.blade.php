@@ -13,27 +13,30 @@
         <thead>
             <tr>
                 <th>No</th>
-                <th>Tanggal</th>
-                <th>Barang</th>
+                <th>Tanggal Perawatan</th>
+                <th>Kode Barang</th>
+                <th>Nama Barang</th>
                 <th>Unit</th>
-                <th>Jenis</th>
-                <th>Jumlah</th>
-                <th>Biaya</th>
-                <th>Status</th>
+                <th>Jenis Perawatan</th>
+                <th>Biaya (Rp)</th>
+                <th>Keterangan</th>
             </tr>
         </thead>
         <tbody>
-            @foreach ($dataPerawatan as $item)
-                <tr>
-                    <td>{{ $loop->iteration }}</td>
-                    <td>{{ $item->tanggal_perawatan }}</td>
-                    <td>{{ $item->perawatanItem[0]->barang->barangMaster->nama_barang }}</td>
-                    <td>{{ $item->perawatanItem[0]->barang->ruangan->nama_ruangan }}</td>
-                    <td>{{ $item->jenis_perawatan }}</td>
-                    <td>{{ $item->jumlah ?? '-' }}</td>
-                    <td>{{ number_format($item->biaya_perawatan, 0, ',', '.') }}</td>
-                    <td>{{ $item->status }}</td>
-                </tr>
+            @php $no = 1; @endphp
+            @foreach ($dataPerawatan as $perawatan)
+                @foreach ($perawatan->perawatanItem as $item)
+                    <tr>
+                        <td>{{ $no++ }}</td>
+                        <td>{{ $perawatan->tanggal_perawatan }}</td>
+                        <td>{{ $item->barang->kode_barang ?? '-' }}</td>
+                        <td>{{ $item->barang->barangMaster->nama_barang ?? '-' }}</td>
+                        <td>{{ $item->barang->ruangan->nama_ruangan ?? '-' }}</td>
+                        <td>{{ $perawatan->jenis_perawatan }}</td>
+                        <td>{{ number_format($perawatan->biaya_perawatan, 0, ',', '.') }}</td>
+                        <td>{{ $perawatan->keterangan ?? '-' }}</td>
+                    </tr>
+                @endforeach
             @endforeach
         </tbody>
     </table>
