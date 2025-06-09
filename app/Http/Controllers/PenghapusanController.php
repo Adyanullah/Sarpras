@@ -23,11 +23,11 @@ class PenghapusanController extends Controller
     public function laporan(Request $request)
     {
         $search = $request->input('search');
-        $query = PenghapusanItem::with(['barang.ruangan', 'penghapusan']);
+        $query = PenghapusanItem::with(['barang.ruangan', 'penghapusan', 'barang.barangMaster']);
 
         // Filter berdasarkan pencarian barang
         if ($search) {
-            $query->whereHas('barang', function ($q) use ($search) {
+            $query->whereHas('barang.barangMaster', function ($q) use ($search) {
                 $q->where('nama_barang', 'like', '%' . $search . '%');
             });
         }

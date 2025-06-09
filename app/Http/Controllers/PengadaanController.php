@@ -57,7 +57,6 @@ class PengadaanController extends Controller
                 'barang_id' => 'required|exists:barang_masters,id',
             ]);
             $data['barang_master_id'] = $request->barang_id;
-
         } elseif ($request->tipe_pengajuan === 'baru') {
             // Pengadaan barang baru
             $request->validate([
@@ -208,10 +207,26 @@ class PengadaanController extends Controller
         return redirect()->back()->with('success', 'Data pengadaan berhasil diperbarui.');
     }
 
-    public function laporan(){
-        $pengadaans = Pengadaan::with('barangMaster')->get();
+    public function laporan(Request $request)
+    {
+        $search = $request->input('search');
+        $tahun = $request->input('tahun');
+
+        $pengadaans = Pengadaan::with('barangMaster')
+            ->when($search, function ($query, $search) {
+                $query->whereHas('barangMaster', function ($q) use ($search) {
+                    $q->where('nama_barang', 'like', "%{$search}%")
+                        ->orWhere('kode_barang', 'like', "%{$search}%");
+                });
+            })
+            ->when($tahun, function ($query, $tahun) {
+                $query->whereYear('tanggal_pengadaan', $tahun);
+            })
+            ->get();
+
         return view('laporan.pengadaan.app', compact('pengadaans'));
     }
+
 
     public function exportPDF($bulan)
     {

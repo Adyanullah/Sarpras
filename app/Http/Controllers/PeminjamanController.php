@@ -77,7 +77,7 @@ class PeminjamanController extends Controller
         $peminjaman->tanggal_pengembalian = now();
         $peminjaman->status_peminjaman = $validated['status'];
         $peminjaman->save();
-        
+
         if ($validated['status'] === 'Dikembalikan') {
             $barangIds = $peminjaman->peminjamanItem->pluck('barang.id');
             Barang::whereIn('id', $barangIds)->update(['sedia' => 1]);
@@ -88,30 +88,32 @@ class PeminjamanController extends Controller
 
     public function laporan(Request $request)
     {
-        // Ambil input filter dari query string
         $status = $request->input('status');
         $search = $request->input('search');
 
         // Query awal dengan relasi
-        $query = PeminjamanItem::with(['barang.ruangan', 'peminjaman.user']);
+        $query = PeminjamanItem::with(['barang.ruangan', 'barang.barangMaster', 'peminjaman.user']);
 
-        // Filter status jika dipilih
+        // Filter status dari relasi peminjaman
         if ($status) {
-            $query->where('status_peminjaman', $status);
+            $query->whereHas('peminjaman', function ($q) use ($status) {
+                $q->where('status_peminjaman', $status);
+            });
         }
 
-        // Filter pencarian jika diisi
-        // if ($search) {
-        //     $query->where(function ($q) use ($search) {
-        //         $q->where('nama_peminjam', 'like', "%{$search}%")
-        //             ->orWhereHas('barang', function ($q2) use ($search) {
-        //                 $q2->where('nama_barang', 'like', "%{$search}%");
-        //             });
-        //     });
-        // }
+        // Filter pencarian: nama_peminjam dari relasi peminjaman, atau nama_barang dari relasi barang -> barangMaster
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('peminjaman', function ($q2) use ($search) {
+                    $q2->where('nama_peminjam', 'like', "%{$search}%");
+                })->orWhereHas('barang.barangMaster', function ($q2) use ($search) {
+                    $q2->where('nama_barang', 'like', "%{$search}%");
+                });
+            });
+        }
+
         $items = $query->get();
 
-        // $items = Peminjaman::with(['barang.ruangan', 'ajuan'])->get();
         return view('laporan.peminjaman.app', compact('items'));
     }
 

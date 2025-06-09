@@ -83,14 +83,14 @@ class PerawatanController extends Controller
     public function laporan(Request $request)
     {
         $search = $request->input('search');
-        $query = PerawatanItem::with('barang.ruangan', 'perawatan.user');
+        $query = PerawatanItem::with('barang.ruangan', 'perawatan.user', 'barang.barangMaster');
         // $query = PerawatanItem::all();
         // dd($query->get());
 
         // Fitur pencarian berdasarkan nama barang
         if ($request->has('search') && $request->search != '') {
             $search = $request->search;
-            $query->whereHas('barang', function ($q) use ($search) {
+            $query->whereHas('barang.barangMaster', function ($q) use ($search) {
                 $q->where('nama_barang', 'like', '%' . $search . '%');
             });
         }

@@ -80,17 +80,4 @@
             </tbody>
         </table>
     </div>
-
-    <!-- Script Pencarian -->
-    <script>
-        document.getElementById('searchMutasi').addEventListener('keyup', function() {
-            const filter = this.value.toLowerCase();
-            const rows = document.querySelectorAll('#tabelMutasi tbody tr');
-            rows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                row.style.display = text.includes(filter) ? '' : 'none';
-            });
-        });
-    </script>
-
 </x-layout>

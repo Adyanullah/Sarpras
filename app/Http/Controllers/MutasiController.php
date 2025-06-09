@@ -78,14 +78,13 @@ class MutasiController extends Controller
         $search = $request->input('search');
         $ruangans = Ruangan::pluck('nama_ruangan', 'id')->toArray();
 
-        $mutasi = MutasiItem::with(['barang.ruangan', 'mutasi.user'])
+        $mutasi = MutasiItem::with(['barang.ruangan', 'mutasi.user', 'barang.barangMaster'])
             ->when($search, function ($query, $search) {
                 $query->where(function ($q) use ($search) {
-                    $q->whereHas('barang', function ($q2) use ($search) {
+                    $q->whereHas('barang.barangMaster', function ($q2) use ($search) {
                         $q2->where('nama_barang', 'like', "%{$search}%")
                         ->orWhere('kode_barang', 'like', "%{$search}%");
-                    })
-                    ->orWhere('keterangan', 'like', "%{$search}%");
+                    });
                 });
             })
             ->get();

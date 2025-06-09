@@ -1,5 +1,5 @@
 <x-layout>
-    <form method="GET" action="">
+    <form method="GET" action="{{ route('pengadaan.laporan') }}">
         <div class="row align-items-center mb-4">
             <div class="col-md-3">
                 <select name="tahun" class="form-select">
@@ -8,7 +8,8 @@
                 </select>
             </div>
             <div class="col-md-3">
-                <input type="text" name="search" class="form-control" placeholder="Cari data barang...">
+                <input type="text" name="search" class="form-control" placeholder="Cari data barang..."
+               value="{{ request('search') }}">
             </div>
             <div class="col-md-2">
                 <button type="submit" class="btn btn-primary"><i class="ri-search-line me-1"></i>Filter</button>
