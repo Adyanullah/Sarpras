@@ -128,7 +128,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/laporan/pengadaan/pdf/{bulan}', [PengadaanController::class, 'exportPDF'])->name('pengadaan.pdf');
     Route::get('/laporan/pengadaan/excel/{bulan}', [PengadaanController::class, 'exportExcel'])->name('pengadaan.excel');
 
-    Route::get('/laporan/barangruang', [BarangRuangController::class, 'index']);
+    Route::get('/laporan/barangruang', [BarangRuangController::class, 'index'])->name('ruangan.index');
+    Route::get('/laporan-barang-ruang/{id}', [BarangRuangController::class, 'detail'])->name('ruangan.detail');
 
     // Pengaturan
     Route::get('/pengaturan/ruangan', [DataRuanganController::class, 'index'])->middleware('role:1');

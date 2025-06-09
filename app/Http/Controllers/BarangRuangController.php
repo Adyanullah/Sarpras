@@ -11,4 +11,11 @@ class BarangRuangController extends Controller
         $ruangans = Ruangan::with('barang.barangMaster')->get();
         return view('laporan.barangruang.app', compact('ruangans'));
     }
+
+    public function detail($id)
+    {
+        $ruangan = Ruangan::with('barang.barangMaster')->findOrFail($id);
+        return view('laporan.barangruang.detail', compact('ruangan'));
+    }
+    
 }

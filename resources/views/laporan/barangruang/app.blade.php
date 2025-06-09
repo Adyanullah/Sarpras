@@ -1,41 +1,54 @@
 <x-layout>
-    <div class="container">
-        <h3>Laporan Barang per Ruangan</h3>
+    <div class="container mt-4">
+        <h3 class="mb-4">Daftar Ruangan</h3>
 
-        @foreach ($ruangans as $ruangan)
-        <h4>{{ $ruangan->nama_ruangan }} ({{ $ruangan->kode_ruangan }})</h4>
-        <table border="1" cellspacing="0" cellpadding="5">
-            <thead>
+        <div class="row mb-3">
+            <div class="col-md-4 col-sm-6">
+                <input type="text" id="searchInput" class="form-control" placeholder="Cari berdasarkan nama atau kode ruangan...">
+            </div>
+        </div>
+
+        <table class="table table-bordered table-striped" id="ruanganTable">
+            <thead class="table-light">
                 <tr>
                     <th>No</th>
-                    <th>Kode Barang</th>
-                    <th>Nama Barang</th>
-                    <th>Jenis</th>
-                    <th>Merk</th>
-                    <th>Tahun</th>
-                    <th>Sumber Dana</th>
-                    <th>Kondisi</th>
+                    <th>Kode Ruangan</th>
+                    <th>Nama Ruangan</th>
+                    <th>Jumlah Barang</th>
+                    <th>Aksi</th>
                 </tr>
             </thead>
             <tbody>
-                @forelse ($ruangan->barang as $index => $barang)
+                @foreach ($ruangans as $index => $ruangan)
                 <tr>
                     <td>{{ $index + 1 }}</td>
-                    <td>{{ $barang->kode_barang }}</td>
-                    <td>{{ $barang->barangMaster->nama_barang ?? '-' }}</td>
-                    <td>{{ $barang->barangMaster->jenis_barang ?? '-' }}</td>
-                    <td>{{ $barang->barangMaster->merk_barang ?? '-' }}</td>
-                    <td>{{ $barang->tahun_perolehan }}</td>
-                    <td>{{ $barang->sumber_dana }}</td>
-                    <td>{{ $barang->kondisi_barang }}</td>
+                    <td class="kode">{{ $ruangan->kode_ruangan }}</td>
+                    <td class="nama">{{ $ruangan->nama_ruangan }}</td>
+                    <td>{{ $ruangan->barang->count() }}</td>
+                    <td>
+                        <a href="{{ route('ruangan.detail', $ruangan->id) }}" class="btn btn-sm btn-primary">Detail</a>
+                    </td>
                 </tr>
-                @empty
-                <tr>
-                    <td colspan="8">Tidak ada barang di ruangan ini.</td>
-                </tr>
-                @endforelse
+                @endforeach
             </tbody>
         </table>
-        @endforeach
     </div>
+
+    {{-- Script Filter --}}
+    <script>
+        document.getElementById("searchInput").addEventListener("keyup", function() {
+            let filter = this.value.toLowerCase();
+            let rows = document.querySelectorAll("#ruanganTable tbody tr");
+
+            rows.forEach(row => {
+                let kode = row.querySelector(".kode").textContent.toLowerCase();
+                let nama = row.querySelector(".nama").textContent.toLowerCase();
+                if (kode.includes(filter) || nama.includes(filter)) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            });
+        });
+    </script>
 </x-layout>

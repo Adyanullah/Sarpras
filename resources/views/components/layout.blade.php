@@ -21,21 +21,41 @@
     <script src="{{ asset('/assets/js/config.min.js') }}"></script>
     <style>
         .dropdown-item.text-white:hover {
-            background-color:rgb(176, 176, 176) !important;
+            background-color: rgb(176, 176, 176) !important;
             color: white !important;
+        }
+
+        @media print {
+            body * {
+                visibility: hidden;
+                /* sembunyikan semua */
+            }
+
+            #printableTable,
+            #printableTable * {
+                visibility: visible;
+                /* tampilkan tabel dan isi */
+            }
+
+            #printableTable {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+            }
         }
     </style>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             document.querySelectorAll('.modal').forEach(modal => {
-                modal.addEventListener('hidden.bs.modal', function () {
+                modal.addEventListener('hidden.bs.modal', function() {
                     document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
                     document.body.classList.remove('modal-open');
                     document.body.style = '';
                 });
             });
         });
-</script>
+    </script>
 
 </head>
 
@@ -105,12 +125,12 @@
 
                                     <div class="dropdown-divider my-1"></div>
                                     {{-- <form action="/auth/logout" method="post"> --}}
-                                        {{-- @csrf --}}
-                                        <button type="submit" class="dropdown-item text-danger" data-bs-toggle="modal" data-bs-target="#logoutModal">
-                                            <iconify-icon icon="solar:logout-3-broken"
-                                                class="align-middle me-2 fs-18"></iconify-icon><span
-                                                class="align-middle">Logout</span>
-                                        </button>
+                                    {{-- @csrf --}}
+                                    <button type="submit" class="dropdown-item text-danger" data-bs-toggle="modal" data-bs-target="#logoutModal">
+                                        <iconify-icon icon="solar:logout-3-broken"
+                                            class="align-middle me-2 fs-18"></iconify-icon><span
+                                            class="align-middle">Logout</span>
+                                    </button>
                                     {{-- </form> --}}
                                 </div>
                             </div>
@@ -294,40 +314,40 @@
 
                     <!-- Role 1 dan 3: Peminjaman, Perawatan, Mutasi, Penghapusan -->
                     @if (in_array(Auth::user()->role, [1, 3]))
-                        <li class="nav-item">
-                            <a class="nav-link" href="/pengadaan">
-                                <span class="nav-icon"><i class="ri-archive-line"></i></span>
-                                <span class="nav-text">Pengadaan</span>
-                            </a>
-                        </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/pengadaan">
+                            <span class="nav-icon"><i class="ri-archive-line"></i></span>
+                            <span class="nav-text">Pengadaan</span>
+                        </a>
+                    </li>
 
-                        <li class="nav-item">
-                            <a class="nav-link" href="/peminjaman">
-                                <span class="nav-icon"><i class="ri-hand-coin-line"></i></span>
-                                <span class="nav-text">Peminjaman</span>
-                            </a>
-                        </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/peminjaman">
+                            <span class="nav-icon"><i class="ri-hand-coin-line"></i></span>
+                            <span class="nav-text">Peminjaman</span>
+                        </a>
+                    </li>
 
-                        <li class="nav-item">
-                            <a class="nav-link" href="/perawatan">
-                                <span class="nav-icon"><i class="ri-tools-line"></i></span>
-                                <span class="nav-text">Perawatan</span>
-                            </a>
-                        </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/perawatan">
+                            <span class="nav-icon"><i class="ri-tools-line"></i></span>
+                            <span class="nav-text">Perawatan</span>
+                        </a>
+                    </li>
 
-                        <li class="nav-item">
-                            <a class="nav-link" href="/mutasi">
-                                <span class="nav-icon"><i class="ri-shuffle-line"></i></span>
-                                <span class="nav-text">Pemindahan</span>
-                            </a>
-                        </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/mutasi">
+                            <span class="nav-icon"><i class="ri-shuffle-line"></i></span>
+                            <span class="nav-text">Pemindahan</span>
+                        </a>
+                    </li>
 
-                        <li class="nav-item">
-                            <a class="nav-link" href="/penghapusan">
-                                <span class="nav-icon"><i class="ri-delete-bin-6-line"></i></span>
-                                <span class="nav-text">Penghapusan</span>
-                            </a>
-                        </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/penghapusan">
+                            <span class="nav-icon"><i class="ri-delete-bin-6-line"></i></span>
+                            <span class="nav-text">Penghapusan</span>
+                        </a>
+                    </li>
                     @endif
 
                     <!-- Role 1, 2, dan 4: Laporan -->
