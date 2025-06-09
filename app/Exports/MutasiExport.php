@@ -4,9 +4,10 @@ namespace App\Exports;
 
 use App\Models\Mutasi;
 use Carbon\Carbon;
-use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\FromArray;
+use Maatwebsite\Excel\Concerns\WithHeadings;
 
-class MutasiExport implements FromCollection
+class MutasiExport implements FromArray, WithHeadings
 {
     protected $bulan;
 
@@ -15,12 +16,44 @@ class MutasiExport implements FromCollection
         $this->bulan = $bulan;
     }
 
-    public function collection()
+    public function array(): array
     {
         $tanggalMulai = Carbon::now()->subMonths($this->bulan);
-        return Mutasi::with(['barang.ruangan', 'ajuan'])
+
+        $data = Mutasi::with(['barang.barangMaster', 'barang.ruangan', 'tujuanRuangan'])
             ->whereDate('tanggal_mutasi', '>=', $tanggalMulai)
             ->get();
+
+        $result = [];
+        $no = 1;
+
+        foreach ($data as $item) {
+            $result[] = [
+                $no++,
+                $item->tanggal_mutasi,
+                $item->barang->kode_barang ?? '-',
+                $item->barang->barangMaster->nama_barang ?? '-',
+                $item->barang->ruangan->nama_ruangan ?? '-',
+                optional($item->tujuanRuangan)->nama_ruangan ?? '-',
+                $item->jumlah_barang ?? '-',
+                $item->keterangan ?? '-',
+            ];
+        }
+
+        return $result;
+    }
+
+    public function headings(): array
+    {
+        return [
+            'No',
+            'Tanggal Mutasi',
+            'Kode Barang',
+            'Nama Barang',
+            'Dari Unit',
+            'Ke Unit',
+            'Jumlah',
+            'Keterangan',
+        ];
     }
 }
-

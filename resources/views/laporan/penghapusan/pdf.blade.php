@@ -4,7 +4,7 @@
     <title>Laporan Penghapusan</title>
     <style>
         table { width: 100%; border-collapse: collapse; font-size: 12px; }
-        th, td { border: 1px solid black; padding: 5px; }
+        th, td { border: 1px solid black; padding: 5px; text-align: left; }
     </style>
 </head>
 <body>
@@ -14,23 +14,25 @@
             <tr>
                 <th>No</th>
                 <th>Tanggal</th>
+                <th>Kode Barang</th>
                 <th>Nama Barang</th>
-                <th>Jumlah</th>
-                <th>Alasan</th>
-                <th>Status</th>
+                <th>Alasan Penghapusan</th>>
             </tr>
         </thead>
         <tbody>
-            @foreach ($data as $item)
+            @forelse ($data as $item)
             <tr>
                 <td>{{ $loop->iteration }}</td>
                 <td>{{ $item->created_at->format('Y-m-d') }}</td>
-                <td>{{ $item->barang->nama_barang }}</td>
-                <td>{{ $item->jumlah }}</td>
-                <td>{{ $item->keterangan ?? '-' }}</td>
-                <td>{{ $item->ajuan[0]->status ?? '-' }}</td>
+                <td>{{ $item->barang->kode_barang ?? '-' }}</td>
+                <td>{{ $item->barang->barangMaster->nama_barang ?? '-' }}</td>
+                <td>{{ $item->penghapusan->keterangan ?? '-' }}</td>
             </tr>
-            @endforeach
+            @empty
+            <tr>
+                <td colspan="6" class="text-center">Tidak ada data laporan</td>
+            </tr>
+            @endforelse
         </tbody>
     </table>
 </body>

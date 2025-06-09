@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Laporan Mutasi</title>
+    <title>Laporan Mutasi Barang</title>
     <style>
         table { width: 100%; border-collapse: collapse; font-size: 12px; }
-        th, td { border: 1px solid black; padding: 5px; }
+        th, td { border: 1px solid black; padding: 5px; text-align: left; }
+        th { background-color: #f0f0f0; }
     </style>
 </head>
 <body>
@@ -14,27 +15,29 @@
             <tr>
                 <th>No</th>
                 <th>Tanggal Mutasi</th>
+                <th>Kode Barang</th>
                 <th>Nama Barang</th>
-                <th>Jumlah</th>
                 <th>Dari Unit</th>
                 <th>Ke Unit</th>
                 <th>Keterangan</th>
-                <th>Status</th>
             </tr>
         </thead>
         <tbody>
-            @foreach ($mutasi as $item)
-            <tr>
-                <td>{{ $loop->iteration }}</td>
-                <td>{{ $item->tanggal_mutasi }}</td>
-                <td>{{ $item->barang->nama_barang }}</td>
-                <td>{{ $item->jumlah_barang }}</td>
-                <td>{{ $item->barang->ruangan->nama_ruangan }}</td>
-                <td>{{ $ruangans[$item->tujuan] ?? '-' }}</td>
-                <td>{{ $item->keterangan ?? '-' }}</td>
-                <td>{{ $item->ajuan[0]->status ?? '-' }}</td>
-            </tr>
-            @endforeach
+            @forelse ($mutasi as $item)
+                <tr>
+                    <td>{{ $loop->iteration }}</td>
+                    <td>{{ $item->mutasi->tanggal_mutasi }}</td>
+                    <td>{{ $item->barang->kode_barang }}</td>
+                    <td>{{ $item->barang->barangMaster->nama_barang ?? '-' }}</td>
+                    <td>{{ $item->barang->ruangan->nama_ruangan ?? '-' }}</td>
+                    <td>{{ $ruangans[$item->mutasi->tujuan] ?? '-' }}</td>
+                    <td>{{ $item->mutasi->keterangan ?? '-' }}</td>
+                </tr>
+            @empty
+                <tr>
+                    <td colspan="8">Tidak ada data mutasi.</td>
+                </tr>
+            @endforelse
         </tbody>
     </table>
 </body>

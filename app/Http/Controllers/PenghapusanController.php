@@ -64,11 +64,12 @@ class PenghapusanController extends Controller
     {
         $tanggalMulai = Carbon::now()->subMonths($bulan);
 
-        $data = Penghapusan::with(['barang.ruangan', 'ajuan'])
-            ->whereDate('created_at', '>=', $tanggalMulai)
-            ->whereHas('ajuan', function ($q) {
-                $q->where('status', 'pending');
-            })->get();
+        $data = Penghapusan::with(['penghapusanItem.barang.ruangan', 'user'])
+            // ->whereDate('created_at', '>=', $tanggalMulai)
+            // ->whereHas('ajuan', function ($q) {
+            //     $q->where('status', 'pending');
+            // })
+            ->get();
 
         $pdf = Pdf::loadView('laporan.penghapusan.pdf', compact('data'));
         return $pdf->download("laporan-penghapusan-{$bulan}-bulan.pdf");

@@ -4,9 +4,10 @@ namespace App\Exports;
 
 use App\Models\Penghapusan;
 use Carbon\Carbon;
-use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\FromArray;
+use Maatwebsite\Excel\Concerns\WithHeadings;
 
-class PenghapusanExport implements FromCollection
+class PenghapusanExport implements FromArray, WithHeadings
 {
     protected $bulan;
 
@@ -15,14 +16,41 @@ class PenghapusanExport implements FromCollection
         $this->bulan = $bulan;
     }
 
-    public function collection()
+    public function array(): array
     {
         $tanggalMulai = Carbon::now()->subMonths($this->bulan);
 
-        return Penghapusan::with(['barang.ruangan', 'ajuan'])
+        $data = Penghapusan::with(['penghapusanItem.barang.barangMaster'])
             ->whereDate('created_at', '>=', $tanggalMulai)
-            ->whereHas('ajuan', function ($q) {
-                $q->where('status', 'pending');
-            })->get();
+            ->get();
+
+        $result = [];
+        $no = 1;
+
+        foreach ($data as $penghapusan) {
+            foreach ($penghapusan->penghapusanItem as $item) {
+                $result[] = [
+                    $no++,
+                    $penghapusan->created_at->format('Y-m-d'),
+                    $item->barang->kode_barang ?? '-',
+                    $item->barang->barangMaster->nama_barang ?? '-',
+                    $penghapusan->keterangan ?? '-',
+                ];
+            }
+        }
+
+        return $result;
+    }
+
+    public function headings(): array
+    {
+        return [
+            'No',
+            'Tanggal',
+            'Kode Barang',
+            'Nama Barang',
+            'Alasan Penghapusan',
+        ];
     }
 }
+

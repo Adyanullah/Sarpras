@@ -12,6 +12,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\PenghapusanController;
 use App\Http\Controllers\BarangRusakController;
 use App\Http\Controllers\PengadaanController;
+use App\Http\Controllers\BarangRuangController;
 use App\Models\Perawatan;
 // use Dflydev\DotAccessData\Data;
 use Illuminate\Support\Facades\Route;
@@ -127,6 +128,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/laporan/pengadaan/pdf/{bulan}', [PengadaanController::class, 'exportPDF'])->name('pengadaan.pdf');
     Route::get('/laporan/pengadaan/excel/{bulan}', [PengadaanController::class, 'exportExcel'])->name('pengadaan.excel');
 
+    Route::get('/laporan/barangruang', [BarangRuangController::class, 'index']);
 
     // Pengaturan
     Route::get('/pengaturan/ruangan', [DataRuanganController::class, 'index'])->middleware('role:1');
