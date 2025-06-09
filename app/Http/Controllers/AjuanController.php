@@ -168,6 +168,16 @@ class AjuanController extends Controller
         ]);
     }
 
+    private function tersedia($barangs)
+    {
+        foreach ($barangs as $barang) {
+            if ($barang) {
+                $barang->sedia = 1;
+                $barang->save();
+            }
+        }
+    }
+
     /**
      * Update status ajuan (Disetujui / Ditolak).
      * Route: PUT /waka/verifikasi-ajuan/{type}/{id}/{status}
@@ -215,6 +225,7 @@ class AjuanController extends Controller
                         }
                     } else {
                         $ajuan->status_ajuan = 'ditolak';
+                        $this->tersedia($ajuan->peminjamanItem->pluck('barang'));
                     }
                     $ajuan->save();
                     break;
@@ -234,6 +245,7 @@ class AjuanController extends Controller
                         }
                     } else {
                         $ajuan->status_ajuan = 'ditolak';
+                        $this->tersedia($ajuan->perawatanItem->pluck('barang'));
                     }
                     $ajuan->save();
                     break;
@@ -254,6 +266,7 @@ class AjuanController extends Controller
                         }
                     } else {
                         $ajuan->status_ajuan = 'ditolak';
+                        $this->tersedia($ajuan->mutasiItem->pluck('barang'));
                     }
                     $ajuan->save();
                     break;
@@ -271,6 +284,7 @@ class AjuanController extends Controller
                         }
                     } else {
                         $ajuan->status_ajuan = 'ditolak';
+                        $this->tersedia($ajuan->penghapusanItem->pluck('barang'));
                     }
                     $ajuan->save();
                     break;

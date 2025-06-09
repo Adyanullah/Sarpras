@@ -11,5 +11,8 @@ class Ruangan extends Model
     {
         return $this->hasMany(Barang::class, 'ruangan_id'); 
     }
-
+    public function barangAktif()
+    {
+        return $this->hasMany(Barang::class)->where('sedia', '>', -1);
+    }
 }

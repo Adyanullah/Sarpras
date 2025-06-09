@@ -32,8 +32,7 @@
         @foreach($barangs as $barang)
         new QRious({
             element: document.getElementById('qr-big-{{ $loop->index }}'),
-            value: '{{ route('
-            inventaris.detail ', $barang->kode_barang) }}',
+            value: '{{ route('inventaris.detail', $barang->kode_barang) }}',
             size: 160
         });
         @endforeach

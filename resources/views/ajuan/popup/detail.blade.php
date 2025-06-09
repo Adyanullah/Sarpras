@@ -37,7 +37,9 @@
                 </dl>
 
                 <hr>
-                <a><img src="{{ asset($item['tambahan']) }}" alt="image" class="img-fluid rounded" width="600" /></a>
+                @if ($item['model_type'] === 'barang_rusak')
+                    <a><img src="{{ asset($item['tambahan']) }}" alt="image" class="img-fluid rounded" width="600" /></a>
+                @endif
                 {{-- <label for="catatanVerif" class="form-label">Catatan Verifikasi</label>
                 <textarea class="form-control" id="catatanVerif" rows="2" placeholder="(Opsional) Tambahkan alasan jika ditolak…">
                                             </textarea> --}}

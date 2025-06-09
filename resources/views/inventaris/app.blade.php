@@ -84,7 +84,15 @@
                         <td>{{ $item->barangMaster->nama_barang }}</td>
                         <td>{{ $item->barangMaster->jenis_barang }}</td>
                         <td>{{ $item->barangMaster->merk_barang }}</td>
-                        <td>{{ $item->total_unit }}</td>
+                        @php
+                            $ajuanJumlah = $ajuan[$item->barang_id]->total_ajuan ?? 0;
+                        @endphp
+                        <td>
+                            {{ $item->total_unit }} tersedia
+                            @if ($ajuanJumlah > 0)
+                                <span class="text-warning">({{ $ajuanJumlah }} diajukan)</span>
+                            @endif
+                        </td>
                         <td>
                             <a type="button" data-bs-toggle="modal" data-bs-target="#ImageModal{{ $loop->iteration }}">
                                 <img src="{{ asset($item->barangMaster->gambar_barang) }}"

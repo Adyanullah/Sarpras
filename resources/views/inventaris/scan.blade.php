@@ -49,7 +49,8 @@
             statusElement.innerText = "QR berhasil dibaca. Mengarahkan...";
 
             html5QrCode.stop().then(() => {
-                window.location.href = `/barang/scan/result/${decodedText}`;
+                // window.location.href = `/barang/scan/result/${decodedText}`;
+                window.location.href = '/barang/scan/result?url=' + encodeURIComponent(decodedText);
             }).catch(err => {
                 console.error("Gagal menghentikan kamera: ", err);
             });

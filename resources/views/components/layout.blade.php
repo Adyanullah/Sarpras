@@ -19,6 +19,7 @@
     <link href="{{ asset('/assets/css/icons.min.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('/assets/css/app.min.css') }}" rel="stylesheet" type="text/css" />
     <script src="{{ asset('/assets/js/config.min.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
     <style>
         .dropdown-item.text-white:hover {
             background-color: rgb(176, 176, 176) !important;

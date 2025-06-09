@@ -39,7 +39,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/inventaris/unit/aksi', [BarangController::class, 'aksi'])->name('inventaris.aksi');
 
     Route::get('/inventaris/qr-cetak/{ukuran}', [BarangController::class, 'cetakQR'])->name('inventaris.qr.cetak');
-    Route::get('/barang/scan/result/{kode}', [BarangController::class, 'scanResult']);
+    Route::get('/barang/scan/result', [BarangController::class, 'scanResult']);
     Route::view('/scan', 'inventaris.scan');
     Route::get('/qr', function () {
         return view('inventaris.qr');

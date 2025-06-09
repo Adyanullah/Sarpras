@@ -24,7 +24,7 @@
                     <td>{{ $index + 1 }}</td>
                     <td class="kode">{{ $ruangan->kode_ruangan }}</td>
                     <td class="nama">{{ $ruangan->nama_ruangan }}</td>
-                    <td>{{ $ruangan->barang->count() }}</td>
+                    <td>{{ $ruangan->barang_aktif_count }}</td>
                     <td>
                         <a href="{{ route('ruangan.detail', $ruangan->id) }}" class="btn btn-sm btn-primary">Detail</a>
                     </td>

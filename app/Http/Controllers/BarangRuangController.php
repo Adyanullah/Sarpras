@@ -8,13 +8,13 @@ class BarangRuangController extends Controller
 {
     public function index()
     {
-        $ruangans = Ruangan::with('barang.barangMaster')->get();
+        $ruangans = Ruangan::withCount(['barangAktif'])->get();
         return view('laporan.barangruang.app', compact('ruangans'));
     }
 
     public function detail($id)
     {
-        $ruangan = Ruangan::with('barang.barangMaster')->findOrFail($id);
+        $ruangan = Ruangan::with('barangAktif.barangMaster')->findOrFail($id);
         return view('laporan.barangruang.detail', compact('ruangan'));
     }
     

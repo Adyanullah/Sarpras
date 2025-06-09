@@ -31,13 +31,18 @@ class BarangController extends Controller
         $barangs = Barang::with('ruangan', 'barangMaster')
             ->select('barang_id', DB::raw('COUNT(*) as total_unit'))
             ->groupBy('barang_id')
+            ->where('sedia', 1)
             ->paginate(8)
             ->appends($request->query());
-
+        $ajuan = Barang::select('barang_id', DB::raw('COUNT(*) as total_ajuan'))
+            ->where('sedia', '>', 1)
+            ->groupBy('barang_id')
+            ->get()
+            ->keyBy('barang_id'); // <-- agar bisa diakses dengan [barang_id]
         $barangDetails = BarangMaster::whereIn('id', $barangs->pluck('barang_id'))
             ->get()
             ->keyBy('id');
-        return view('inventaris.app', compact('barangs', 'ruangan'));
+        return view('inventaris.app', compact('barangs', 'ruangan', 'ajuan'));
     }
 
     public function unit(Request $request, $id)
@@ -78,6 +83,9 @@ class BarangController extends Controller
     public function show($id)
     {
         $item = Barang::with(['ruangan', 'perawatanItem'])->where('kode_barang', $id)->firstOrFail();
+        if ($item->sedia == -1) {
+            return redirect()->route('inventaris.index');
+        }
         $ruangan = Ruangan::all();
         // $peminjaman = Peminjaman::where('status_peminjaman', 'Dipinjam')
         //     ->whereHas('ajuan', function ($query) {
@@ -183,6 +191,11 @@ class BarangController extends Controller
         }
     }
 
+    private function tidakTersedia(array $ids, $identifier)
+    {
+        Barang::whereIn('id', $ids)->update(['sedia' => $identifier]);
+    }
+
     /**
      * Hapus semua barang yang ID‐nya ada di $ids
      */
@@ -207,6 +220,7 @@ class BarangController extends Controller
                 'barang_id' => $barang_id,
             ]);
         }
+        $this->tidakTersedia($ids, 5);
 
         return redirect()->route('inventaris.index')
             ->with('success', 'Pengajuan penghapusan berhasil dibuat untuk barang terpilih.');
@@ -243,6 +257,7 @@ class BarangController extends Controller
                 'status_peminjaman' => 'Dipinjam',
             ]);
         }
+        $this->tidakTersedia($ids, 2);
 
         return redirect()->route('inventaris.index')
             ->with('success', 'Pengajuan peminjaman berhasil dikirim.');
@@ -279,6 +294,7 @@ class BarangController extends Controller
                 'status_perawatan' => 'belum',
             ]);
         }
+        $this->tidakTersedia($ids, 3);
 
         return redirect()->route('inventaris.index')
             ->with('success', 'Pengajuan perawatan berhasil dikirim.');
@@ -315,6 +331,7 @@ class BarangController extends Controller
                 'status_mutasi' => 'belum',
             ]);
         }
+        $this->tidakTersedia($ids, 4);
 
         return redirect()->route('inventaris.index')
             ->with('success', 'Pengajuan mutasi berhasil dikirim.');
@@ -330,12 +347,26 @@ class BarangController extends Controller
         return view($view, compact('barangs'));
     }
 
-    public function scanResult($kode)
+    public function scanResult(Request $request)
     {
-        $item = Barang::where('kode_barang', $kode)->firstOrFail();
-        $qr = $item->kode_barang;
+        $fullUrl = $request->input('url'); // Kirimkan URL hasil scan sebagai parameter 'url'
 
-        $qrCode = QrCode::size(200)->generate($qr);
+        // Validasi: URL harus dari domain kamu
+        $parsed = parse_url($fullUrl);
+        if (!isset($parsed['host']) || $parsed['host'] !== request()->getHost()) {
+            abort(403, 'QR Code tidak valid atau berasal dari domain lain.');
+        }
+
+        // Pisahkan path, ambil kode di segmen ke-3 (0-based: 0=/inventaris, 1=/unit, 2=KRS-00016)
+        $segments = explode('/', trim($parsed['path'], '/'));
+        $kode = $segments[2] ?? null;
+
+        if (!$kode) {
+            abort(400, 'QR Code tidak memiliki kode yang valid.');
+        }
+        
+        $item = Barang::where('kode_barang', $kode)->firstOrFail();
+
         return view('inventaris.detail', compact('item'));
     }
 

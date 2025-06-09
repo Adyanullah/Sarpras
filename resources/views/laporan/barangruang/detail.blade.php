@@ -23,7 +23,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse ($ruangan->barang as $index => $barang)
+                    @forelse ($ruangan->barangAktif as $index => $barang)
                     <tr>
                         <td>{{ $index + 1 }}</td>
                         <td>{{ $barang->kode_barang }}</td>
