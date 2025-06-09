@@ -8,13 +8,13 @@
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body d-flex">
                 <dl class="row">
                     <dt class="col-sm-4">Nama Pengaju</dt>
-                    <dd class="col-sm-8">{{ $item['pengaju'] }}</dd>
+                    <dd class="col-sm-6">{{ $item['pengaju'] }}</dd>
 
                     <dt class="col-sm-4">Ruangan</dt>
-                    <dd class="col-sm-8">{{ $item['ruangan'] }}
+                    <dd class="col-sm-6">{{ $item['ruangan'] }}
                         {{-- Jika Mutasi, tampilkan “ke {tambahan}” --}}
                         @if ($item['jenis'] === 'Mutasi' && $item['tambahan'])
                             &nbsp;→ ke {{ $item['tambahan'] }}
@@ -22,24 +22,25 @@
                     </dd>
 
                     <dt class="col-sm-4">Jenis Ajuan</dt>
-                    <dd class="col-sm-8">{{ $item['jenis'] }}</dd>
+                    <dd class="col-sm-6">{{ $item['jenis'] }}</dd>
 
                     <dt class="col-sm-4">Barang</dt>
-                    <dd class="col-sm-8">
+                    <dd class="col-sm-6">
                         {{ $item['jumlah'] }} Unit {{ $item['barang'] }}
                     </dd>
 
                     <dt class="col-sm-4">Keperluan / Keterangan</dt>
-                    <dd class="col-sm-8">{{ $item['keterangan'] }}</dd>
+                    <dd class="col-sm-6">{{ $item['keterangan'] }}</dd>
 
                     <dt class="col-sm-4">Tanggal Pengajuan</dt>
-                    <dd class="col-sm-8">{{ $item['created_at'] }}</dd>
+                    <dd class="col-sm-6">{{ $item['created_at'] }}</dd>
                 </dl>
 
                 <hr>
-                <label for="catatanVerif" class="form-label">Catatan Verifikasi</label>
+                <a><img src="{{ asset($item['tambahan']) }}" alt="image" class="img-fluid rounded" width="600" /></a>
+                {{-- <label for="catatanVerif" class="form-label">Catatan Verifikasi</label>
                 <textarea class="form-control" id="catatanVerif" rows="2" placeholder="(Opsional) Tambahkan alasan jika ditolak…">
-                                            </textarea>
+                                            </textarea> --}}
             </div>
             <div class="modal-footer">
                 {{-- Tombol Tolak --}}

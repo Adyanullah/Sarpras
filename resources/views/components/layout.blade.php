@@ -376,7 +376,7 @@
                                     <a class="sub-nav-link" href="/laporan/penghapusan">Penghapusan</a>
                                 </li>
                                 <li class="sub-nav-item">
-                                    <a class="sub-nav-link" href="/laporan/barangruang">PerRuangan</a>
+                                    <a class="sub-nav-link" href="/laporan/barangruang">Ruangan</a>
                                 </li>
                             </ul>
                         </div>

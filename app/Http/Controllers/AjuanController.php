@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Pengadaan;
 use App\Models\BarangMaster;
 use App\Models\Barang;
+use App\Models\BarangRusak;
 use App\Models\Peminjaman;
 use App\Models\PeminjamanItem;
 use App\Models\Perawatan;
@@ -129,10 +130,35 @@ class AjuanController extends Controller
                 'barang'     => $namaBarang,
                 'jumlah'     => $p->penghapusanItem()->count(),
                 'status'     => $p->status_ajuan,
-                'ruangan'    => '-',                  // tidak relevan di penghapusan
+                'ruangan'    => '-',                  
                 'tambahan'   => null,
                 'model_type' => 'penghapusan',
                 'keterangan' => $p->keterangan ?? '-',
+            ]);
+        }
+
+        // 6. Barang Rusak (status = pending)
+        $barangRusak = BarangRusak::with(['user','barang'])->where('status_ajuan', 'pending')->get();
+        foreach ($barangRusak as $r) {
+            $namaBarang = $r->barang->barangMaster->nama_barang;
+            $ruangan = optional(optional($r->barang)->ruangan)->nama_ruangan ?? 'Ruangan tidak ditemukan';
+            if ($r->kondisi_barang == 'rusak') {
+                $kondisi = 'Rusak Ringan';
+            } elseif ($r->kondisi_barang == 'berat') {
+                $kondisi = 'Rusak Berat';
+            }
+            $dataAjuan->push([
+                'id'         => $r->id,
+                'created_at' => $r->created_at->format('d M Y'),
+                'pengaju'    => $r->user->name,
+                'jenis'      => 'Barang Rusak - '. $kondisi,
+                'barang'     => $namaBarang,
+                'jumlah'     => $r->barang->kode_barang,
+                'status'     => $r->status_ajuan,
+                'ruangan'    => $ruangan,                  
+                'tambahan'   => $r->gambar_barang ?? null,
+                'model_type' => 'barang_rusak',
+                'keterangan' => $r->keterangan ?? '-',
             ]);
         }
 
@@ -153,7 +179,7 @@ class AjuanController extends Controller
         string $status
     ) {
         // Validasi tipe dan status
-        if (! in_array($type, ['pengadaan', 'peminjaman', 'perawatan', 'mutasi', 'penghapusan'])) {
+        if (! in_array($type, ['pengadaan', 'peminjaman', 'perawatan', 'mutasi', 'penghapusan','barang_rusak'])) {
             return redirect()->back()->with('error', 'Tipe ajuan tidak valid.');
         }
         if (! in_array($status, ['Disetujui', 'Ditolak'])) {
@@ -242,6 +268,22 @@ class AjuanController extends Controller
                                 $barang->sedia = -1;
                                 $barang->save();
                             }
+                        }
+                    } else {
+                        $ajuan->status_ajuan = 'ditolak';
+                    }
+                    $ajuan->save();
+                    break;
+
+                case 'barang_rusak':
+                    $ajuan = BarangRusak::with('barang')->findOrFail($id);
+                    if ($status === 'Disetujui') {
+                        $ajuan->status_ajuan = 'disetujui';
+                        $barang = $ajuan->barang;
+                        $kondisi = $ajuan->kondisi_barang;
+                        if ($barang) {
+                            $barang->kondisi_barang = $kondisi;
+                            $barang->save();
                         }
                     } else {
                         $ajuan->status_ajuan = 'ditolak';

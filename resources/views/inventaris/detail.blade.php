@@ -12,45 +12,112 @@
             </div>
         </div>
     </div>
+    {{-- @if ($errors->any())
+        @dd($errors->all())
+    @endif --}}
     <div class="row g-4">
         <!-- Kolom Kiri -->
         <div class="col-md-6">
             <div class="card shadow-sm rounded-3">
                 <div class="card-body">
-                    <table class="table table-bordered">
-                        <tbody>
-                            <tr><th>Kode Barang</th><td>{{ $item->kode_barang }}</td></tr>
-                            <tr><th>Nama Barang</th><td>{{ $item->barangMaster->nama_barang }}</td></tr>
-                            <tr><th>Jenis Barang</th><td>{{ $item->barangMaster->jenis_barang }}</td></tr>
-                            <tr><th>Merk / Spesifikasi</th><td>{{ $item->barangMaster->merk_barang }}</td></tr>
-                            <tr><th>Tahun Perolehan</th><td>{{ $item->tahun_perolehan }}</td></tr>
-                            <tr><th>Sumber Dana</th><td>{{ $item->sumber_dana }}</td></tr>
-                            <tr>
-                                <th>Harga Satuan</th>
-                                <td>{{ $item->harga_unit == 0 ? '-' : 'Rp. ' . number_format($item->harga_unit, 0, ',', '.') }}</td>
-                            </tr>
-                            <tr><th>Supplier</th><td>{{ $item->cv_pengadaan }}</td></tr>
-                            <tr><th>Lokasi</th><td>{{ $item->ruangan->nama_ruangan }}</td></tr>
-                            <tr><th>Kondisi</th><td>{{ $item->kondisi_barang }}</td></tr>
-                            <tr><th>Kepemilikan</th><td>{{ $item->kepemilikan_barang }}</td></tr>
-                            <tr><th>Penanggung Jawab</th><td>{{ $item->ruangan->penanggung_jawab ?? '-' }}</td></tr>
-                        </tbody>
-                    </table>
-                    @if (in_array(auth()->user()->role, [1]))
-                        <div class="d-flex justify-content-end gap-2 mt-3">
-                            @include('inventaris.popup.dropdown')
-                            @include('peminjaman.popup.peminjaman')
-                            @include('perawatan.popup.perawatan')
-                            @include('mutasi.popup.mutasi')
-
-                            <button class="btn btn-warning px-2 py-1" >Barang Rusak</button>
-                            {{-- <button class="btn btn-warning px-2 py-1" data-bs-toggle="modal" data-bs-target="#editData">Edit</button>
+                    @if (session('success'))
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <strong>Berhasil!</strong> {{ session('success') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                aria-label="Close"></button>
+                        </div>
+                        @endif
+                        @if ($errors->any())
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <strong>Gagal!</strong> Ada beberapa kesalahan:
+                                <ul class="mb-0">
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                    aria-label="Close"></button>
+                            </div>
+                        @endif
+                        <table class="table table-bordered">
+                            <tbody>
+                                <tr>
+                                    <th>Kode Barang</th>
+                                    <td>{{ $item->kode_barang }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Nama Barang</th>
+                                    <td>{{ $item->barangMaster->nama_barang }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Jenis Barang</th>
+                                    <td>{{ $item->barangMaster->jenis_barang }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Merk / Spesifikasi</th>
+                                    <td>{{ $item->barangMaster->merk_barang }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Tahun Perolehan</th>
+                                    <td>{{ $item->tahun_perolehan }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Sumber Dana</th>
+                                    <td>{{ $item->sumber_dana }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Harga Satuan</th>
+                                    <td>{{ $item->harga_unit == 0 ? '-' : 'Rp. ' . number_format($item->harga_unit, 0, ',', '.') }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Supplier</th>
+                                    <td>{{ $item->cv_pengadaan }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Lokasi</th>
+                                    <td>{{ $item->ruangan->nama_ruangan }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Kondisi</th>
+                                    <td>
+                                        @if ($item->kondisi_barang == 'baik')
+                                            Baik
+                                        @elseif ($item->kondisi_barang == 'rusak')
+                                            Rusak Ringan`
+                                        @elseif ($item->kondisi_barang == 'berat')
+                                            Rusak Berat
+                                        @endif
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Kepemilikan</th>
+                                    <td>{{ $item->kepemilikan_barang }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Penanggung Jawab</th>
+                                    <td>{{ $item->ruangan->penanggung_jawab ?? '-' }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        @if (in_array(auth()->user()->role, [1]))
+                            <div class="d-flex justify-content-end gap-2 mt-3">
+                                @if ($item->kondisi_barang != 'berat')
+                                    @include('inventaris.popup.dropdown')
+                                    @include('peminjaman.popup.peminjaman')
+                                    @include('perawatan.popup.perawatan')
+                                    @include('mutasi.popup.mutasi')
+                                    <button class="btn btn-warning px-2 py-1" data-bs-toggle="modal"
+                                        data-bs-target="#barangRusak">Barang Rusak</button>
+                                    @include('inventaris.popup.rusak')
+                                @endif
+                                {{-- <button class="btn btn-warning px-2 py-1" data-bs-toggle="modal" data-bs-target="#editData">Edit</button>
                             @include('inventaris.popup.edit_data')
 
                             <button class="btn btn-danger px-2 py-1" data-bs-toggle="modal" data-bs-target="#deleteModal">Drop</button>
                             @include('inventaris.popup.confirmation_delete', ['modalId' => '', 'item' => $item]) --}}
-                        </div>
-                    @endif
+                            </div>
+                        @endif
                 </div>
             </div>
         </div>
@@ -59,7 +126,8 @@
         <div class="col-md-6">
             <div class="card shadow-sm rounded-3 mb-3">
                 <div class="card-body text-center">
-                    <img src="{{ asset($item->barangMaster->gambar_barang) }}" class="img-fluid rounded" alt="Gambar Barang">
+                    <img src="{{ asset($item->barangMaster->gambar_barang) }}" class="img-fluid rounded"
+                        alt="Gambar Barang">
                 </div>
             </div>
 

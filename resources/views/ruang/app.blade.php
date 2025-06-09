@@ -25,7 +25,6 @@
                             <button type="button" data-bs-toggle="modal"
                                 data-bs-target="#editRuang{{ $loop->iteration }}"
                                 class="btn btn-warning px-2 py-1">Ubah</button>
-                            <a href="" class="btn btn-danger px-2 py-1">Hapus</a>
                             <div class="modal fade" id="editRuang{{ $loop->iteration }}" tabindex="-1" aria-labelledby="editRuangTitle"
                                 aria-hidden="true">
                                 <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">

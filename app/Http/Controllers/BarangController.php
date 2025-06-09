@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Barang;
 use App\Models\BarangMaster;
+use App\Models\BarangRusak;
 use App\Models\Mutasi;
 use App\Models\MutasiItem;
 use App\Models\Peminjaman;
@@ -44,7 +45,7 @@ class BarangController extends Controller
         $ruangan = Ruangan::all();
 
         $query = Barang::with('ruangan', 'barangMaster')
-            ->where('barang_id', $id)->where('sedia',1);
+            ->where('barang_id', $id)->where('sedia', 1);
 
         if ($request->filled('ruangan_id')) {
             $query->where('ruangan_id', $request->ruangan_id);
@@ -100,23 +101,41 @@ class BarangController extends Controller
             // , 'perawatan', 'peminjaman'
         ));
     }
-    // public function aksi(Request $request)
-    // {
-    //     $ids = $request->selected_ids;
-    //     if (!$ids || count($ids) === 0) {
-    //         return redirect()->back()->with('error', 'Tidak ada barang yang dipilih.');
-    //     }
 
-    //     if ($request->aksi === 'cetak_qr_kecil' || $request->aksi === 'cetak_qr_besar') {
-    //         $barangs = Barang::with('barangMaster')->whereIn('id', $ids)->get();
-    //         $ukuran = $request->aksi === 'cetak_qr_kecil' ? 'kecil' : 'besar';
+    public function barangRusak(Request $request, $id)
+    {
+        $barang = Barang::where('kode_barang', $id)->first();
+        $request->validate([
+            'kondisi_barang' => 'required|in:baik,rusak,berat',
+            'keterangan' => 'required|string|max:255',
+            'gambar_barang' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+        $gambarPath = null;
 
-    //         $pdf = Pdf::loadView('inventaris.qr', compact('barangs', 'ukuran'));
-    //         return $pdf->download('stiker_qr.pdf');
-    //     }
+        if ($request->hasFile('gambar_barang')) {
+            $file = $request->file('gambar_barang');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $path = public_path('uploads/ajuan');
 
-    //     return redirect()->back()->with('success', 'Pengajuan penghapusan berhasil dikirim.');
-    // }
+            if (!file_exists($path)) {
+                mkdir($path, 0777, true);
+            }
+
+            $file->move($path, $filename);
+            $gambarPath = 'uploads/ajuan/' . $filename;
+        }
+
+        BarangRusak::create([
+            'barang_id' => $barang->id,
+            'user_id' => Auth::user()->id,
+            'kondisi_barang' => $request->input('kondisi_barang'),
+            'kode_barang' => $id, // pastikan kolom ini ada di tabel BarangRusak
+            'keterangan' => $request->input('keterangan'),
+            'gambar_barang' => $gambarPath, // pastikan kolom ini juga ada
+        ]);
+
+        return redirect()->back()->with('success', 'Barang rusak berhasil diajukan.');
+    }
 
     public function aksi(Request $request)
     {
