@@ -100,13 +100,13 @@
                             </tr>
                         </tbody>
                     </table>
-                    @if (in_array(auth()->user()->role, [1]))
+                    @if (in_array(auth()->user()->role, [1,3]))
                         <div class="d-flex justify-content-end gap-2 mt-3">
                             @if ($item->kondisi_barang != 'berat')
-                                {{-- @include('inventaris.popup.dropdown')
+                                @include('inventaris.popup.dropdown')
                                 @include('peminjaman.popup.peminjaman')
                                 @include('perawatan.popup.perawatan')
-                                @include('mutasi.popup.mutasi') --}}
+                                @include('mutasi.popup.mutasi')
                                 <button class="btn btn-warning px-2 py-1" data-bs-toggle="modal"
                                     data-bs-target="#barangRusak">Barang Rusak</button>
                                 @include('inventaris.popup.rusak')

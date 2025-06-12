@@ -346,7 +346,7 @@ class AjuanController extends Controller
         if ($lastBarang) {
             $lastNumber = (int) str_replace($prefix . '-', '', $lastBarang->kode_barang);
         }
-        
+        dd($p);
         $nextNumber = $lastNumber + 1;
 
         for ($i = 0; $i < $p->jumlah; $i++) {
@@ -362,6 +362,7 @@ class AjuanController extends Controller
                 'kondisi_barang'     => $p->kondisi_barang ?? 'baik',
                 'kepemilikan_barang' => $p->kepemilikan_barang ?? $master->kepemilikan_barang,
                 'sedia'              => 1,
+                'gambar_barang'      => $p->gambar_barang ?? null,
             ]);
         }
     }

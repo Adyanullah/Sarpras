@@ -98,8 +98,7 @@
                 </div>
                 <div class="mb-3">
                     <label for="gambar_barang" class="form-label">Upload foto</label>
-                    <input type="file" accept="image/*" class="form-control" id="gambar_barang" name="gambar_barang"
-                        value="{{ old('gambar_barang') }}">
+                    <input type="file" accept="image/*" class="form-control" id="gambar_barang" name="gambar_barang">
                 </div>
                 @error('gambar_barang')
                     <div class="alert alert-danger mt-2">{{ $message }}</div>

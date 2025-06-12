@@ -29,12 +29,12 @@ class PengadaanController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'tipe_pengajuan' => 'required|in:tambah,baru',
-            'jumlah' => 'required|integer|min:1',
-            'ruangan_id' => 'required|exists:ruangans,id',
-            'sumber_dana' => 'required|in:BOS,DAK,Hibah',
-            'harga_perolehan' => 'required|numeric|min:0',
-            'cv_pengadaan' => 'required|string|max:255',
+            // 'tipe_pengajuan' => 'required|in:tambah,baru',
+            // 'jumlah' => 'required|integer|min:1',
+            // 'ruangan_id' => 'required|exists:ruangans,id',
+            // 'sumber_dana' => 'required|in:BOS,DAK,Hibah',
+            // 'harga_perolehan' => 'required|numeric|min:0',
+            // 'cv_pengadaan' => 'required|string|max:255',
         ]);
 
         $data = [
@@ -67,7 +67,6 @@ class PengadaanController extends Controller
             $data['nama_barang'] = $request->nama_barang;
             $data['jenis_barang'] = $request->jenis_barang;
             $data['merk_barang'] = $request->merk_barang;
-
             // Upload gambar jika ada
             if ($request->hasFile('gambar_barang')) {
                 $file = $request->file('gambar_barang');
