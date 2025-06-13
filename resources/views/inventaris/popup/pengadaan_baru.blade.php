@@ -51,9 +51,11 @@
                 @enderror
                 <div class="mb-3">
                     <label for="sumber_dana" class="form-label">Sumber Dana</label>
-                    <select class="form-select" id="sumber_dana" name="sumber_dana">
-                        <option selected disabled>Piliih Sumber Dana</option>
+                    <select id="sumber_dana_baru" name="sumber_dana" class="form-select">
+                        <option value="" disabled selected>--Pilih Sumber Dana--</option>
                         <option value="BOS">BOS</option>
+                        <option value="BPOPP">BPOPP</option>
+                        <option value="Komite">Komite</option>
                         <option value="DAK">DAK</option>
                         <option value="Hibah">Hibah</option>
                     </select>
@@ -89,10 +91,10 @@
                     <div class="alert alert-danger mt-2">{{ $message }}</div>
                 @enderror
                 <div class="col-md-12 mb-3">
-                    <label for="kepemilikan_barang" class="form-label">Kepemilikan Barang (Opsional)</label>
-                    <input type="text" name="kepemilikan_barang" class="form-control" id="kepemilikan_barang"
-                        placeholder="Contoh : Milik Sekolah" step="0.01" value="{{ old('kepemilikan_barang') }}">
-                    @error('kepemilikan_barang')
+                    <label for="keterangan" class="form-label">Keterangan</label>
+                    <input type="text" name="keterangan" class="form-control" id="keterangan"
+                        placeholder="Contoh : Milik Sekolah" step="0.01" value="{{ old('keterangan') }}">
+                    @error('keterangan')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
                 </div>
@@ -111,3 +113,5 @@
         </form>
     </div>
 </div>
+
+

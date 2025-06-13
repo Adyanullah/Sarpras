@@ -43,8 +43,9 @@
                         </td>
                         <td>
                             <button class="btn btn-primary px-2 py-1 m-0" data-bs-toggle="modal" data-bs-target="#modalDetailPengadaan{{ $loop->iteration }}">Detail</button>
+                            @include('pengadaan.popup.detail')
+                            @include('pengadaan.popup.edit')
                         </td>
-                        @include('pengadaan.popup.detail')
                     </tr>
                 @empty
                     <tr>
@@ -54,4 +55,16 @@
             </tbody>
         </table>
     </div>
+    
+    <script>
+        @foreach($pengadaans as $pengadaan)
+            new TomSelect("#sumber_dana_{{ $pengadaan->id }}", {
+                create: true,
+                sortField: {
+                    field: "text",
+                    direction: "asc"
+                }
+            });
+        @endforeach
+    </script>
 </x-layout>

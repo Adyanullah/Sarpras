@@ -10,6 +10,9 @@
             </div>
         </div>
     </div>
+    @if ($errors->any())
+        @dd($errors->all())
+    @endif
     <div class="row mb-3">
         <div class="col-md-6">
             @if (in_array(auth()->user()->role, [1, 3]))
@@ -163,4 +166,20 @@
             </li>
         </ul>
     </nav>
+    <script>
+    new TomSelect("#sumber_dana_baru", {
+        create: true, // Mengizinkan input baru
+        sortField: {
+        field: "text",
+        direction: "asc"
+        }
+    });
+    new TomSelect("#sumber_dana_lama", {
+        create: true, // Mengizinkan input baru
+        sortField: {
+        field: "text",
+        direction: "asc"
+        }
+    });
+    </script>
 </x-layout>

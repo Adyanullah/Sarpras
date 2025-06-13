@@ -225,6 +225,13 @@ class AjuanController extends Controller
                         }
                     } else {
                         $ajuan->status_ajuan = 'ditolak';
+                        foreach ($ajuan->mutasiItem as $item) {
+                            $barang = $item->barang;
+                            if ($barang) {
+                                $barang->sedia = 1;
+                                $barang->save();
+                            }
+                        }
                         $this->tersedia($ajuan->peminjamanItem->pluck('barang'));
                     }
                     $ajuan->save();
@@ -245,6 +252,13 @@ class AjuanController extends Controller
                         }
                     } else {
                         $ajuan->status_ajuan = 'ditolak';
+                        foreach ($ajuan->mutasiItem as $item) {
+                            $barang = $item->barang;
+                            if ($barang) {
+                                $barang->sedia = 1;
+                                $barang->save();
+                            }
+                        }
                         $this->tersedia($ajuan->perawatanItem->pluck('barang'));
                     }
                     $ajuan->save();
@@ -261,11 +275,19 @@ class AjuanController extends Controller
                             $barang = $item->barang;
                             if ($barang) {
                                 $barang->ruangan_id = $tujuan;
+                                $barang->sedia = 1;
                                 $barang->save();
                             }
                         }
                     } else {
                         $ajuan->status_ajuan = 'ditolak';
+                        foreach ($ajuan->mutasiItem as $item) {
+                            $barang = $item->barang;
+                            if ($barang) {
+                                $barang->sedia = 1;
+                                $barang->save();
+                            }
+                        }
                         $this->tersedia($ajuan->mutasiItem->pluck('barang'));
                     }
                     $ajuan->save();
@@ -284,6 +306,13 @@ class AjuanController extends Controller
                         }
                     } else {
                         $ajuan->status_ajuan = 'ditolak';
+                        foreach ($ajuan->mutasiItem as $item) {
+                            $barang = $item->barang;
+                            if ($barang) {
+                                $barang->sedia = 1;
+                                $barang->save();
+                            }
+                        }
                         $this->tersedia($ajuan->penghapusanItem->pluck('barang'));
                     }
                     $ajuan->save();
@@ -324,10 +353,11 @@ class AjuanController extends Controller
             $this->createBarangFromPengadaan($master, $p);
         } elseif ($p->tipe_pengajuan === 'baru') {
             $newMaster = BarangMaster::create([
-                'kode_barang' => $p->kode_barang,
-                'nama_barang' => $p->nama_barang,
-                'jenis_barang' => $p->jenis_barang,
-                'merk_barang' => $p->merk_barang,
+                'kode_barang'   => $p->kode_barang,
+                'nama_barang'   => $p->nama_barang,
+                'jenis_barang'  => $p->jenis_barang,
+                'merk_barang'   => $p->merk_barang,
+                'gambar_barang' => $p->gambar_barang ?? null,
             ]);
             $this->createBarangFromPengadaan($newMaster, $p);
         }
@@ -346,7 +376,6 @@ class AjuanController extends Controller
         if ($lastBarang) {
             $lastNumber = (int) str_replace($prefix . '-', '', $lastBarang->kode_barang);
         }
-        dd($p);
         $nextNumber = $lastNumber + 1;
 
         for ($i = 0; $i < $p->jumlah; $i++) {
@@ -360,9 +389,8 @@ class AjuanController extends Controller
                 'cv_pengadaan'       => $p->cv_pengadaan,
                 'ruangan_id'         => $p->ruangan_id,
                 'kondisi_barang'     => $p->kondisi_barang ?? 'baik',
-                'kepemilikan_barang' => $p->kepemilikan_barang ?? $master->kepemilikan_barang,
+                'keterangan'         => $p->keterangan ?? $master->keterangan,
                 'sedia'              => 1,
-                'gambar_barang'      => $p->gambar_barang ?? null,
             ]);
         }
     }

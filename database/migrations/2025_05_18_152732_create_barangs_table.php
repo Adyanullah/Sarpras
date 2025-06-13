@@ -16,12 +16,12 @@ return new class extends Migration
             $table->foreignId('barang_id')->constrained('barang_masters')->onDelete('cascade');
             $table->string('kode_barang')->unique();
             $table->year('tahun_perolehan')->nullable();
-            $table->enum('sumber_dana', ['BOS', 'DAK', 'Hibah']);
+            $table->string('sumber_dana');
             $table->integer('harga_unit')->nullable();
             $table->string('cv_pengadaan')->nullable();
             $table->foreignId('ruangan_id')->constrained('ruangans')->onDelete('cascade');
             $table->enum('kondisi_barang',['baik','rusak','berat'])->default('baik');
-            $table->string('kepemilikan_barang')->default('Milik Sekolah');
+            $table->string('keterangan')->nullable();
             $table->integer('sedia')->default(1);
             $table->timestamps();
         });

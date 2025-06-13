@@ -26,7 +26,7 @@ class BarangSeeder extends Seeder
         $kondisiList = ['baik', 'rusak', 'berat'];
         $tahunList = range(2018, now()->year);
         $kodeCounter = [];
-        $pemilikList = ['Sekolah', 'pemerintah', 'pinjam'];
+        $pemilikList = ['Budi Santoso', 'Dewi Lestari', 'Andi Wijaya', 'Siti Nurhaliza', 'Ahmad Yani', 'Rina Marlina', 'Siti Rahma'];
 
         foreach ($barangDetails as $barangDetail) {
             // Jumlah item per jenis
@@ -57,7 +57,7 @@ class BarangSeeder extends Seeder
                     'cv_pengadaan' => $cv,
                     'ruangan_id' => $ruanganId,
                     'kondisi_barang' => fake()->randomElement($kondisiList),
-                    'kepemilikan_barang' => $pemilik,
+                    'keterangan' => $pemilik,
                 ]);
             }
         }

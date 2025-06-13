@@ -61,7 +61,7 @@
                 <tr>
                     <th>No</th>
                     <th>Tanggal Pinjam</th>
-                    <th>Batas Pinjam</th>
+                    <th>Tanggal Pengembalian</th>
                     <th>Kode Barang</th>
                     <th>Nama Peminjam</th>
                     <th>Unit</th>
@@ -74,7 +74,7 @@
                     <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $item->peminjaman->tanggal_peminjaman }}</td>
-                        <td>{{ $item->peminjaman->tanggal_pengembalian }}</td>
+                        <td>{{ $item->peminjaman->tanggal_pengembalian ?? '-' }}</td>
                         <td>{{ $item->barang->kode_barang }}</td>
                         <td>{{ $item->peminjaman->nama_peminjam }}</td>
                         <td>{{ $item->barang->ruangan->nama_ruangan }}</td>

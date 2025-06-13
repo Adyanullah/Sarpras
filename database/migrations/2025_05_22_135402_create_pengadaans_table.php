@@ -65,12 +65,12 @@ return new class extends Migration
 
             // Informasi umum
             $table->year('tahun_perolehan')->nullable();
-            $table->enum('sumber_dana', ['BOS', 'DAK', 'Hibah'])->nullable();
-            $table->decimal('harga_perolehan', 15, 2)->nullable();
+            $table->string('sumber_dana')->nullable();
+            $table->integer('harga_perolehan')->nullable();
             $table->string('cv_pengadaan')->nullable();
             $table->foreignId('ruangan_id')->nullable()->constrained('ruangans')->onDelete('set null');
             $table->enum('kondisi_barang', ['baik', 'rusak', 'berat'])->nullable();
-            $table->string('kepemilikan_barang')->nullable();
+            $table->string('keterangan')->nullable();
             $table->text('gambar_barang')->nullable();
 
             // Info umum pengajuan

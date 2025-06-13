@@ -91,13 +91,13 @@
                                 </td>
                             </tr>
                             <tr>
-                                <th>Kepemilikan</th>
-                                <td>{{ $item->kepemilikan_barang }}</td>
+                                <th>Keterangan</th>
+                                <td>{{ $item->keterangan }}</td>
                             </tr>
-                            <tr>
+                            {{-- <tr>
                                 <th>Penanggung Jawab</th>
                                 <td>{{ $item->ruangan->penanggung_jawab ?? '-' }}</td>
-                            </tr>
+                            </tr> --}}
                         </tbody>
                     </table>
                     @if (in_array(auth()->user()->role, [1,3]))
