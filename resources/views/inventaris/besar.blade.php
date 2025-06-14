@@ -1,43 +1,86 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
     <meta charset="UTF-8">
-    <title>Label QR Barang Sarana Prasarana</title>
+    <title>Label Stiker 103</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+    <style>
+        @page {
+            size: A4;
+            margin: 0;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .page {
+            width: 210mm;
+            height: 297mm;
+            padding: 0;
+            box-sizing: border-box;
+            display: grid;
+            grid-template-columns: repeat(3, 64mm);
+            grid-template-rows: repeat(7, 32mm);
+            gap: 0.5mm;
+            justify-content: center;
+            align-content: start;
+        }
+
+        .label {
+            width: 64mm;
+            height: 32mm;
+            padding: 2mm;
+            box-sizing: border-box;
+            overflow: hidden;
+            text-align: center;
+            font-size: 7pt;
+            border: 0.1mm dotted #ccc;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 2mm;
+        }
+
+        .label canvas {
+            width: 27mm;
+            height: 27mm;
+        }
+
+        .label-info {
+            flex: 1;
+            text-align: left;
+            line-height: 1.2;
+        }
+    </style>
 </head>
 
-<body style="font-family: Arial, sans-serif; margin: 0;">
-    <div style="width: 210mm; height: 297mm; padding: 10mm; box-sizing: border-box;">
-        <div id="label-container" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8mm;">
-            @foreach ($barangs as $barang)
-            <div style="
-        width: 60mm; height: 70mm; border: 1px solid #ccc; padding: 5mm;
-        box-sizing: border-box; display: flex; flex-direction: column;
-        align-items: center; justify-content: space-between;">
-                <canvas id="qr-big-{{ $loop->index }}" style="width: 40mm; height: 40mm;"></canvas>
-                <div style="text-align: center; font-size: 9pt;">
-                    <strong>{{ $barang->barangMaster->nama_barang }}</strong><br>
-                    Kode: {{ $barang->kode_barang }}<br>
-                    Tahun: {{ $barang->tahun_perolehan }}<br>
-                    Sumber: {{ $barang->sumber_dana }}
-                </div>
+<body>
+    <div class="page">
+        @foreach ($barangs as $barang)
+        <div class="label">
+            <canvas id="qr-{{ $loop->index }}"></canvas>
+            <div class="label-info">
+                <strong>{{ $barang->barangMaster->nama_barang }}</strong><br>
+                Kode: {{ $barang->kode_barang }}<br>
+                Tahun: {{ $barang->tahun_perolehan }}
             </div>
-            @endforeach
         </div>
+        @endforeach
     </div>
 
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         @foreach($barangs as $barang)
         new QRious({
-            element: document.getElementById('qr-big-{{ $loop->index }}'),
+            element: document.getElementById('qr-{{ $loop->index }}'),
             value: '{{ route('inventaris.detail', $barang->kode_barang) }}',
-            size: 160
+            size: 80
         });
         @endforeach
     });
     </script>
 </body>
-
 </html>
