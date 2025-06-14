@@ -32,7 +32,10 @@
             <!-- Body -->
             <div class="modal-body">
                 <div class="row g-3">
-                    <input type="hidden" name="selected_ids" id="mutasi-selected-ids" value="">
+                    @php
+                        $selected = $selectedIds ?? '';
+                    @endphp
+                    <input type="hidden" name="selected_ids" id="mutasi-selected-ids" value="{{ $selectedIds ?? '' }}">
                     <input type="hidden" name="action_type" value="mutasi">
 
                     <div class="col-md-12">

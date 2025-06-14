@@ -1,6 +1,6 @@
-<div class="btn-group me-2">
-    <button type="button" class="btn btn-primary dropdown-toggle" id="trigger-ajuan" disabled data-bs-toggle="dropdown"
-        aria-expanded="false">
+<div class="btn-group">
+    <button type="button" class="btn btn-primary dropdown-toggle" id="trigger-ajuan"
+        @if (!isset($disabled) || $disabled) disabled @endif data-bs-toggle="dropdown" aria-expanded="false">
         <i class="bi bi-plus-circle me-2"></i>Pengajuan
     </button>
     <ul class="dropdown-menu bg-primary" style=" min-width: 100%;">

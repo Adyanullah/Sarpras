@@ -29,8 +29,10 @@
             </div>
 
             <div class="modal-body px-3">
-                
-                <input type="hidden" name="selected_ids" id="peminjaman-selected-ids" value="">
+                @php
+                    $selected = $selectedIds ?? '';
+                @endphp
+                <input type="hidden" name="selected_ids" id="peminjaman-selected-ids" value="{{ $selectedIds ?? '' }}">
                 <input type="hidden" name="action_type" value="peminjaman">
                 <div class="mb-3">
                     <label for="tanggal_peminjaman" class="form-label">Tanggal Peminjaman</label>
@@ -40,15 +42,6 @@
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
                 </div>
-{{-- 
-                <div class="mb-3">
-                    <label for="tanggal_pengembalian" class="form-label">Tanggal Pengembalian</label>
-                    <input type="date" class="form-control" id="tanggal_pengembalian" name="tanggal_pengembalian"
-                        value="{{ old('tanggal_pengembalian') }}">
-                    @error('tanggal_pengembalian')
-                        <div class="alert alert-danger mt-2">{{ $message }}</div>
-                    @enderror
-                </div> --}}
 
                 <div class="mb-3">
                     <label for="nama_peminjam" class="form-label">Nama Peminjam</label>

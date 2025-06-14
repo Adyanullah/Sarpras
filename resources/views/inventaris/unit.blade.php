@@ -74,34 +74,10 @@
         </div>
     </div>
 
-    <div class="col-md-6 d-flex mb-3">
+    <div class="col-md-6 d-flex gap-2 mb-3">
         @csrf
         @include('inventaris.popup.dropdown')
-        <div class="btn-group me-2">
-            <form id="form-cetak-qr" method="POST" action="{{ route('inventaris.aksi') }}">
-                @csrf
-                <input type="hidden" name="selected_ids" id="cetak-selected-ids" value="">
-                {{-- tombol utama dropdown --}}
-                <button type="button" class="btn btn-secondary dropdown-toggle" id="trigger-cetak" disabled
-                    data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="bi bi-printer me-2"></i>Cetak QR
-                </button>
-                <ul class="dropdown-menu bg-secondary" style="min-width:100%">
-                    <li>
-                        <button type="submit" name="action_type" value="cetak_qr_kecil"
-                            class="dropdown-item text-white">
-                            Ukuran Kecil
-                        </button>
-                    </li>
-                    <li>
-                        <button type="submit" name="action_type" value="cetak_qr_besar"
-                            class="dropdown-item text-white">
-                            Ukuran Besar
-                        </button>
-                    </li>
-                </ul>
-            </form>
-        </div>
+        @include('inventaris.popup.cetak')
         <button type="button" class="btn btn-danger" id="trigger-delete" disabled data-bs-toggle="modal"
             data-bs-target="#hapusModal">
             <i class="bi bi-trash me-2"></i>Hapus Terpilih

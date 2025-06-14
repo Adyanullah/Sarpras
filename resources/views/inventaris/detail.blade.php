@@ -12,9 +12,9 @@
             </div>
         </div>
     </div>
-    {{-- @if ($errors->any())
+    @if ($errors->any())
         @dd($errors->all())
-    @endif --}}
+    @endif
     <div class="row g-4">
         <!-- Kolom Kiri -->
         <div class="col-md-6">
@@ -102,20 +102,20 @@
                     </table>
                     @if (in_array(auth()->user()->role, [1,3]))
                         <div class="d-flex justify-content-end gap-2 mt-3">
+                            @include('inventaris.popup.dropdown', ['disabled' => false])
+                            @include('peminjaman.popup.peminjaman', ['selectedIds' => $item->id])
+                            @include('perawatan.popup.perawatan', ['selectedIds' => $item->id])
+                            @include('mutasi.popup.mutasi', ['selectedIds' => $item->id])
                             @if ($item->kondisi_barang != 'berat')
-                                @include('inventaris.popup.dropdown')
-                                @include('peminjaman.popup.peminjaman')
-                                @include('perawatan.popup.perawatan')
-                                @include('mutasi.popup.mutasi')
                                 <button class="btn btn-warning px-2 py-1" data-bs-toggle="modal"
                                     data-bs-target="#barangRusak">Barang Rusak</button>
                                 @include('inventaris.popup.rusak')
                             @endif
-                            {{-- <button class="btn btn-warning px-2 py-1" data-bs-toggle="modal" data-bs-target="#editData">Edit</button>
-                            @include('inventaris.popup.edit_data')
-
-                            <button class="btn btn-danger px-2 py-1" data-bs-toggle="modal" data-bs-target="#deleteModal">Drop</button>
-                            @include('inventaris.popup.confirmation_delete', ['modalId' => '', 'item' => $item]) --}}
+                            <button type="button" class="btn btn-danger" id="trigger-delete" data-bs-toggle="modal"
+                                data-bs-target="#hapusModal">
+                                <i class="bi bi-trash me-2"></i>Hapus Barang
+                            </button>
+                            @include('inventaris.popup.penghapusan', ['selectedIds' => $item->id])
                         </div>
                     @endif
                 </div>
@@ -136,12 +136,9 @@
                     <h5 class="mb-3 fw-semibold">QR Code</h5>
                     <div id="print-area">
                         <canvas id="qrcode-canvas"></canvas>
-                        {{-- {!! QrCode::size(216)->generate($item->kode_barang) !!} --}}
                         <p class="mt-2">{{ $item->kode_barang }}</p>
                     </div>
-                </div>
-                <div class="card-footer text-center bg-white">
-                    <button class="btn btn-primary" onclick="printQRCode()">Cetak QR Code</button>
+                    @include('inventaris.popup.cetak', ['disabled' => false, 'selectedIds' => $item->id])
                 </div>
             </div>
         </div>
@@ -156,29 +153,4 @@
             size: 216
         });
     });
-
-    function printQRCode() {
-        const printContents = document.getElementById('print-area').innerHTML;
-        const originalContents = document.body.innerHTML;
-
-        document.body.innerHTML = `
-            <html>
-                <head>
-                    <title>Cetak QR Code</title>
-                    <style>
-                        body {
-                            text-align: center;
-                            margin-top: 100px;
-                            font-family: Arial, sans-serif;
-                        }
-                    </style>
-                </head>
-                <body>${printContents}</body>
-            </html>
-        `;
-
-        window.print();
-        document.body.innerHTML = originalContents;
-        location.reload();
-    }
 </script>
