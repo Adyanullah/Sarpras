@@ -23,45 +23,6 @@ class PeminjamanController extends Controller
         return view('peminjaman.app', compact('items', 'barangs'));
     }
 
-
-    // public function store(Request $request)
-    // {
-    //     try {
-    //         $validated = $request->validate([
-    //             'tanggal_peminjaman' => 'required|date',
-    //             'tanggal_pengembalian' => 'required|date|after_or_equal:tanggal_peminjaman',
-    //             'nama_peminjam' => 'required|string|max:255',
-    //             'barang_id' => 'required|exists:barangs,id',
-    //             'jumlah_barang' => 'required|integer|min:1',
-    //             'status_peminjaman' => 'nullable|in:Dipinjam,Dikembalikan,Diperpanjang,Hilang',
-    //             'keterangan' => 'nullable|string',
-    //         ]);
-    //     } catch (ValidationException $e) {
-    //         return redirect()->back()
-    //             ->withErrors($e->validator)
-    //             ->withInput()
-    //             ->with('modal_error', 'TambahPeminjaman'); // tanda modal mana yang error
-    //     }
-
-    //     $barang = Barang::findOrFail($validated['barang_id']);
-
-    //     if ($validated['jumlah_barang'] > $barang->jumlah_barang) {
-    //         return redirect()->back()
-    //             ->withErrors(['jumlah_barang' => 'Jumlah barang yang diminta melebihi stok tersedia.'])
-    //             ->withInput()
-    //             ->with('modal_error', 'TambahPeminjaman');
-    //     }
-
-    //     $peminjaman = Peminjaman::create($validated);
-
-    //     AjuanPeminjaman::create([
-    //         'user_id' => Auth::id(),
-    //         'peminjaman_id' => $peminjaman->id,
-    //     ]);
-
-    //     return redirect('/peminjaman')->with('success', 'Peminjaman berhasil diajukan.');
-    // }
-
     public function updateStatus(Request $request, $id)
     {
         $validated = $request->validate([
@@ -76,6 +37,12 @@ class PeminjamanController extends Controller
         $peminjaman->tanggal_pengembalian = now();
         $peminjaman->status_peminjaman = $validated['status'];
         $peminjaman->save();
+        if ($validated['status'] === 'Hilang') {
+            foreach ($peminjaman->peminjamanItem as $item) {
+                $item->barang->sedia = -1;
+                $item->barang->save();
+            }
+        }
 
         if ($validated['status'] === 'Dikembalikan') {
             $barangIds = $peminjaman->peminjamanItem->pluck('barang.id');

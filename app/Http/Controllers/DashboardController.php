@@ -11,11 +11,11 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $totalBarang = Barang::count();
-        $barangRusak = Barang::whereIn('kondisi_barang', ['rusak','berat'])->count();
+        $totalBarang = Barang::where('sedia','>', '-1')->count();
+        $barangRusak = Barang::whereIn('kondisi_barang', ['rusak','berat'])->where('sedia','>', '-1')->count();
         // $barangBaru2025 = Barang::where('tahun_perolehan',now()->year())->count();
         $tahunSekarang = date('Y');
-        $barangBaru2025 = Barang::where('tahun_perolehan', $tahunSekarang)->count();
+        $barangBaru2025 = Barang::where('tahun_perolehan', $tahunSekarang)->where('sedia','>', '-1')->count();
         $tahunSekarang = now()->year();
 
         // Ambil jumlah barang baru per tahun

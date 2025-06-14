@@ -9,7 +9,7 @@ class BarangRusakController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Barang::whereIn('kondisi_barang', ['rusak', 'berat']);
+        $query = Barang::whereIn('kondisi_barang', ['rusak', 'berat'])->where('sedia','>', '-1');
 
         if ($request->filled('search')) {
             $query->where('nama_barang', 'like', '%' . $request->search . '%');
