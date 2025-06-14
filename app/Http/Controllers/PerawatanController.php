@@ -36,6 +36,7 @@ class PerawatanController extends Controller
 
         if ($perawatan) {
             $perawatan->status_perawatan = $validated['status'];
+            $perawatan->tanggal_selesai = now();
             $perawatan->save();
 
             $barangIds = $perawatan->perawatanItem->pluck('barang_id');
@@ -83,7 +84,9 @@ class PerawatanController extends Controller
     public function laporan(Request $request)
     {
         $search = $request->input('search');
-        $query = PerawatanItem::with('barang.ruangan', 'perawatan.user', 'barang.barangMaster');
+        $query = PerawatanItem::with('barang.ruangan', 'perawatan.user', 'barang.barangMaster')->whereHas('perawatan', function ($q) {
+            $q->where('status_ajuan', 'disetujui');
+        });
         // $query = PerawatanItem::all();
         // dd($query->get());
 
@@ -103,9 +106,13 @@ class PerawatanController extends Controller
     public function exportPDF($bulan)
     {
         $tanggalMulai = Carbon::now()->subMonths($bulan);
-        $dataPerawatan = Perawatan::with('perawatanItem.barang.ruangan', 'user')
-            ->where('tanggal_perawatan', '>=', $tanggalMulai)
-            ->get();
+        // $dataPerawatan = Perawatan::with('perawatanItem.barang.ruangan', 'user')
+        //     ->where('tanggal_perawatan', '>=', $tanggalMulai)
+        //     ->get();
+        $dataPerawatan = PerawatanItem::with('barang.ruangan', 'perawatan.user', 'barang.barangMaster')->whereHas('perawatan', function ($q) use ($tanggalMulai) {
+            $q->where('status_ajuan', 'disetujui')
+            ->where('tanggal_perawatan', '>=', $tanggalMulai);
+        })->get();
 
         $pdf = Pdf::loadView('laporan.perawatan.pdf', compact('dataPerawatan'));
         return $pdf->download("laporan-perawatan-{$bulan}-bulan.pdf");

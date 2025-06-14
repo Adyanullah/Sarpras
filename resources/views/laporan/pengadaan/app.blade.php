@@ -55,7 +55,7 @@
                     <th>Sumber Dana</th>
                     <th>Supplier</th>
                     <th>Total Harga</th>
-                    <th>Status</th>
+                    {{-- <th>Status</th> --}}
                 </tr>
             </thead>
             <tbody>
@@ -70,7 +70,7 @@
                         <td>{{ $pengadaan->sumber_dana }}</td>
                         <td>{{ $pengadaan->cv_pengadaan }}</td>
                         <td>Rp {{ number_format($pengadaan->harga_perolehan, 0, ',', '.') }}</td>
-                        <td>
+                        {{-- <td>
                             @if ($pengadaan->status == 'pending')
                                 <span class="badge bg-warning">Belum disetujui</span>
                             @elseif ($pengadaan->status == 'disetujui')
@@ -78,11 +78,11 @@
                             @else
                                 <span class="badge bg-danger">Ditolak</span>
                             @endif
-                        </td>
+                        </td> --}}
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="11" class="text-center">Tidak ada data</td>
+                        <td colspan="10" class="text-center">Tidak ada data</td>
                     </tr>
                 @endforelse
             </tbody>

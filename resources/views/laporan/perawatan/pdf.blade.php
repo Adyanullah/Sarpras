@@ -14,6 +14,7 @@
             <tr>
                 <th>No</th>
                 <th>Tanggal Perawatan</th>
+                <th>Tanggal Selesai</th>
                 <th>Kode Barang</th>
                 <th>Nama Barang</th>
                 <th>Unit</th>
@@ -23,20 +24,20 @@
             </tr>
         </thead>
         <tbody>
-            @php $no = 1; @endphp
             @foreach ($dataPerawatan as $perawatan)
-                @foreach ($perawatan->perawatanItem as $item)
+                {{-- @foreach ($perawatan as $item) --}}
                     <tr>
-                        <td>{{ $no++ }}</td>
-                        <td>{{ $perawatan->tanggal_perawatan }}</td>
-                        <td>{{ $item->barang->kode_barang ?? '-' }}</td>
-                        <td>{{ $item->barang->barangMaster->nama_barang ?? '-' }}</td>
-                        <td>{{ $item->barang->ruangan->nama_ruangan ?? '-' }}</td>
-                        <td>{{ $perawatan->jenis_perawatan }}</td>
+                        <td>{{ $loop->iteration }}</td>
+                        <td>{{ $perawatan->perawatan->tanggal_perawatan }}</td>
+                        <td>{{ $perawatan->perawatan->tanggal_selesai }}</td>
+                        <td>{{ $perawatan->barang->kode_barang ?? '-' }}</td>
+                        <td>{{ $perawatan->barang->barangMaster->nama_barang ?? '-' }}</td>
+                        <td>{{ $perawatan->barang->ruangan->nama_ruangan ?? '-' }}</td>
+                        <td>{{ $perawatan->perawatan->jenis_perawatan }}</td>
                         <td>{{ number_format($perawatan->biaya_perawatan, 0, ',', '.') }}</td>
-                        <td>{{ $perawatan->keterangan ?? '-' }}</td>
+                        <td>{{ $perawatan->perawatan->keterangan ?? '-' }}</td>
                     </tr>
-                @endforeach
+                {{-- @endforeach --}}
             @endforeach
         </tbody>
     </table>

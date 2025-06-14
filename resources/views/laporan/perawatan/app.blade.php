@@ -46,13 +46,14 @@
                 <tr>
                     <th>No</th>
                     <th>Tanggal Perawatan</th>
+                    <th>Tanggal Selesai</th>
                     <th>Kode Barang</th>
                     <th>Nama Barang</th>
                     <th>Unit</th>
                     <th>Jenis Perawatan</th>
                     <th>Biaya (Rp)</th>
                     <th>Keterangan</th>
-                    <th>Status</th>
+                    {{-- <th>Status</th> --}}
                 </tr>
             </thead>
             <tbody>
@@ -60,13 +61,14 @@
                     <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $data->perawatan->tanggal_perawatan }}</td>
+                        <td>{{ $data->perawatan->tanggal_selsesai ?? 'Belum Selesai' }}</td>
                         <td>{{ $data->barang->kode_barang }}</td>
                         <td>{{ $data->barang->barangMaster->nama_barang }}</td>
                         <td>{{ $data->barang->ruangan->nama_ruangan }}</td>
                         <td>{{ $data->perawatan->jenis_perawatan }}</td>
                         <td>{{ number_format($data->perawatan->biaya_perawatan, 0, ',', '.') }}</td>
                         <td>{{ $data->perawatan->keterangan ?? '-'}}</td>
-                        <td>
+                        {{-- <td>
                             @if ($data->perawatan->status_ajuan == 'pending')
                                 <span class="badge bg-warning">belum disetujui</span>
                             @elseif ($data->perawatan->status_ajuan == 'disetujui')
@@ -78,7 +80,7 @@
                             @else
                                 <span class="badge bg-danger">Ditolak</span>
                             @endif
-                        </td>
+                        </td> --}}
                     </tr>
                     
                 @empty

@@ -18,7 +18,7 @@
                 <tr>
                     <th>No</th>
                     <th>Tanggal Pinjam</th>
-                    <th>Batas Pinjam</th>
+                    {{-- <th>Batas Pinjam</th> --}}
                     <th>Nama Peminjam</th>
                     <th>Unit</th>
                     <th>Barang</th>
@@ -32,7 +32,7 @@
                     <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $item->tanggal_peminjaman }}</td>
-                        <td>{{ $item->tanggal_pengembalian }}</td>
+                        {{-- <td>{{ $item->tanggal_pengembalian }}</td> --}}
                         <td>{{ $item->nama_peminjam }}</td>
                         <td>{{ $item->peminjamanItem[0]->barang->ruangan->nama_ruangan }}</td>
                         <td>{{ $item->peminjamanItem[0]->barang->barangMaster->nama_barang }}</td>
@@ -82,7 +82,7 @@
                         </td>
                     </tr>
                 @empty
-                    <td colspan="9" class="text-center">Tidak ada pengajuan</td>
+                    <td colspan="8" class="text-center">Tidak ada pengajuan</td>
                 @endforelse
             </tbody>
         </table>

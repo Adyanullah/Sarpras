@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('perawatans', function (Blueprint $table) {
             $table->id();
             $table->date('tanggal_perawatan');
+            $table->date('tanggal_selsai')->nullable();
             $table->string('jenis_perawatan');
             $table->integer('biaya_perawatan')->nullable();
             $table->enum('status_perawatan', ['selesai', 'belum'])->default('belum');   

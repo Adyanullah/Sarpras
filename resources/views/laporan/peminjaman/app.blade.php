@@ -66,7 +66,7 @@
                     <th>Nama Peminjam</th>
                     <th>Unit</th>
                     <th>Barang</th>
-                    <th>Status</th>
+                    {{-- <th>Status</th> --}}
                 </tr>
             </thead>
             <tbody>
@@ -74,12 +74,12 @@
                     <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $item->peminjaman->tanggal_peminjaman }}</td>
-                        <td>{{ $item->peminjaman->tanggal_pengembalian ?? '-' }}</td>
+                        <td>{{ $item->peminjaman->tanggal_pengembalian ?? 'Belum Dikembalikan' }}</td>
                         <td>{{ $item->barang->kode_barang }}</td>
                         <td>{{ $item->peminjaman->nama_peminjam }}</td>
                         <td>{{ $item->barang->ruangan->nama_ruangan }}</td>
                         <td>{{ $item->barang->barangMaster->nama_barang }}</td>
-                        <td>
+                        {{-- <td>
                             @if ($item->peminjaman->status_ajuan == 'pending')
                                 <span class="badge bg-warning">Belum disetujui</span>
                             @elseif ($item->peminjaman->status_ajuan == 'disetujui')
@@ -93,10 +93,10 @@
                             @else
                                 <span class="badge bg-danger">Ditolak</span>
                             @endif
-                        </td>
+                        </td> --}}
                     </tr>
                 @empty
-                    <td colspan="8" class="text-center">Tidak ada data laporan</td>
+                    <td colspan="7" class="text-center">Tidak ada data laporan</td>
                 @endforelse
             </tbody>
         </table>

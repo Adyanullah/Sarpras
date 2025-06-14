@@ -25,43 +25,43 @@ class PeminjamanController extends Controller
     }
 
 
-    public function store(Request $request)
-    {
-        try {
-            $validated = $request->validate([
-                'tanggal_peminjaman' => 'required|date',
-                'tanggal_pengembalian' => 'required|date|after_or_equal:tanggal_peminjaman',
-                'nama_peminjam' => 'required|string|max:255',
-                'barang_id' => 'required|exists:barangs,id',
-                'jumlah_barang' => 'required|integer|min:1',
-                'status_peminjaman' => 'nullable|in:Dipinjam,Dikembalikan,Diperpanjang,Hilang',
-                'keterangan' => 'nullable|string',
-            ]);
-        } catch (ValidationException $e) {
-            return redirect()->back()
-                ->withErrors($e->validator)
-                ->withInput()
-                ->with('modal_error', 'TambahPeminjaman'); // tanda modal mana yang error
-        }
+    // public function store(Request $request)
+    // {
+    //     try {
+    //         $validated = $request->validate([
+    //             'tanggal_peminjaman' => 'required|date',
+    //             'tanggal_pengembalian' => 'required|date|after_or_equal:tanggal_peminjaman',
+    //             'nama_peminjam' => 'required|string|max:255',
+    //             'barang_id' => 'required|exists:barangs,id',
+    //             'jumlah_barang' => 'required|integer|min:1',
+    //             'status_peminjaman' => 'nullable|in:Dipinjam,Dikembalikan,Diperpanjang,Hilang',
+    //             'keterangan' => 'nullable|string',
+    //         ]);
+    //     } catch (ValidationException $e) {
+    //         return redirect()->back()
+    //             ->withErrors($e->validator)
+    //             ->withInput()
+    //             ->with('modal_error', 'TambahPeminjaman'); // tanda modal mana yang error
+    //     }
 
-        $barang = Barang::findOrFail($validated['barang_id']);
+    //     $barang = Barang::findOrFail($validated['barang_id']);
 
-        if ($validated['jumlah_barang'] > $barang->jumlah_barang) {
-            return redirect()->back()
-                ->withErrors(['jumlah_barang' => 'Jumlah barang yang diminta melebihi stok tersedia.'])
-                ->withInput()
-                ->with('modal_error', 'TambahPeminjaman');
-        }
+    //     if ($validated['jumlah_barang'] > $barang->jumlah_barang) {
+    //         return redirect()->back()
+    //             ->withErrors(['jumlah_barang' => 'Jumlah barang yang diminta melebihi stok tersedia.'])
+    //             ->withInput()
+    //             ->with('modal_error', 'TambahPeminjaman');
+    //     }
 
-        $peminjaman = Peminjaman::create($validated);
+    //     $peminjaman = Peminjaman::create($validated);
 
-        AjuanPeminjaman::create([
-            'user_id' => Auth::id(),
-            'peminjaman_id' => $peminjaman->id,
-        ]);
+    //     AjuanPeminjaman::create([
+    //         'user_id' => Auth::id(),
+    //         'peminjaman_id' => $peminjaman->id,
+    //     ]);
 
-        return redirect('/peminjaman')->with('success', 'Peminjaman berhasil diajukan.');
-    }
+    //     return redirect('/peminjaman')->with('success', 'Peminjaman berhasil diajukan.');
+    // }
 
     public function updateStatus(Request $request, $id)
     {
@@ -93,9 +93,9 @@ class PeminjamanController extends Controller
 
         // Query awal dengan relasi
         $query = PeminjamanItem::with(['barang.ruangan', 'barang.barangMaster', 'peminjaman.user'])
-        // ->whereHas('peminjaman', function ($q) {
-        //     $q->where('status_peminjaman', 'Dipinjam');
-        // })
+        ->whereHas('peminjaman', function ($q) {
+            $q->where('status_ajuan', 'disetujui');
+        })
         ;
 
         // Filter status dari relasi peminjaman
@@ -161,9 +161,16 @@ class PeminjamanController extends Controller
     {
         $tanggalMulai = Carbon::now()->subMonths($bulan);
 
-        $items = Peminjaman::with(['barang.ruangan', 'ajuan'])
-            ->whereDate('tanggal_peminjaman', '>=', $tanggalMulai)
-            ->get();
+        // $items = Peminjaman::with(['barang.ruangan', 'ajuan'])
+        //     ->where('status_ajuan', 'disetujui')
+        //     ->whereDate('tanggal_peminjaman', '>=', $tanggalMulai)
+        //     ->get();
+
+        $items = PeminjamanItem::with(['barang.ruangan', 'barang.barangMaster', 'peminjaman.user'])
+        ->whereHas('peminjaman', function ($q) use ($tanggalMulai) {
+            $q->where('status_ajuan', 'disetujui')
+            ->whereDate('tanggal_peminjaman', '>=', $tanggalMulai);
+        })->get();
 
         $pdf = Pdf::loadView('laporan.peminjaman.pdf', compact('items'));
         return $pdf->download("laporan-peminjaman-{$bulan}-bulan.pdf");

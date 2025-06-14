@@ -241,7 +241,6 @@ class AjuanController extends Controller
                     $ajuan = Perawatan::with('perawatanItem')->findOrFail($id);
                     if ($status === 'Disetujui') {
                         $ajuan->status_ajuan = 'disetujui';
-                        $ajuan->status_perawatan = 'selesai';
                         foreach ($ajuan->perawatanItem as $item) {
                             $item->save();
                             $barang = $item->barang;

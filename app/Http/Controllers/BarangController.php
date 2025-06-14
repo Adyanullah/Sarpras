@@ -234,15 +234,13 @@ class BarangController extends Controller
         // Validasi form Peminjaman
         $request->validate([
             'tanggal_peminjaman'   => 'required|date',
-            'tanggal_pengembalian' => 'required|date|after_or_equal:tanggal_peminjaman',
             'nama_peminjam'        => 'required|string|max:255',
-            // 'keterangan' boleh kosong
         ]);
 
         // Simpan ke tabel peminjaman
         $peminjaman = Peminjaman::create([
             'tanggal_peminjaman'   => $request->input('tanggal_peminjaman'),
-            'tanggal_pengembalian' => $request->input('tanggal_pengembalian'),
+            'tanggal_pengembalian' => null,
             'nama_peminjam'        => $request->input('nama_peminjam'),
             'keterangan'           => $request->input('keterangan'),
             'user_id'              => Auth::id(),

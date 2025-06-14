@@ -153,7 +153,8 @@ class PengadaanController extends Controller
     {
         $tanggalMulai = Carbon::now()->subMonths($bulan);
 
-        $pengadaans = Pengadaan::whereDate('created_at', '>=', $tanggalMulai)->get();
+        $pengadaans = Pengadaan::whereDate('created_at', '>=', $tanggalMulai)
+            ->where('status', 'disetujui')->get();
 
         $pdf = Pdf::loadView('laporan.pengadaan.pdf', compact('pengadaans'));
         return $pdf->download("laporan-pengadaan-{$bulan}-bulan.pdf");
