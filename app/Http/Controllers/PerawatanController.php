@@ -38,12 +38,19 @@ class PerawatanController extends Controller
             $perawatan->status_perawatan = $validated['status'];
             $perawatan->tanggal_selesai = now();
             $perawatan->save();
-
-            $barangIds = $perawatan->perawatanItem->pluck('barang_id');
-            Barang::whereIn('id', $barangIds)->update([
-                'kondisi_barang' => $validated['kondisi_barang'],
-                'sedia' => 1
-            ]);
+        foreach ($perawatan->perawatanItem as $item) {
+            $barang = $item->barang;
+            if($barang){
+                $barang->kondisi_barang = $validated['kondisi_barang'];
+                $barang->sedia = 1;
+                $barang->save();
+            }
+        }
+            // $barangIds = $perawatan->perawatanItem->pluck('barang_id');
+            // Barang::whereIn('id', $barangIds)->update([
+            //     'kondisi_barang' => $validated['kondisi_barang'],
+            //     'sedia' => 1
+            // ]);
 
             return redirect()->back()->with('success', 'Status dan kondisi barang berhasil diperbarui.');
         }
@@ -75,10 +82,24 @@ class PerawatanController extends Controller
 
     public function destroy($id)
     {
-        $perawatan = Perawatan::findOrFail($id);
-        $perawatan->delete();
+        DB::transaction(function () use ($id) {
+            $perawatan = Perawatan::findOrFail($id);
 
-        return redirect()->back()->with('success', 'Data perawatan berhasil dihapus.');
+            // Ambil semua ID barang dari item yang terkait
+            $barangIds = PerawatanItem::where('perawatan_id', $id)
+                ->pluck('barang_id') // ambil langsung ID
+                ->filter()           // buang null jika ada
+                ->toArray();
+
+            // Kembalikan status "sedia" ke 1 untuk semua barang terkait
+            if (!empty($barangIds)) {
+                Barang::whereIn('id', $barangIds)->update(['sedia' => 1]);
+            }
+
+            // Hapus perawatan (otomatis hapus item jika relasi cascade di DB)
+            $perawatan->delete();
+        });
+        return redirect()->back()->with('success', 'Data perawatan berhasil dibatalkan.');
     }
 
     public function laporan(Request $request)

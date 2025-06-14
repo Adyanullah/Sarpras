@@ -10,6 +10,7 @@ use App\Exports\PenghapusanExport;
 use App\Models\PenghapusanItem;
 use Maatwebsite\Excel\Facades\Excel;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class PenghapusanController extends Controller
 {
@@ -54,10 +55,25 @@ class PenghapusanController extends Controller
     // Method untuk menghapus data penghapusan
     public function destroy($id)
     {
-        $penghapusan = Penghapusan::findOrFail($id);
-        $penghapusan->delete();
+        DB::transaction(function () use ($id) {
+            $penghapusan = Penghapusan::findOrFail($id);
 
-        return redirect()->back()->with('success', 'Penghapusan berhasil dibatalkan.');
+            // Ambil semua ID barang dari item yang terkait
+            $barangIds = PenghapusanItem::where('penghapusan_id', $id)
+                ->pluck('barang_id') // ambil langsung ID
+                ->filter()           // buang null jika ada
+                ->toArray();
+
+            // Kembalikan status "sedia" ke 1 untuk semua barang terkait
+            if (!empty($barangIds)) {
+                Barang::whereIn('id', $barangIds)->update(['sedia' => 1]);
+            }
+
+            // Hapus penghapusan (otomatis hapus item jika relasi cascade di DB)
+            $penghapusan->delete();
+        });
+
+        return redirect()->back()->with('success', 'Data penghapusan berhasil dibatalkan.');
     }
 
     public function exportPDF($bulan)

@@ -14,6 +14,7 @@ use App\Exports\MutasiExport;
 use App\Models\MutasiItem;
 use Maatwebsite\Excel\Facades\Excel;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class MutasiController extends Controller
 {
@@ -119,10 +120,25 @@ class MutasiController extends Controller
 
     public function destroy($id)
     {
-        $mutasi = Mutasi::findOrFail($id);
-        $mutasi->delete();
+        DB::transaction(function () use ($id) {
+            $mutasi = Mutasi::findOrFail($id);
 
-        return redirect()->back()->with('success', 'Data mutasi berhasil dihapus.');
+            // Ambil semua ID barang dari item yang terkait
+            $barangIds = MutasiItem::where('mutasi_id', $id)
+                ->pluck('barang_id') // ambil langsung ID
+                ->filter()           // buang null jika ada
+                ->toArray();
+
+            // Kembalikan status "sedia" ke 1 untuk semua barang terkait
+            if (!empty($barangIds)) {
+                Barang::whereIn('id', $barangIds)->update(['sedia' => 1]);
+            }
+
+            // Hapus mutasi (otomatis hapus item jika relasi cascade di DB)
+            $mutasi->delete();
+        });
+
+        return redirect()->back()->with('success', 'Data peminjaman berhasil dibatalkan.');
     }
 
     public function exportPDF($bulan)

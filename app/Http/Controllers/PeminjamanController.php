@@ -6,12 +6,11 @@ use App\Exports\PeminjamanExport;
 use App\Models\Peminjaman;
 use App\Models\Barang;
 use Illuminate\Http\Request;
-use App\Models\AjuanPeminjaman;
+use Illuminate\Support\Facades\DB;
 use App\Models\PeminjamanItem;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Maatwebsite\Excel\Facades\Excel;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 
 class PeminjamanController extends Controller
@@ -149,12 +148,27 @@ class PeminjamanController extends Controller
 
         return redirect()->back()->with('success', 'Data peminjaman berhasil diperbarui.');
     }
-
     public function destroy($id)
     {
-        $peminjaman = Peminjaman::findOrFail($id);
-        $peminjaman->delete();
-        return redirect()->back()->with('success', 'Data peminjaman berhasil dihapus.');
+        DB::transaction(function () use ($id) {
+            $peminjaman = Peminjaman::findOrFail($id);
+
+            // Ambil semua ID barang dari item yang terkait
+            $barangIds = PeminjamanItem::where('peminjaman_id', $id)
+                ->pluck('barang_id') // ambil langsung ID
+                ->filter()           // buang null jika ada
+                ->toArray();
+
+            // Kembalikan status "sedia" ke 1 untuk semua barang terkait
+            if (!empty($barangIds)) {
+                Barang::whereIn('id', $barangIds)->update(['sedia' => 1]);
+            }
+
+            // Hapus peminjaman (otomatis hapus item jika relasi cascade di DB)
+            $peminjaman->delete();
+        });
+
+        return redirect()->back()->with('success', 'Data peminjaman berhasil dibatalkan.');
     }
 
     public function exportPDF($bulan)
