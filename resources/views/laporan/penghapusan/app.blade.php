@@ -46,8 +46,10 @@
                     <th>Tanggal</th>
                     <th>Kode Barang</th>
                     <th>Nama Barang</th>
-                    <th>Alasan Penghapusan</th>
-                    <th>Status Pengajuan</th>
+                    <th>Jenis Barang</th>
+                    <th>Mesk Barang</th>
+                    <th>Keterangan</th>
+                    {{-- <th>Status Pengajuan</th> --}}
                 </tr>
             </thead>
             <tbody>
@@ -57,8 +59,10 @@
                         <td>{{ $item->created_at->format('Y-m-d') }}</td>
                         <td>{{ $item->barang->kode_barang }}</td>
                         <td>{{ $item->barang->barangMaster->nama_barang }}</td>
+                        <td>{{ $item->barang->barangMaster->jenis_barang }}</td>
+                        <td>{{ $item->barang->barangMaster->merk_barang }}</td>
                         <td>{{ $item->penghapusan->keterangan ?? '-' }}</td>
-                        <td>
+                        {{-- <td>
                             @if ($item->penghapusan->status_ajuan == 'pending')
                                 <span class="badge bg-warning">Belum disetujui</span>
                             @elseif ($item->penghapusan->status_ajuan == 'disetujui')
@@ -66,7 +70,7 @@
                             @else
                                 <span class="badge bg-danger">Ditolak</span>
                             @endif
-                        </td>
+                        </td> --}}
                     </tr>
                     
                 @empty

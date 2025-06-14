@@ -145,9 +145,15 @@ class MutasiController extends Controller
     {
         $tanggalMulai = Carbon::now()->subMonths($bulan);
 
-        $mutasi = Mutasi::with(['barang.ruangan', 'ajuan'])
-            ->whereDate('tanggal_mutasi', '>=', $tanggalMulai)
-            ->get();
+        // $mutasi = MutasiItem::with(['barang.ruangan', 'user'])
+        //     ->whereDate('tanggal_mutasi', '>=', $tanggalMulai)
+        //     ->get();
+        
+        $mutasi = MutasiItem::with(['barang.ruangan', 'barang.barangMaster', 'mutasi.user'])
+        ->whereHas('mutasi', function ($q) use ($tanggalMulai) {
+            $q->where('status_ajuan', 'disetujui')
+            ->whereDate('tanggal_mutasi', '>=', $tanggalMulai);
+        })->get();
 
         $ruangans = Ruangan::pluck('nama_ruangan', 'id')->toArray();
 

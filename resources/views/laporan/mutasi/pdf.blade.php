@@ -17,6 +17,8 @@
                 <th>Tanggal Mutasi</th>
                 <th>Kode Barang</th>
                 <th>Nama Barang</th>
+                <th>Jenis Barang</th>
+                <th>Merk Barang</th>
                 <th>Dari Unit</th>
                 <th>Ke Unit</th>
                 <th>Keterangan</th>
@@ -28,9 +30,11 @@
                     <td>{{ $loop->iteration }}</td>
                     <td>{{ $item->mutasi->tanggal_mutasi }}</td>
                     <td>{{ $item->barang->kode_barang }}</td>
-                    <td>{{ $item->barang->barangMaster->nama_barang ?? '-' }}</td>
-                    <td>{{ $item->barang->ruangan->nama_ruangan ?? '-' }}</td>
-                    <td>{{ $ruangans[$item->mutasi->tujuan] ?? '-' }}</td>
+                    <td>{{ $item->barang->barangMaster->nama_barang }}</td>
+                    <td>{{ $item->barang->barangMaster->jenis_barang }}</td>
+                    <td>{{ $item->barang->barangMaster->merk_barang }}</td>
+                    <td>{{ $ruangans[$item->mutasi->asal] }}</td>
+                    <td>{{ $ruangans[$item->mutasi->tujuan] }}</td>
                     <td>{{ $item->mutasi->keterangan ?? '-' }}</td>
                 </tr>
             @empty

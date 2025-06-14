@@ -34,6 +34,7 @@
                 <div class="row g-3">
                     <input type="hidden" name="selected_ids" id="mutasi-selected-ids" value="">
                     <input type="hidden" name="action_type" value="mutasi">
+
                     <div class="col-md-12">
                         <label for="tanggal_mutasi" class="form-label">Tanggal Mutasi</label>
                         <input type="date" name="tanggal_mutasi" class="form-control" id="tanggal_mutasi"

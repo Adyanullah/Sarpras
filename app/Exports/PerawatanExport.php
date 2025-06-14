@@ -31,6 +31,7 @@ class PerawatanExport implements FromArray, WithHeadings
                 $result[] = [
                     $no++,
                     $perawatan->tanggal_perawatan,
+                    $perawatan->perawatan->tanggal_selesai ?? 'Belum Selesai',
                     $item->barang->kode_barang ?? '-',
                     $item->barang->barangMaster->nama_barang ?? '-',
                     $item->barang->ruangan->nama_ruangan ?? '-',
@@ -49,6 +50,7 @@ class PerawatanExport implements FromArray, WithHeadings
         return [
             'No',
             'Tanggal Perawatan',
+            'Tanggal Selesai',
             'Kode Barang',
             'Nama Barang',
             'Unit',

@@ -308,13 +308,22 @@ class BarangController extends Controller
             'tanggal_mutasi' => 'required|date',
             'nama_mutasi'    => 'required|string|max:255',
             'tujuan'         => 'required|integer|exists:ruangans,id',
-            // 'keterangan' boleh kosong
         ]);
+
+        $ruanganIds = Barang::whereIn('id', $ids)
+            ->select('ruangan_id')
+            ->distinct()
+            ->pluck('ruangan_id');
+
+        if ($ruanganIds->count() > 1) {
+            return redirect()->back()->with('error', 'Barang yang dipilih berasal dari ruangan yang berbeda. Silakan pilih barang dari ruangan yang sama.');
+        }
 
         // Simpan ke tabel mutasis
         $mutasi = Mutasi::create([
             'tanggal_mutasi' => $request->input('tanggal_mutasi'),
             'nama_mutasi'    => $request->input('nama_mutasi'),
+            'asal'           => Barang::find($ids[0])->ruangan_id,
             'tujuan'         => $request->input('tujuan'),
             'keterangan'     => $request->input('keterangan'),
             'user_id'        => Auth::id(),

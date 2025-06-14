@@ -16,9 +16,11 @@
                 <th>Tanggal Pinjam</th>
                 <th>Tanggal Pengembalian</th>
                 <th>Kode Barang</th>
-                <th>Nama Peminjam</th>
-                <th>Unit</th>
                 <th>Barang</th>
+                <th>Jenis Barang</th>
+                <th>Merk Barang</th>
+                <th>Unit</th>
+                <th>Nama Peminjam</th>
             </tr>
         </thead>
         <tbody>
@@ -26,11 +28,19 @@
                 <tr>
                     <td>{{ $loop->iteration }}</td>
                     <td>{{ $item->peminjaman->tanggal_peminjaman }}</td>
-                    <td>{{ $item->peminjaman->tanggal_pengembalian ?? '-' }}</td>
-                    <td>{{ $item->barang->kode_barang ?? '-' }}</td>
+                    <td>
+                        @if ($item->peminjaman->status_peminjaman == 'Hilang')
+                            Hilang
+                        @else
+                            {{ $item->peminjaman->tanggal_pengembalian ?? 'Belum Dikembalikan' }}
+                        @endif
+                    </td>
+                    <td>{{ $item->barang->kode_barang }}</td>
+                    <td>{{ $item->barang->barangMaster->nama_barang }}</td>
+                    <td>{{ $item->barang->barangMaster->jenis_barang }}</td>
+                    <td>{{ $item->barang->barangMaster->merk_barang }}</td>
+                    <td>{{ $item->barang->ruangan->nama_ruangan }}</td>
                     <td>{{ $item->peminjaman->nama_peminjam }}</td>
-                    <td>{{ $item->barang->ruangan->nama_ruangan ?? '-' }}</td>
-                    <td>{{ $item->barang->barangMaster->nama_barang ?? '-' }}</td>
                 </tr>
             @endforeach
         </tbody>

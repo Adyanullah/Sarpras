@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->date('tanggal_mutasi');
             $table->string('nama_mutasi');
+            $table->integer('asal');
             $table->integer('tujuan');
             $table->enum('status_mutasi', ['selesai', 'belum'])->default('belum');
             $table->text('keterangan')->nullable();

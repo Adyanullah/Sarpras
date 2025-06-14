@@ -30,14 +30,20 @@ class PeminjamanExport implements FromArray, WithHeadings
         $no = 1;
 
         foreach ($data as $item) {
+            if ($item->peminjaman->status_peminjaman == 'Hilang')
+                $tanggal_pengembalian = 'Hilang';
+            else
+                $tanggal_pengembalian = $item->peminjaman->tanggal_pengembalian ?? 'Belum Dikembalikan';
             $result[] = [
                 $no++,
                 $item->peminjaman->tanggal_peminjaman,
-                $item->peminjaman->tanggal_pengembalian,
+                $tanggal_pengembalian,
                 $item->barang->kode_barang ?? '-',
-                $item->peminjaman->nama_peminjam ?? '-',
-                $item->barang->ruangan->nama_ruangan ?? '-',
                 $item->barang->barangMaster->nama_barang ?? '-',
+                $item->barang->barangMaster->jenis_barang ?? '-',
+                $item->barang->barangMaster->merk_barang ?? '-',
+                $item->barang->ruangan->nama_ruangan ?? '-',
+                $item->peminjaman->nama_peminjam ?? '-',
             ];
         }
 
@@ -49,11 +55,13 @@ class PeminjamanExport implements FromArray, WithHeadings
         return [
             'No',
             'Tanggal Pinjam',
-            'Batas Pinjam',
+            'Tanggal Pengembalian',
             'Kode Barang',
-            'Nama Peminjam',
+            'Nama Barang',
+            'Jenis Barang',
+            'Merk Barang',
             'Unit',
-            'Barang',
+            'Nama Peminjam',
         ];
     }
 }

@@ -19,9 +19,8 @@ class PenghapusanExport implements FromArray, WithHeadings
     public function array(): array
     {
         $tanggalMulai = Carbon::now()->subMonths($this->bulan);
-
-        $data = Penghapusan::with(['penghapusanItem.barang.barangMaster'])
-            ->whereDate('created_at', '>=', $tanggalMulai)
+        $data = Penghapusan::with('penghapusanItem.barang.ruangan', 'user')
+            ->where('created_at', '>=', $tanggalMulai)
             ->get();
 
         $result = [];
@@ -34,6 +33,8 @@ class PenghapusanExport implements FromArray, WithHeadings
                     $penghapusan->created_at->format('Y-m-d'),
                     $item->barang->kode_barang ?? '-',
                     $item->barang->barangMaster->nama_barang ?? '-',
+                    $item->barang->barangMaster->jenis_barang ?? '-',
+                    $item->barang->barangMaster->merk_barang ?? '-',
                     $penghapusan->keterangan ?? '-',
                 ];
             }
@@ -49,6 +50,8 @@ class PenghapusanExport implements FromArray, WithHeadings
             'Tanggal',
             'Kode Barang',
             'Nama Barang',
+            'Jenis Barang',
+            'Merk Barang',
             'Alasan Penghapusan',
         ];
     }

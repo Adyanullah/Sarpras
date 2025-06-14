@@ -48,10 +48,12 @@
                     <th>Tanggal Mutasi</th>
                     <th>Kode Barang</th>
                     <th>Nama Barang</th>
+                    <th>Jenis Barang</th>
+                    <th>Merk Barang</th>
                     <th>Dari Unit</th>
                     <th>Ke Unit</th>
                     <th>Keterangan</th>
-                    <th>Status</th>
+                    {{-- <th>Status</th> --}}
                 </tr>
             </thead>
             <tbody>
@@ -61,10 +63,12 @@
                     <td>{{ $item->mutasi->tanggal_mutasi }}</td>
                     <td>{{ $item->barang->kode_barang }}</td>
                     <td>{{ $item->barang->barangMaster->nama_barang }}</td>
-                    <td>{{ $item->barang->ruangan->nama_ruangan }}</td>
+                    <td>{{ $item->barang->barangMaster->jenis_barang }}</td>
+                    <td>{{ $item->barang->barangMaster->merk_barang }}</td>
+                    <td>{{ $ruangans[$item->mutasi->asal] }}</td>
                     <td>{{ $ruangans[$item->mutasi->tujuan] }}</td>
                     <td>{{ $item->mutasi->keterangan ?? '-' }}</td>
-                    <td>
+                    {{-- <td>
                         @if ($item->mutasi->status_ajuan == 'pending')
                         <span class="badge bg-warning">Belum disetujui</span>
                         @elseif ($item->mutasi->status_ajuan == 'disetujui')
@@ -72,7 +76,7 @@
                         @else
                         <span class="badge bg-danger">Ditolak</span>
                         @endif
-                    </td>
+                    </td> --}}
                 </tr>
                 @empty
                 <td colspan="8" class="text-center">Data mutasi kosong</td>

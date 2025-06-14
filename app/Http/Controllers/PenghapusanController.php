@@ -24,7 +24,10 @@ class PenghapusanController extends Controller
     public function laporan(Request $request)
     {
         $search = $request->input('search');
-        $query = PenghapusanItem::with(['barang.ruangan', 'penghapusan', 'barang.barangMaster']);
+        $query = PenghapusanItem::with(['barang.ruangan', 'penghapusan', 'barang.barangMaster'])
+        ->whereHas('penghapusan', function ($q) {
+            $q->where('status_ajuan', 'disetujui');
+        });
 
         // Filter berdasarkan pencarian barang
         if ($search) {
@@ -80,12 +83,10 @@ class PenghapusanController extends Controller
     {
         $tanggalMulai = Carbon::now()->subMonths($bulan);
 
-        $data = Penghapusan::with(['penghapusanItem.barang.ruangan', 'user'])
-            // ->whereDate('created_at', '>=', $tanggalMulai)
-            // ->whereHas('ajuan', function ($q) {
-            //     $q->where('status', 'pending');
-            // })
-            ->get();
+        $data = PenghapusanItem::with(['barang.ruangan', 'penghapusan', 'barang.barangMaster'])
+        ->whereHas('penghapusan', function ($q) {
+            $q->where('status_ajuan', 'disetujui');
+        })->get();
 
         $pdf = Pdf::loadView('laporan.penghapusan.pdf', compact('data'));
         return $pdf->download("laporan-penghapusan-{$bulan}-bulan.pdf");

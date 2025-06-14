@@ -225,7 +225,7 @@ class AjuanController extends Controller
                         }
                     } else {
                         $ajuan->status_ajuan = 'ditolak';
-                        foreach ($ajuan->mutasiItem as $item) {
+                        foreach ($ajuan->peminjamanItem as $item) {
                             $barang = $item->barang;
                             if ($barang) {
                                 $barang->sedia = 1;
@@ -251,7 +251,7 @@ class AjuanController extends Controller
                         }
                     } else {
                         $ajuan->status_ajuan = 'ditolak';
-                        foreach ($ajuan->mutasiItem as $item) {
+                        foreach ($ajuan->perawatanItem as $item) {
                             $barang = $item->barang;
                             if ($barang) {
                                 $barang->sedia = 1;
@@ -305,7 +305,7 @@ class AjuanController extends Controller
                         }
                     } else {
                         $ajuan->status_ajuan = 'ditolak';
-                        foreach ($ajuan->mutasiItem as $item) {
+                        foreach ($ajuan->penghapusanItem as $item) {
                             $barang = $item->barang;
                             if ($barang) {
                                 $barang->sedia = 1;
