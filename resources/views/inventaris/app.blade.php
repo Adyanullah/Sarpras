@@ -130,18 +130,15 @@
                                     href="{{ route('inventaris.unit', $item->barang_id) }}">
                                     Lihat
                                 </a>
-                                @if (in_array(auth()->user()->role, [1, 3]))
-                                    {{-- <button class="btn btn-danger px-2 py-1 m-0" data-bs-toggle="modal"
-                                data-bs-target="#deleteModal{{ $item->id }}">
-                                Hapus
-                            </button> --}}
-                                    {{-- @include('inventaris.popup.ajuan_penghapusan', [
-                            'modalId' => $item->id,
-                            'item' => $item,
-                            ]) --}}
-                                @endif
-                            </div>
-                        </td>
+                                @if (auth()->user()->role == 1)
+                                    <button type="button" class="btn btn-warning px-2 py-1 m-0" data-bs-toggle="modal"
+                                        data-bs-target="#editMaster{{ $item->barangMaster->id }}">
+                                        <i class="bi bi-pencil-square me-2"></i>Edit
+                                    </button>
+                                    @include('inventaris.popup.edit_master')
+                                    @endif
+                                </div>
+                            </td>
                     </tr>
                 @empty
                     Data Kosong

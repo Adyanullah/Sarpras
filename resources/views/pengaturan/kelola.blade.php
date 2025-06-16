@@ -47,11 +47,11 @@
                             <button class="btn btn-primary px-2 py-1" data-bs-toggle="modal" data-bs-target="#editUser{{ $user->id }}">Edit</button>
                             {{-- <a href="{{ route('pengaturan.edit', $user->id) }}" class="btn btn-primary px-2 py-1">Edit</a> --}}
                             @include('pengaturan.popup.edit_user')
-                            <form action="{{ route('user.destroy', $user->id) }}" method="POST" class="d-inline">
+                            {{-- <form action="{{ route('user.destroy', $user->id) }}" method="POST" class="d-inline">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-danger px-2 py-1">Hapus</button>
-                            </form>
+                            </form> --}}
                         </td>
                     </tr>
                 @endforeach

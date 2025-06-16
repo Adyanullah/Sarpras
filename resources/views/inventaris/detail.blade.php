@@ -111,6 +111,13 @@
                                     data-bs-target="#barangRusak">Barang Rusak</button>
                                 @include('inventaris.popup.rusak')
                             @endif
+                            @if (auth()->user()->role == 1)
+                                <button type="button" class="btn btn-warning" data-bs-toggle="modal"
+                                    data-bs-target="#editData">
+                                    <i class="bi bi-pencil-square me-2"></i>Edit
+                                </button>
+                                @include('inventaris.popup.edit_data')
+                            @endif
                             <button type="button" class="btn btn-danger" id="trigger-delete" data-bs-toggle="modal"
                                 data-bs-target="#hapusModal">
                                 <i class="bi bi-trash me-2"></i>Hapus Barang
@@ -152,5 +159,12 @@
             value: '{{ route('inventaris.detail', $item->kode_barang) }}',
             size: 216
         });
+    });
+    new TomSelect("#sumber_dana_edit", {
+        create: true, // Mengizinkan input baru
+        sortField: {
+        field: "text",
+        direction: "asc"
+        }
     });
 </script>

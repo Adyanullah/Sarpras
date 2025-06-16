@@ -24,7 +24,7 @@ class UserController extends Controller
             'role' => 'required|in:1,2,3,4',
             'photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
-
+        // dd($request->all());
         if ($request->hasFile('photo')) {
             $file = $request->file('photo');
             $filename = time() . '_' . $file->getClientOriginalName();

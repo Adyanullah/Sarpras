@@ -1,11 +1,11 @@
-@if ($errors->any())
+{{-- @if ($errors->any())
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             var myModal = new bootstrap.Modal(document.getElementById('editData'));
             myModal.show();
         });
     </script>
-@endif
+@endif --}}
 <div class="modal fade" id="editData" tabindex="-1" aria-labelledby="exampleModalCenteredScrollableTitle"
     aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
@@ -21,29 +21,20 @@
 
                 <div class="mb-3">
                     <label for="nama_barang" class="form-label">Nama Barang</label>
-                    <input type="text" class="form-control" name="nama_barang"
-                        value="{{ old('nama_barang', $item->nama_barang) }}">
-                    @error('nama_barang')
-                        <div class="alert alert-danger mt-2">{{ $message }}</div>
-                    @enderror
+                    <input type="text" class="form-control bg-light text-dark " name="nama_barang"
+                        value="{{ old('nama_barang', $item->barangMaster->nama_barang) }}" readonly>
                 </div>
 
                 <div class="mb-3">
                     <label for="jenis_barang" class="form-label">Jenis Barang</label>
-                    <input type="text" class="form-control" name="jenis_barang"
-                        value="{{ old('jenis_barang', $item->jenis_barang) }}">
-                    @error('jenis_barang')
-                        <div class="alert alert-danger mt-2">{{ $message }}</div>
-                    @enderror
+                    <input type="text" class="form-control bg-light text-dark " name="jenis_barang"
+                        value="{{ old('jenis_barang', $item->barangMaster->jenis_barang) }}" readonly>
                 </div>
 
                 <div class="mb-3">
                     <label for="merk_barang" class="form-label">Merk / Spesifikasi</label>
-                    <input type="text" class="form-control" name="merk_barang"
-                        value="{{ old('merk_barang', $item->merk_barang) }}">
-                    @error('merk_barang')
-                        <div class="alert alert-danger mt-2">{{ $message }}</div>
-                    @enderror
+                    <input type="text" class="form-control bg-light text-dark " name="merk_barang"
+                        value="{{ old('merk_barang', $item->barangMaster->merk_barang) }}" readonly>
                 </div>
 
                 <div class="mb-3">
@@ -57,26 +48,21 @@
 
                 <div class="mb-3">
                     <label for="sumber_dana" class="form-label">Sumber Dana</label>
-                    <select class="form-select" name="sumber_dana">
-                        <option value="BOS" {{ old('sumber_dana', $item->sumber_dana) === 'BOS' ? 'selected' : '' }}>
-                            BOS</option>
-                        <option value="DAK"
-                            {{ old('sumber_dana', $item->sumber_dana) === 'DAK' ? 'selected' : '' }}>
-                            DAK</option>
-                        <option value="Hibah"
-                            {{ old('sumber_dana', $item->sumber_dana) === 'Hibah' ? 'selected' : '' }}>
-                            Hibah</option>
+                    <select id="sumber_dana_edit" name="sumber_dana" class="form-select">
+                        <option value="" disabled selected>--Pilih Sumber Dana--</option>
+                        <option value="BOS" @if ($item->sumber_dana == 'BOS') selected @endif>BOS</option>
+                        <option value="BPOPP" @if ($item->sumber_dana == 'BPOPP') selected @endif>BPOPP</option>
+                        <option value="Komite" @if ($item->sumber_dana == 'Komite') selected @endif>Komite</option>
+                        <option value="DAK" @if ($item->sumber_dana == 'DAK') selected @endif>DAK</option>
+                        <option value="Hibah" @if ($item->sumber_dana == 'Hibah') selected @endif>Hibah</option>
                     </select>
-                    @error('sumber_dana')
-                        <div class="alert alert-danger mt-2">{{ $message }}</div>
-                    @enderror
                 </div>
 
                 <div class="mb-3">
-                    <label for="harga_perolehan" class="form-label">Harga Perolehan</label>
-                    <input type="number" class="form-control" name="harga_perolehan"
-                        value="{{ old('harga_perolehan', $item->harga_perolehan) }}">
-                    @error('harga_perolehan')
+                    <label for="harga_unit" class="form-label">Harga Satuan</label>
+                    <input type="number" class="form-control" name="harga_unit"
+                        value="{{ old('harga_unit', $item->harga_unit) }}">
+                    @error('harga_unit')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
                 </div>
@@ -91,23 +77,14 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="jumlah_barang" class="form-label">Jumlah Barang</label>
-                    <input type="number" class="form-control" name="jumlah_barang"
-                        value="{{ old('jumlah_barang', $item->jumlah_barang) }}">
-                    @error('jumlah_barang')
-                        <div class="alert alert-danger mt-2">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <div class="mb-3">
                     <label for="ruangan_id" class="form-label">Ruangan</label>
                     <select class="form-select" name="ruangan_id" id="ruangan_id" required>
                         <option disabled {{ old('ruangan_id', $item->ruangan_id) ? '' : 'selected' }}>Pilih Ruangan
                         </option>
-                        @foreach ($ruangans as $ruangan)
-                            <option value="{{ $ruangan->id }}"
-                                {{ old('ruangan_id', $item->ruangan_id) == $ruangan->id ? 'selected' : '' }}>
-                                {{ $ruangan->nama_ruangan }}
+                        @foreach ($ruangan as $r)
+                            <option value="{{ $r->id }}"
+                                {{ old('ruangan_id', $item->ruangan_id) == $r->id ? 'selected' : '' }}>
+                                {{ $r->nama_ruangan }}
                             </option>
                         @endforeach
                     </select>
@@ -130,35 +107,25 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="kepemilikan" class="form-label">Kepemilikan</label>
-                    <input type="text" class="form-control" name="kepemilikan"
-                        value="{{ old('kepemilikan', $item->kepemilikan_barang) }}">
-                    @error('kepemilikan')
+                    <label for="keterangan" class="form-label">Keterangan</label>
+                    <textarea type="text" class="form-control" name="keterangan" id="keterangan">{{ old('keterangan', $item->keterangan) }}</textarea>
+                    @error('keterangan')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
                 </div>
 
-                <div class="mb-3">
-                    <label for="penanggung_jawab" class="form-label">Penanggung Jawab</label>
-                    <input type="text" class="form-control" name="penanggung_jawab"
-                        value="{{ old('penanggung_jawab', $item->penanggung_jawab) }}">
-                    @error('penanggung_jawab')
-                        <div class="alert alert-danger mt-2">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <div class="mb-3">
-                    <label for="upload" class="form-label">Upload Gambar (Opsional)</label>
+                {{-- <div class="mb-3"> --}}
+                    {{-- <label for="upload" class="form-label">Upload Gambar (Opsional)</label>
                     <input type="file" class="form-control" name="upload">
                     @error('upload')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
-                    @enderror
-                    @if ($item->gambar_barang)
+                    @enderror --}}
+                    {{-- @if ($item->barangMaster->gambar_barang)
                         <div class="mt-2">
-                            <img src="{{ asset($item->gambar_barang) }}" alt="gambar saat ini" width="100">
+                            <img src="{{ asset($item->barangMaster->gambar_barang) }}" alt="gambar saat ini" width="100">
                         </div>
-                    @endif
-                </div>
+                    @endif --}}
+                {{-- </div> --}}
 
             </div>
             <div class="modal-footer">

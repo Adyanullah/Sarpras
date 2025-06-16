@@ -205,6 +205,12 @@ class AjuanController extends Controller
                         $this->approvePengadaan($ajuan);
                         $ajuan->status = 'disetujui';
                     } else {
+                        if ($ajuan->gambar_barang) {
+                            $gambarPath = public_path($ajuan->gambar_barang);
+                            if (file_exists($gambarPath)) {
+                                @unlink($gambarPath);
+                            }
+                        }
                         $ajuan->status = 'ditolak';
                     }
                     $ajuan->save();
@@ -319,16 +325,21 @@ class AjuanController extends Controller
 
                 case 'barang_rusak':
                     $ajuan = BarangRusak::with('barang')->findOrFail($id);
+                    $barang = $ajuan->barang;
                     if ($status === 'Disetujui') {
                         $ajuan->status_ajuan = 'disetujui';
-                        $barang = $ajuan->barang;
-                        $kondisi = $ajuan->kondisi_barang;
                         if ($barang) {
-                            $barang->kondisi_barang = $kondisi;
+                            $barang->kondisi_barang = $ajuan->kondisi_barang;;
                             $barang->save();
                         }
                     } else {
                         $ajuan->status_ajuan = 'ditolak';
+                    }
+                    if ($ajuan->gambar_barang) {
+                        $gambarPath = public_path($ajuan->gambar_barang);
+                        if (file_exists($gambarPath)) {
+                            @unlink($gambarPath); // gunakan @ untuk suppress warning
+                        }
                     }
                     $ajuan->save();
                     break;

@@ -1,11 +1,11 @@
-@if ($errors->any())
+{{-- @if ($errors->any())
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             var myModal = new bootstrap.Modal(document.getElementById('editUser{{ $user->id }}'));
             myModal.show();
         });
     </script>
-@endif
+@endif --}}
 <div class="modal fade" id="editUser{{ $user->id }}" tabindex="-1" aria-labelledby="editUserLabel{{ $user->id }}" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <form class="modal-content" action="{{ route('user.update', $user->id) }}" method="post" enctype="multipart/form-data">
@@ -28,8 +28,8 @@
                     <label for="email{{ $user->id }}" class="form-label">Email</label>
                     <input type="email" class="form-control" name="email" id="email{{ $user->id }}" value="{{ old('email', $user->email) }}" required>
                 </div>
-{{-- 
-                <div class="mb-3">
+
+                {{-- <div class="mb-3">
                     <label for="password{{ $user->id }}" class="form-label">Password (opsional)</label>
                     <input type="password" class="form-control" name="password" id="password{{ $user->id }}" placeholder="Kosongkan jika tidak diubah">
                 </div> --}}

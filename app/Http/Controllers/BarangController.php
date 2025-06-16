@@ -87,17 +87,6 @@ class BarangController extends Controller
             return redirect()->route('inventaris.index');
         }
         $ruangan = Ruangan::all();
-        // $peminjaman = Peminjaman::where('status_peminjaman', 'Dipinjam')
-        //     ->whereHas('ajuan', function ($query) {
-        //         $query->where('status', 'disetujui');
-        //     })
-        //     ->sum('jumlah_barang');
-
-        // $perawatan = Perawatan::where('status', 'belum')
-        //     ->whereHas('ajuan', function ($query) {
-        //         $query->where('status', 'disetujui');
-        //     })
-        //     ->sum('jumlah');
 
         $qr = $item->kode_barang;
         $qrCode = QrCode::size(200)->generate($qr);
@@ -143,6 +132,42 @@ class BarangController extends Controller
         ]);
 
         return redirect()->back()->with('success', 'Barang rusak berhasil diajukan.');
+    }
+
+    public function updateMater(Request $request, $id)
+    {
+        $barang = BarangMaster::findOrFail($id);
+
+        $validated = $request->validate([
+            'nama_barang'   => 'required|string|max:255',
+            'jenis_barang'  => 'nullable|string|max:255',
+            'merk_barang'   => 'nullable|string|max:255',
+            'gambar_barang' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        ]);
+
+        // Update basic fields
+        $barang->nama_barang = $validated['nama_barang'];
+        $barang->jenis_barang = $validated['jenis_barang'];
+        $barang->merk_barang = $validated['merk_barang'];
+
+        // Handle file upload (jika ada)
+        if ($request->hasFile('gambar_barang')) {
+            // Optional: hapus gambar lama
+            if ($barang->gambar_barang && file_exists(public_path($barang->gambar_barang))) {
+                unlink(public_path($barang->gambar_barang));
+            }
+
+            $file = $request->file('gambar_barang');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $filePath = 'uploads/barang/' . $fileName;
+            $file->move(public_path('uploads/barang'), $fileName);
+
+            $barang->gambar_barang = $filePath;
+        }
+
+        $barang->save();
+
+        return redirect()->back()->with('success', 'Data berhasil diperbarui.');
     }
 
     public function aksi(Request $request)
@@ -437,36 +462,32 @@ class BarangController extends Controller
     // }
 
 
-    // public function update(Request $request, $id)
-    // {
-    //     $request->validate([
-    //         'nama_barang' => 'required|string|max:255',
-    //         'jenis_barang' => 'required|string|max:255',
-    //         'merk_barang' => 'required|string|max:255', // wajib karena tidak nullable
-    //         'tahun_perolehan' => 'nullable|digits:4|integer|min:1900|max:' . date('Y'),
-    //         'sumber_dana' => 'required|in:BOS,DAK,Hibah', // ENUM
-    //         'harga_perolehan' => 'nullable|numeric|min:0',
-    //         'cv_pengadaan' => 'nullable|string|max:255',
-    //         'jumlah_barang' => 'required|integer|min:1',
-    //         'ruangan_id' => 'required|exists:ruangans,id', // foreign key
-    //         'kondisi_barang' => 'required|in:baik,rusak,berat', // ENUM kondisi_barang
-    //         'kepemilikan' => 'required|string|max:255',
-    //         'penanggung_jawab' => 'nullable|string|max:255',
-    //         'upload' => 'nullable|image|mimes:jpg,png,jpeg|max:2048',
-    //     ]);
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'tahun_perolehan' => 'nullable|digits:4|integer|min:1900|max:' . date('Y'),
+            'sumber_dana' => 'required|string|max:255',
+            'harga_unit' => 'nullable|integer|min:0',
+            'cv_pengadaan' => 'nullable|string|max:255',
+            'ruangan_id' => 'required|exists:ruangans,id',
+            'kondisi_barang' => 'required|in:baik,rusak,berat',
+            'keterangan' => 'nullable|string|max:1000',
+        ]);
 
-    //     $barang = Barang::findOrFail($id);
+        $barang = Barang::findOrFail($id);
 
-    //     $barang->update($request->except('upload'));
+        $barang->update([
+            'tahun_perolehan' => $request->tahun_perolehan,
+            'sumber_dana' => $request->sumber_dana,
+            'harga_unit' => $request->harga_unit,
+            'cv_pengadaan' => $request->cv_pengadaan,
+            'ruangan_id' => $request->ruangan_id,
+            'kondisi_barang' => $request->kondisi_barang,
+            'keterangan' => $request->keterangan,
+        ]);
 
-    //     if ($request->hasFile('upload')) {
-    //         $gambar = $request->file('upload')->store('uploads', 'public');
-    //         $barang->gambar_barang = 'storage/' . $gambar;
-    //         $barang->save();
-    //     }
-
-    //     return redirect()->back()->with('success', 'Data berhasil diperbarui.');
-    // }
+        return redirect()->back()->with('success', 'Data barang berhasil diperbarui.');
+    }
 
     // public function destroy($id)
     // {

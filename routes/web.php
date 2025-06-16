@@ -37,6 +37,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/inventaris/unit/{id}/detail', [BarangController::class, 'show'])->name('inventaris.detail');
     Route::post('/inventaris/unit/{id}/rusak', [BarangController::class, 'barangRusak'])->name('inventaris.rusak');
     Route::post('/inventaris/unit/aksi', [BarangController::class, 'aksi'])->name('inventaris.aksi');
+    Route::put('/inventaris/detail/{id}/edit', [BarangController::class, 'update'])->name('inventaris.update');
+    Route::put('/inventaris/{id}/edit', [BarangController::class, 'updateMaster'])->name('inventaris.update.master');
 
     Route::get('/inventaris/qr-cetak/{ukuran}', [BarangController::class, 'cetakQR'])->name('inventaris.qr.cetak');
     Route::get('/barang/scan/result', [BarangController::class, 'scanResult']);
@@ -47,7 +49,6 @@ Route::middleware('auth')->group(function () {
 
 
     // Route::post('/inventaris/tambah', [BarangController::class, 'store'])->name('inventaris.store');
-    // Route::put('/inventaris/detail/{id}', [BarangController::class, 'update'])->name('inventaris.update');
     // Route::delete('/inventaris/hapus/{id}', [BarangController::class, 'destroy'])->name('inventaris.destroy');
     // Route::delete('/inventaris/ajukanHapus/{id}', [BarangController::class, 'destroyApp'])->name('inventaris.destroy.app');
 

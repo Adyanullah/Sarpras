@@ -1,12 +1,30 @@
 @if ($errors->any())
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            var myModal = new bootstrap.Modal(document.getElementById('tambahUser'));
-            myModal.show();
+            const modalEl = document.getElementById('tambahUser');
+            // Cek apakah modal sudah memiliki instance
+            let modalInstance = bootstrap.Modal.getInstance(modalEl);
+            if (!modalInstance) {
+                modalInstance = new bootstrap.Modal(modalEl);
+            }
+
+            // Hindari buka ulang modal jika sudah terbuka
+            if (!modalEl.classList.contains('show')) {
+                modalInstance.show();
+            }
+
+            // Pastikan hanya ada satu backdrop
+            setTimeout(() => {
+                const backdrops = document.querySelectorAll('.modal-backdrop');
+                if (backdrops.length > 1) {
+                    for (let i = 1; i < backdrops.length; i++) {
+                        backdrops[i].remove();
+                    }
+                }
+            }, 200);
         });
     </script>
 @endif
-
 <div class="modal fade" id="tambahUser" tabindex="-1" aria-labelledby="tambahUserTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <form class="modal-content" action="{{ route('user.store') }}" method="post" enctype="multipart/form-data">

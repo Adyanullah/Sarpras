@@ -113,7 +113,7 @@
                                 <a type="button" class="topbar-button" id="page-header-user-dropdown"
                                     data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <span class="d-flex align-items-center">
-                                        <img class="rounded-circle" width="32" src="{{ asset('/assets/images/users/avatar-1.jpg') }}"
+                                        <img class="rounded-circle" width="32" src="{{ Auth::user()->photo ? asset(Auth::user()->photo) : asset('/assets/images/dummy.jpg') }}"
                                             alt="avatar-3">
                                     </span>
                                 </a>
@@ -121,11 +121,11 @@
                                     <!-- item-->
                                     <h6 class="dropdown-header">Welcome {{ Auth::user()->name }}!</h6>
 
-                                    {{-- <a class="dropdown-item" href="/auth/edit-password">
+                                    <a class="dropdown-item" href="/auth/edit-password">
                                         <iconify-icon icon="solar:lock-keyhole-broken"
                                             class="align-middle me-2 fs-18"></iconify-icon><span
                                             class="align-middle">Change Password</span>
-                                    </a> --}}
+                                    </a>
 
                                     <div class="dropdown-divider my-1"></div>
                                     {{-- <form action="/auth/logout" method="post"> --}}
