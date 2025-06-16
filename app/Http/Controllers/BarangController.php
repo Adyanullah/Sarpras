@@ -134,7 +134,7 @@ class BarangController extends Controller
         return redirect()->back()->with('success', 'Barang rusak berhasil diajukan.');
     }
 
-    public function updateMater(Request $request, $id)
+    public function updateMaster(Request $request, $id)
     {
         $barang = BarangMaster::findOrFail($id);
 
