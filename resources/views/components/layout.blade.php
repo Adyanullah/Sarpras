@@ -121,7 +121,7 @@
                                     <!-- item-->
                                     <h6 class="dropdown-header">Welcome {{ Auth::user()->name }}!</h6>
 
-                                    <a class="dropdown-item" href="/auth/edit-password">
+                                    <a class="dropdown-item" href="{{ route('user.password.edit') }}">
                                         <iconify-icon icon="solar:lock-keyhole-broken"
                                             class="align-middle me-2 fs-18"></iconify-icon><span
                                             class="align-middle">Change Password</span>

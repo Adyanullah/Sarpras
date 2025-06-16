@@ -139,4 +139,9 @@ Route::middleware('auth')->group(function () {
     Route::delete('/pengaturan/user/{id}', [UserController::class, 'destroy'])->name('user.destroy');
     Route::post('/pengaturan/user/tambah', [UserController::class, 'store'])->name('user.store');
     Route::put('/pengaturan/user/{id}', [UserController::class, 'update'])->name('user.update');
+
+    //user
+    Route::get('/ganti-password', [UserController::class, 'editPassword'])->name('user.password.edit');
+    Route::post('/ganti-password', [UserController::class, 'updatePassword'])->name('user.password.update');
+
 });
