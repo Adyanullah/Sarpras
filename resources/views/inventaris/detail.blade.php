@@ -12,9 +12,6 @@
             </div>
         </div>
     </div>
-    @if ($errors->any())
-        @dd($errors->all())
-    @endif
     <div class="row g-4">
         <!-- Kolom Kiri -->
         <div class="col-md-6">

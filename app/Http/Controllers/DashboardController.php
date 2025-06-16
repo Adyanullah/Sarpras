@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Barang;
+use App\Models\BarangRusak;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -25,11 +26,15 @@ class DashboardController extends Controller
             ->pluck('total', 'tahun_perolehan');
 
         // Ambil jumlah barang rusak per tahun
-        $barangRusakPerTahun = DB::table('barangs')
-            ->select('tahun_perolehan', DB::raw('count(*) as total'))
-            ->whereIn('kondisi_barang', ['rusak','berat'])
-            ->groupBy('tahun_perolehan')
-            ->pluck('total', 'tahun_perolehan');
+        // $barangRusakPerTahun = DB::table('barangs')
+        //     ->select('tahun_perolehan', DB::raw('count(*) as total'))
+        //     ->whereIn('kondisi_barang', ['rusak','berat'])
+        //     ->groupBy('tahun_perolehan')
+        //     ->pluck('total', 'tahun_perolehan');
+        $barangRusakPerTahun = BarangRusak::selectRaw('YEAR(created_at) as tahun, COUNT(*) as total')
+            ->where('status_ajuan', 'disetujui')
+            ->groupBy(DB::raw('YEAR(created_at)'))
+            ->pluck('total', 'tahun');
 
         // Gabungkan semua tahun sebagai x-axis
         $tahunLabels = $barangBaruPerTahun->keys()
@@ -55,9 +60,5 @@ class DashboardController extends Controller
             'dataBarangBaru',
             'dataBarangRusak'
         ));
-
-        // return view('dashboard.app', compact('totalBarang', 'barangRusak', 'barangBaru2025', 'tahunSekarang'));
-
-        // return view('dashboard.app', compact('totalBarang', 'barangRusak', 'barangBaru2025'));
     }
 }
