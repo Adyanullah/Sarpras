@@ -64,7 +64,9 @@
             <canvas id="qr-{{ $loop->index }}"></canvas>
             <div class="label-info">
                 <strong>{{ $barang->barangMaster->nama_barang }}</strong><br>
-                {{ $barang->kode_barang }}
+                {{ $barang->kode_barang }}<br>
+                {{ $barang->tahun_perolehan }}<br>
+                {{ $barang->sumber_dana }}
             </div>
         </div>
         @endforeach

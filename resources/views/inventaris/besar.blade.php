@@ -65,7 +65,8 @@
             <div class="label-info">
                 <strong>{{ $barang->barangMaster->nama_barang }}</strong><br>
                 Kode: {{ $barang->kode_barang }}<br>
-                Tahun: {{ $barang->tahun_perolehan }}
+                Tahun: {{ $barang->tahun_perolehan }}<br>
+                Dana: {{ $barang->sumber_dana }}
             </div>
         </div>
         @endforeach
