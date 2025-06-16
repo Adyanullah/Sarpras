@@ -382,7 +382,7 @@ class BarangController extends Controller
     public function scanResult(Request $request)
     {
         $fullUrl = $request->input('url'); // Kirimkan URL hasil scan sebagai parameter 'url'
-
+        $ruangan = Ruangan::all();
         // Validasi: URL harus dari domain kamu
         $parsed = parse_url($fullUrl);
         if (!isset($parsed['host']) || $parsed['host'] !== request()->getHost()) {
@@ -399,7 +399,7 @@ class BarangController extends Controller
         
         $item = Barang::where('kode_barang', $kode)->firstOrFail();
 
-        return view('inventaris.detail', compact('item'));
+        return view('inventaris.detail', compact('item', 'ruangan'));
     }
 
     // public function store(Request $request)
