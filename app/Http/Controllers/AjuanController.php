@@ -225,7 +225,7 @@ class AjuanController extends Controller
                             $item->save();
                             $barang = $item->barang;
                             if ($barang) {
-                                $barang->sedia = 0; // 0 = tidak tersedia
+                                $barang->sedia = 0.1; // 0 = tidak tersedia
                                 $barang->save();
                             }
                         }

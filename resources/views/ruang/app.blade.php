@@ -11,7 +11,7 @@
                     <th scope="col">Kode Ruang</th>
                     <th scope="col">Nama Ruang</th>
                     <th scope="col">Jumlah Barang</th>
-                    <th scope="col">Aksi</th>
+                    <th scope="col">Aksiaaaaaaaaaaaa</th>
                 </tr>
             </thead>
             <tbody>

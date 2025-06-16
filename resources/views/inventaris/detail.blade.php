@@ -92,7 +92,12 @@
                             </tr>
                             <tr>
                                 <th>Keterangan</th>
-                                <td>{{ $item->keterangan }}</td>
+                                <td>@if ($item->sedia == 0.1)
+                                    <span><span class="badge bg-warning">Sedang dalam Peminjaman</span> - 
+                                    @elseif ($item->sedia == 0)
+                                    <span class="badge bg-warning">Sedang dalam Perawatan</span> - 
+                                @endif
+                                    {{ $item->keterangan }}</td>
                             </tr>
                             {{-- <tr>
                                 <th>Penanggung Jawab</th>
