@@ -10,9 +10,7 @@
             </div>
         </div>
     </div>
-    @if ($errors->any())
-        @dd($errors->all())
-    @endif
+    
     <div class="row mb-3">
         <div class="col-md-6">
             @if (in_array(auth()->user()->role, [1, 3]))

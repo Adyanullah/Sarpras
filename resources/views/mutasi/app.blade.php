@@ -43,9 +43,12 @@
                         </td>
                         <td>
                             <div class="d-flex gap-1">
+                                <button type="button" class="btn btn-info px-2 py-1" data-bs-toggle="modal" data-bs-target="#modalDetail{{ $loop->iteration }}">
+                                    Lihat
+                                </button>
+                                @include('components.detail', ['units' => $item->mutasiItem, 'modalId' => $loop->iteration])
                                 @if ($item->status_ajuan == 'pending')
-                                    
-                                    <button type="button" class="btn btn-primary px-2 py-1" data-bs-toggle="modal" data-bs-target="#editMutasi{{ $item->id }}">
+                                    <button type="button" class="btn btn-warning px-2 py-1" data-bs-toggle="modal" data-bs-target="#editMutasi{{ $item->id }}">
                                         Edit
                                     </button>
                                     @include('mutasi.popup.edit')

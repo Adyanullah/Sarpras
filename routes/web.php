@@ -47,15 +47,6 @@ Route::middleware('auth')->group(function () {
         return view('inventaris.qr');
     });
 
-
-    // Route::post('/inventaris/tambah', [BarangController::class, 'store'])->name('inventaris.store');
-    // Route::delete('/inventaris/hapus/{id}', [BarangController::class, 'destroy'])->name('inventaris.destroy');
-    // Route::delete('/inventaris/ajukanHapus/{id}', [BarangController::class, 'destroyApp'])->name('inventaris.destroy.app');
-
-    // Route::post('/inventaris/pengadaan', [BarangController::class, 'pengadaan'])->name('inventaris.pengadaan');
-    // Route::post('/inventaris/pengadaan/baru', [BarangController::class, 'pengadaanBaru'])->name('inventaris.pengadaan.baru');
-
-
     // Ruangan
     Route::get('/ruang', [DataRuanganController::class, 'index'])->middleware('role:1');
     Route::post('/ruang/tambah', [DataRuanganController::class, 'store']);
@@ -144,4 +135,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/ganti-password', [UserController::class, 'editPassword'])->name('user.password.edit');
     Route::post('/ganti-password', [UserController::class, 'updatePassword'])->name('user.password.update');
 
+    
+
+    // Route::post('/inventaris/tambah', [BarangController::class, 'store'])->name('inventaris.store');
+    // Route::delete('/inventaris/hapus/{id}', [BarangController::class, 'destroy'])->name('inventaris.destroy');
+    // Route::delete('/inventaris/ajukanHapus/{id}', [BarangController::class, 'destroyApp'])->name('inventaris.destroy.app');
+
+    // Route::post('/inventaris/pengadaan', [BarangController::class, 'pengadaan'])->name('inventaris.pengadaan');
+    // Route::post('/inventaris/pengadaan/baru', [BarangController::class, 'pengadaanBaru'])->name('inventaris.pengadaan.baru');
 });

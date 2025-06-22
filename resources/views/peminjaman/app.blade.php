@@ -44,6 +44,10 @@
                         </td>
                         <td>
                             <div class="d-flex gap-1">
+                                <button type="button" class="btn btn-info px-2 py-1" data-bs-toggle="modal" data-bs-target="#modalDetail{{ $loop->iteration }}">
+                                    Lihat
+                                </button>
+                                @include('components.detail', ['units' => $item->peminjamanItem, 'modalId' => $loop->iteration])
                                 @if ($item->status_ajuan == 'disetujui')
                                     <form action="{{ route('peminjaman.updateStatus', ['id' => $item->id]) }}"
                                         method="POST" onsubmit="return confirm('Yakin?')">
@@ -67,7 +71,7 @@
                                         </div>
                                     </form>
                                 @elseif ($item->status_ajuan == 'pending')
-                                    <button type="button" class="btn btn-primary px-2 py-1" data-bs-toggle="modal"
+                                    <button type="button" class="btn btn-warning px-2 py-1" data-bs-toggle="modal"
                                         data-bs-target="#editPeminjaman{{ $item->id }}">
                                         Edit
                                     </button>

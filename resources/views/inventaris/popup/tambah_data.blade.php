@@ -9,9 +9,6 @@
         });
     </script>
 @endif
-@if ($errors->any())
-    @dd($errors->all())
-@endif
 <div class="modal fade" id="TambahData" tabindex="-1" aria-labelledby="exampleModalCenteredScrollableTitle"
     aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">

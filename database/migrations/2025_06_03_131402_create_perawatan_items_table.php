@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('barang_id')->constrained('barangs')->onDelete('cascade');
             $table->foreignId('perawatan_id')->constrained('perawatans')->onDelete('cascade');
+            $table->enum('status_perawatan', ['selesai', 'belum'])->default('belum');   
             $table->timestamps();
         });
     }

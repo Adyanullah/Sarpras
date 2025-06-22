@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('barang_id')->constrained('barangs')->onDelete('cascade');
             $table->foreignId('peminjaman_id')->constrained('peminjaman')->onDelete('cascade');
+            $table->enum('status_peminjaman',['Dipinjam', 'Dikembalikan', 'Diperpanjang', 'Hilang'])->default('Dipinjam');
             $table->timestamps();
         });
     }

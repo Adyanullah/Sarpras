@@ -10,16 +10,22 @@
             </div>
             <div class="modal-body d-flex">
                 <dl class="row">
+                    <dt class="col-sm-4">Tanggal Pengajuan</dt>
+                    <dd class="col-sm-6">{{ $item['created_at'] }}</dd>
+                    
                     <dt class="col-sm-4">Nama Pengaju</dt>
                     <dd class="col-sm-6">{{ $item['pengaju'] }}</dd>
-
-                    <dt class="col-sm-4">Ruangan</dt>
-                    <dd class="col-sm-6">{{ $item['ruangan'] }}
-                        {{-- Jika Mutasi, tampilkan “ke {tambahan}” --}}
-                        @if ($item['jenis'] === 'Mutasi' && $item['tambahan'])
-                            &nbsp;→ ke {{ $item['tambahan'] }}
-                        @endif
-                    </dd>
+                    
+                    @if (in_array($item['jenis'], ['Pengadaan Tambah','Pengadaan Baru', 'Mutasi']))
+                        <dt class="col-sm-4">Ruangan</dt>
+                        <dd class="col-sm-6">{{ $item['ruangan'] }}
+                            {{-- Jika Mutasi, tampilkan “ke {tambahan}” --}}
+                            @if ($item['jenis'] === 'Mutasi' && $item['tambahan'])
+                                &nbsp;→ ke {{ $item['tambahan'] }}
+                            @endif
+                        </dd>
+                        
+                    @endif
 
                     <dt class="col-sm-4">Jenis Ajuan</dt>
                     <dd class="col-sm-6">{{ $item['jenis'] }}</dd>
@@ -32,8 +38,6 @@
                     <dt class="col-sm-4">Keperluan / Keterangan</dt>
                     <dd class="col-sm-6">{{ $item['keterangan'] }}</dd>
 
-                    <dt class="col-sm-4">Tanggal Pengajuan</dt>
-                    <dd class="col-sm-6">{{ $item['created_at'] }}</dd>
                 </dl>
 
                 <hr>

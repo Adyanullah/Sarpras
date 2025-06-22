@@ -34,8 +34,12 @@
                         <td><span class="badge bg-warning">{{ $item->status_ajuan }}</span></td>
                         <td>
                             <div class="d-flex gap-1">
+                                <button type="button" class="btn btn-info px-2 py-1" data-bs-toggle="modal" data-bs-target="#modalDetail{{ $loop->iteration }}">
+                                    Lihat
+                                </button>
+                                @include('components.detail', ['units' => $item->penghapusanItem, 'modalId' => $loop->iteration])
                                 @if ($item->status_ajuan == 'pending')
-                                    <button type="button" class="btn btn-primary px-2 py-1" data-bs-toggle="modal" data-bs-target="#editPenghapusan{{ $item->id }}">
+                                    <button type="button" class="btn btn-warning px-2 py-1" data-bs-toggle="modal" data-bs-target="#editPenghapusan{{ $item->id }}">
                                         Edit
                                     </button>
                                     @include('penghapusan.popup.edit')

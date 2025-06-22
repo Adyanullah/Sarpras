@@ -35,11 +35,11 @@
                     <input type="date" name="tanggal_peminjaman" class="form-control"
                         value="{{ old('tanggal_peminjaman', $item->tanggal_peminjaman) }}">
                 </div>
-                <div class="mb-3">
+                {{-- <div class="mb-3">
                     <label for="tanggal_pengembalian" class="form-label">Tanggal Pengembalian</label>
                     <input type="date" name="tanggal_pengembalian" class="form-control"
                         value="{{ old('tanggal_pengembalian', $item->tanggal_pengembalian) }}">
-                </div>
+                </div> --}}
 
                 <div class="mb-3">
                     <label for="nama_peminjam" class="form-label">Nama Peminjam</label>

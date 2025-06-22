@@ -73,22 +73,21 @@
             </form>
         </div>
     </div>
-
-    <div class="col-md-6 d-flex gap-2 mb-3">
-        @csrf
-        @include('inventaris.popup.dropdown')
-        @include('inventaris.popup.cetak')
-        <button type="button" class="btn btn-danger" id="trigger-delete" disabled data-bs-toggle="modal"
-            data-bs-target="#hapusModal">
-            <i class="bi bi-trash me-2"></i>Hapus Terpilih
-        </button>
-    </div>
-    {{-- <input type="hidden" name="selected_ids" id="selected-ids" value="">
-    <input type="hidden" name="action_type" id="action-type" value=""> --}}
-    @include('peminjaman.popup.peminjaman')
-    @include('perawatan.popup.perawatan')
-    @include('mutasi.popup.mutasi')
-    @include('inventaris.popup.penghapusan')
+    @if (in_array(auth()->user()->role, [1,3]))
+        <div class="col-md-6 d-flex gap-2 mb-3">
+            @csrf
+            @include('inventaris.popup.dropdown')
+            @include('inventaris.popup.cetak')
+            <button type="button" class="btn btn-danger" id="trigger-delete" disabled data-bs-toggle="modal"
+                data-bs-target="#hapusModal">
+                <i class="bi bi-trash me-2"></i>Hapus Terpilih
+            </button>
+        </div>
+        @include('peminjaman.popup.peminjaman')
+        @include('perawatan.popup.perawatan')
+        @include('mutasi.popup.mutasi')
+        @include('inventaris.popup.penghapusan')
+    @endif
     @if (session('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             <strong>Berhasil!</strong> {{ session('success') }}
@@ -105,9 +104,11 @@
         <table id="dataTable" class="table table-bordered table-striped align-middle">
             <thead class="table-light">
                 <tr>
-                    <th scope="col">
-                        <input type="checkbox" id="select-all">
-                    </th>
+                    @if (in_array(auth()->user()->role, [1, 3]))
+                        <th scope="col">
+                            <input type="checkbox" id="select-all">
+                        </th>
+                    @endif 
                     <th scope="col">No</th>
                     <th scope="col">Kode Barang</th>
                     <th scope="col">Nama Barang</th>
@@ -122,10 +123,12 @@
             <tbody>
                 @forelse ($barangs as $item)
                     <tr>
-                        <td>
-                            <input type="checkbox" class="row-checkbox" name="selected_ids[]"
-                                value="{{ $item->id }}">
-                        </td>
+                        @if (in_array(auth()->user()->role, [1, 3]))
+                            <td>
+                                <input type="checkbox" class="row-checkbox" name="selected_ids[]"
+                                    value="{{ $item->id }}">
+                            </td>
+                        @endif
                         <td>{{ $loop->iteration + ($barangs->currentPage() - 1) * $barangs->perPage() }}</td>
                         <td>{{ $item->kode_barang }}</td>
                         <td>{{ $item->barangMaster->nama_barang }}</td>
