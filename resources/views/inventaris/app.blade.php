@@ -11,10 +11,10 @@
         </div>
     </div>
     
-    <div class="row mb-3">
-        <div class="col-md-6">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
             @if (in_array(auth()->user()->role, [1, 3]))
-                <div class="btn-group me-2">
+                <div class="btn-group">
                     <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
                         aria-expanded="false">
                         <i class="bi bi-plus-circle me-2"></i>Barang Masuk
@@ -30,15 +30,15 @@
                 @include('inventaris.popup.pengadaan_baru')
             @endif
         </div>
-        <div class="col-md-6 text-end">
+        <divtext-end">
             <a href="/scan" class="btn btn-outline-primary d-inline-flex align-items-center">
                 <i class="bi bi-qr-code-scan me-2"></i> Scan QR
             </a>
         </div>
     </div>
-    <div class="col-md-10 text-end">
+    <div class="container-fluid col-md-12 text-end">
         <form method="GET" action="{{ route('inventaris.index') }}">
-            <div class="row mb-3 align-items-center">
+            <div class="d-flex align-items-between md-12 gap-2 mb-3">
                 <div class="col-md-8">
                     <input type="text" id="globalSearch" name="search" class="form-control"
                         placeholder="Cari nama barang....">
@@ -63,7 +63,7 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     @endif
-    <div class="table-responsive">
+    <div class="container-fluid table-responsive">
         <table id="dataTable" class="table table-bordered table-striped align-middle">
             <thead class="table-light">
                 <tr>
@@ -139,7 +139,7 @@
                             </td>
                     </tr>
                 @empty
-                    Data Kosong
+                    <td colspan="9" class="text-center">Tidak ada pengajuan</td>
                 @endforelse
             </tbody>
         </table>

@@ -14,7 +14,7 @@
     <div class="row mb-3">
         <div class="col-md-10">
             <form method="GET" action="{{ route('inventaris.unit', $barang->id) }}">
-                <div class="row align-items-center">
+                <div class="row align-items-center gap-2">
                     <div class="col-md-3">
                         <select class="form-select" id="ruangan_id" name="ruangan_id">
                             <option value="" disabled {{ request('ruangan_id') ? '' : 'selected' }}>Pilih Lokasi
@@ -78,7 +78,7 @@
             @csrf
             @include('inventaris.popup.dropdown')
             @include('inventaris.popup.cetak')
-            <button type="button" class="btn btn-danger" id="trigger-delete" disabled data-bs-toggle="modal"
+            <button type="button" class="btn btn-danger px-2" id="trigger-delete" disabled data-bs-toggle="modal"
                 data-bs-target="#hapusModal">
                 <i class="bi bi-trash me-2"></i>Hapus Terpilih
             </button>

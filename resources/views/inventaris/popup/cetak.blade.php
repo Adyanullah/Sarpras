@@ -6,7 +6,7 @@
         @endphp
         <input type="hidden" name="selected_ids" id="cetak-selected-ids" value="{{ $selectedIds ?? '' }}">
         {{-- tombol utama dropdown --}}
-        <button type="button" class="btn btn-secondary dropdown-toggle" id="trigger-cetak" @if (!isset($disabled) || $disabled) disabled @endif
+        <button type="button" class="btn btn-secondary dropdown-toggle px-2" id="trigger-cetak" @if (!isset($disabled) || $disabled) disabled @endif
             data-bs-toggle="dropdown" aria-expanded="false">
             <i class="bi bi-printer me-2"></i>Cetak QR
         </button>

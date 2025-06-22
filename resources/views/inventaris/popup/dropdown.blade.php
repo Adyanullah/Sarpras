@@ -1,5 +1,5 @@
 <div class="btn-group">
-    <button type="button" class="btn btn-primary dropdown-toggle" id="trigger-ajuan"
+    <button type="button" class="btn btn-primary dropdown-toggle px-2" id="trigger-ajuan"
         @if (!isset($disabled) || $disabled) disabled @endif data-bs-toggle="dropdown" aria-expanded="false">
         <i class="bi bi-plus-circle me-2"></i>Pengajuan
     </button>

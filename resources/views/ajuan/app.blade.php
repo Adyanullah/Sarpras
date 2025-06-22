@@ -2,7 +2,7 @@
     <h4 class="mb-4">Verifikasi Ajuan</h4>
 
     {{-- Kartu Ringkasan Jumlah Ajuan --}}
-    <div class="container my-4">
+    {{-- <div class="container my-4">
         <div class="row g-3">
             <div class="col-md-3">
                 <div class="card text-center shadow-sm border-0">
@@ -53,7 +53,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> --}}
 
     {{-- Filter (placeholder saja) --}}
     <div class="row g-3 mb-4">
