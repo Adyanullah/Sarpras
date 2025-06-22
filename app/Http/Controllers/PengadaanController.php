@@ -70,7 +70,7 @@ class PengadaanController extends Controller
             if ($request->hasFile('gambar_barang')) {
                 $file = $request->file('gambar_barang');
                 $filename = time() . '_' . $file->getClientOriginalName();
-                $path = public_path('uploads/inventaris');
+                $path = $_SERVER['DOCUMENT_ROOT'] . '/uploads/inventaris';
 
                 if (!file_exists($path)) {
                     mkdir($path, 0777, true);
@@ -112,7 +112,7 @@ class PengadaanController extends Controller
         if ($request->hasFile('gambar_barang')) {
             $file = $request->file('gambar_barang');
             $filename = time() . '_' . $file->getClientOriginalName();
-            $path = public_path('uploads/inventaris');
+            $path = $_SERVER['DOCUMENT_ROOT'] . '/uploads/inventaris';
 
             if (!file_exists($path)) {
                 mkdir($path, 0777, true);

@@ -55,7 +55,7 @@ class UserController extends Controller
             $file = $request->file('photo');
             $filename = time() . '_' . $file->getClientOriginalName();
 
-            $destinationPath = public_path('uploads/profile');
+            $destinationPath = $_SERVER['DOCUMENT_ROOT'] . '/uploads/profile';
 
             if (!file_exists($destinationPath)) {
                 mkdir($destinationPath, 0777, true);
@@ -87,7 +87,7 @@ class UserController extends Controller
         if ($request->hasFile('photo')) {
             $file = $request->file('photo');
             $filename = time() . '_' . $file->getClientOriginalName();
-            $destinationPath = public_path('uploads/profile');
+            $destinationPath = $_SERVER['DOCUMENT_ROOT'] . '/uploads/profile';
 
             // Buat folder jika belum ada
             if (!File::exists($destinationPath)) {

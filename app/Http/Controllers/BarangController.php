@@ -51,7 +51,7 @@ class BarangController extends Controller
 
         $query = Barang::with('ruangan', 'barangMaster')
             ->where('barang_id', $id)->where('sedia', 1);
-
+        // dd($query->get());
         if ($request->filled('ruangan_id')) {
             $query->where('ruangan_id', $request->ruangan_id);
         }
@@ -70,7 +70,7 @@ class BarangController extends Controller
 
         $barangs = $query->paginate(12);
 
-        $barang = Barang::where('id', $id)->first();
+        $barang = Barang::where('barang_id', $id)->first();
 
         $tahunList = Barang::selectRaw('YEAR(tahun_perolehan) as tahun')
             ->distinct()
@@ -112,7 +112,7 @@ class BarangController extends Controller
         if ($request->hasFile('gambar_barang')) {
             $file = $request->file('gambar_barang');
             $filename = time() . '_' . $file->getClientOriginalName();
-            $path = public_path('uploads/ajuan');
+            $path = $_SERVER['DOCUMENT_ROOT'] . '/uploads/ajuan';
 
             if (!file_exists($path)) {
                 mkdir($path, 0777, true);
@@ -160,9 +160,10 @@ class BarangController extends Controller
             $file = $request->file('gambar_barang');
             $fileName = time() . '_' . $file->getClientOriginalName();
             $filePath = 'uploads/barang/' . $fileName;
-            $file->move(public_path('uploads/barang'), $fileName);
+            $file->move($_SERVER['DOCUMENT_ROOT'] . '/uploads/barang', $fileName);
 
             $barang->gambar_barang = $filePath;
+            
         }
 
         $barang->save();
