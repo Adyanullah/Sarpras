@@ -17,8 +17,12 @@ class Pengadaan extends Model
         return $this->belongsTo(BarangMaster::class);
     }
 
-    public function ruangan()
+    // public function ruangan()
+    // {
+    //     return $this->belongsTo(Ruangan::class);
+    // }
+    public function items()
     {
-        return $this->belongsTo(Ruangan::class);
+        return $this->hasMany(PengadaanItem::class, 'pengadaan_id');
     }
 }

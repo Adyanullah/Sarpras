@@ -42,29 +42,49 @@
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
                 </div>
-                <div class="col-md-12 mb-3">
-                    <label for="ruangan_id" class="form-label">Lokasi</label>
-                    <select name="ruangan_id" id="ruangan_id" class="form-select">
+                
+                <div id="fields-container" class="fields-container">
+                    <div class="row mb-3 field-row">
+                    <!-- Lokasi -->
+                    <div class="col-md-6">
+                        <label class="form-label">Lokasi</label>
+                        <select name="ruangan_id[]" class="form-select" required>
                         <option disabled selected>-- Pilih Lokasi --</option>
-                        @foreach ($ruangan as $ruangan)
-                            <option value="{{ $ruangan->id }}"
-                                {{ old('ruangan_id') == $ruangan->id ? 'selected' : '' }}>
-                                {{ $ruangan->nama_ruangan }}
-                            </option>
+                        @foreach($ruangan as $r)
+                            <option value="{{ $r->id }}">{{ $r->nama_ruangan }}</option>
                         @endforeach
-                    </select>
-                    @error('ruangan_id')
-                        <div class="alert alert-danger mt-2">{{ $message }}</div>
-                    @enderror
+                        </select>
+                        {{-- Tampilkan error untuk semua index ruangan_id --}}
+                        @error('ruangan_id.*')
+                        <div class="text-danger mt-1">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <!-- Jumlah -->
+                    <div class="col-md-4">
+                        <label class="form-label">Jumlah</label>
+                        <input type="number" name="jumlah[]" class="form-control" min="1" required>
+                        {{-- Tampilkan error untuk semua index jumlah --}}
+                        @error('jumlah.*')
+                        <div class="text-danger mt-1">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <!-- Tombol add/remove -->
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button type="button" class="btn btn-outline-success btn-add">
+                        <i class="bi bi-plus-lg"></i>
+                        </button>
+                    </div>
+                    </div>
                 </div>
-                <div class="col-md-12 mb-3">
-                    <label for="jumlah" class="form-label">Jumlah barang yang akan ditambah</label>
-                    <input type="number" name="jumlah" class="form-control" id="jumlah"
-                        placeholder="Contoh : 2" value="{{ old('jumlah') }}">
-                    @error('jumlah')
-                        <div class="alert alert-danger mt-2">{{ $message }}</div>
-                    @enderror
-                </div>
+
+                {{-- Error umum jika misalnya array kosong --}}
+                @if($errors->has('ruangan_id') || $errors->has('jumlah'))
+                    <div class="alert alert-danger">
+                    Pastikan setidaknya satu lokasi dan jumlah diisi dengan benar.
+                    </div>
+                @endif
                 <div class="col-md-12 mb-3">
                     <label for="harga_perolehan" class="form-label">Harga Satuan</label>
                     <input type="number" name="harga_perolehan" class="form-control" id="harga_perolehan"

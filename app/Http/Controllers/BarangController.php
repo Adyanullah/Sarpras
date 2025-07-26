@@ -16,10 +16,9 @@ use App\Models\PerawatanItem;
 use Illuminate\Http\Request;
 use App\Models\Ruangan;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
-use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Validation\Rule;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
-use Illuminate\Validation\ValidationException;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 
 class BarangController extends Controller
@@ -51,7 +50,7 @@ class BarangController extends Controller
 
         $query = Barang::with('ruangan', 'barangMaster')
             ->where('barang_id', $id)->where('sedia', 1);
-        // dd($query->get());
+            
         if ($request->filled('ruangan_id')) {
             $query->where('ruangan_id', $request->ruangan_id);
         }
@@ -68,7 +67,7 @@ class BarangController extends Controller
             $query->where('sumber_dana', $request->sumber_dana);
         }
 
-        $barangs = $query->paginate(12);
+        $barangs = $query->get();
 
         $barang = Barang::where('barang_id', $id)->first();
 
@@ -136,37 +135,54 @@ class BarangController extends Controller
 
     public function updateMaster(Request $request, $id)
     {
-        $barang = BarangMaster::findOrFail($id);
+        $master = BarangMaster::findOrFail($id);
 
         $validated = $request->validate([
-            'nama_barang'   => 'required|string|max:255',
-            'jenis_barang'  => 'nullable|string|max:255',
-            'merk_barang'   => 'nullable|string|max:255',
-            'gambar_barang' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'kode_barang'  => ['required','string','max:255',
+                               Rule::unique('barang_masters','kode_barang')->ignore($master->id)],
+            'nama_barang'  => 'required|string|max:255',
+            'jenis_barang' => 'nullable|string|max:255',
+            'merk_barang'  => 'nullable|string|max:255',
+            'gambar_barang'=> 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
-        // Update basic fields
-        $barang->nama_barang = $validated['nama_barang'];
-        $barang->jenis_barang = $validated['jenis_barang'];
-        $barang->merk_barang = $validated['merk_barang'];
+        DB::transaction(function() use ($request, $master, $validated) {
+            // simpan old prefix untuk update child nanti
+            $oldPrefix = $master->kode_barang;
+            $newPrefix = $validated['kode_barang'];
 
-        // Handle file upload (jika ada)
-        if ($request->hasFile('gambar_barang')) {
-            // Optional: hapus gambar lama
-            if ($barang->gambar_barang && file_exists(public_path($barang->gambar_barang))) {
-                unlink(public_path($barang->gambar_barang));
+            // update master fields
+            $master->kode_barang  = $newPrefix;
+            $master->nama_barang  = $validated['nama_barang'];
+            $master->jenis_barang = $validated['jenis_barang'];
+            $master->merk_barang  = $validated['merk_barang'];
+
+            // handle file upload
+            if ($request->hasFile('gambar_barang')) {
+                // hapus lama
+                if ($master->gambar_barang && file_exists(public_path($master->gambar_barang))) {
+                    unlink(public_path($master->gambar_barang));
+                }
+                $file     = $request->file('gambar_barang');
+                $fileName = time() . '_' . $file->getClientOriginalName();
+                $path     = 'uploads/barang/' . $fileName;
+                $file->move(public_path('uploads/barang'), $fileName);
+                $master->gambar_barang = $path;
             }
 
-            $file = $request->file('gambar_barang');
-            $fileName = time() . '_' . $file->getClientOriginalName();
-            $filePath = 'uploads/barang/' . $fileName;
-            $file->move($_SERVER['DOCUMENT_ROOT'] . '/uploads/barang', $fileName);
+            $master->save();
 
-            $barang->gambar_barang = $filePath;
-            
-        }
-
-        $barang->save();
+            // jika prefix berubah, update semua child barangs
+            if ($newPrefix !== $oldPrefix) {
+                foreach ($master->barang as $child) {
+                    // ambil suffix setelah oldPrefix-
+                    $suffix = substr($child->kode_barang, strlen($oldPrefix) + 1);
+                    // set kode baru
+                    $child->kode_barang = $newPrefix . '-' . $suffix;
+                    $child->save();
+                }
+            }
+        });
 
         return redirect()->back()->with('success', 'Data berhasil diperbarui.');
     }
@@ -403,66 +419,6 @@ class BarangController extends Controller
         return view('inventaris.detail', compact('item', 'ruangan'));
     }
 
-    // public function store(Request $request)
-    // {
-    //     try {
-    //         $validated = $request->validate([
-    //             'nama_barang'       => 'required|string|max:255',
-    //             'jenis_barang'      => 'required|string',
-    //             'merk_barang'       => 'required|string',
-    //             'tahun_perolehan'   => 'nullable|digits:4|integer|min:1900|max:' . date('Y'),
-    //             'sumber_dana'       => 'required|in:bos,dak,hibah',
-    //             'harga_perolehan'   => 'nullable|numeric',
-    //             'cv_pengadaan'      => 'nullable|string',
-    //             'jumlah_barang'     => 'required|integer',
-    //             'ruangan_id'        => 'required|exists:ruangans,id',
-    //             'kondisi'           => 'nullable|string',
-    //             'kepemilikan'       => 'required|string',
-    //             'penanggung_jawab'  => 'nullable|string',
-    //             'upload'            => 'nullable|image|mimes:jpeg,png,jpg,svg+xml,webp,gif,heic|max:2048',
-    //         ]);
-    //     } catch (ValidationException $e) {
-    //         // Menyimpan ID modal yang harus dibuka kembali (contoh: 'TambahData')
-    //         return redirect()->back()
-    //             ->withErrors($e->validator)
-    //             ->withInput()
-    //             ->with('modal_error', 'TambahData');
-    //     }
-
-    //     // Tangani upload file
-    //     if ($request->hasFile('upload')) {
-    //         $file = $request->file('upload');
-    //         $filename = time() . '_' . $file->getClientOriginalName();
-    //         $path = public_path('uploads/inventaris');
-
-    //         if (!file_exists($path)) {
-    //             mkdir($path, 0777, true);
-    //         }
-
-    //         $file->move($path, $filename);
-    //         $validated['gambar_barang'] = 'uploads/inventaris/' . $filename;
-    //     }
-
-    //     // Tambah kode unik dan normalisasi field
-    //     $validated['kode_barang']         = 'BRG-' . strtoupper(Str::random(6));
-    //     $validated['kondisi_barang']      = $validated['kondisi'] ?? null;
-    //     $validated['kepemilikan_barang']  = $validated['kepemilikan'];
-
-    //     unset($validated['kondisi'], $validated['kepemilikan']);
-
-    //     // Simpan barang
-    //     $barang = Barang::create($validated);
-
-    //     // Simpan pengajuan
-    //     // AjuanPengadaan::create([
-    //     //     'user_id'   => Auth::id(),
-    //     //     'barang_id' => $barang->id,
-    //     // ]);
-
-    //     return redirect('/inventaris')->with('success', 'Data inventaris berhasil ditambahkan.');
-    // }
-
-
     public function update(Request $request, $id)
     {
         $request->validate([
@@ -490,47 +446,17 @@ class BarangController extends Controller
         return redirect()->back()->with('success', 'Data barang berhasil diperbarui.');
     }
 
-    // public function destroy($id)
-    // {
-    //     $barang = Barang::findOrFail($id);
-    //     $barang->delete();
-    //     return redirect('/inventaris')->with('success', 'Data inventaris berhasil dihapus.');
-    // }
+    public function destroy(int $id): RedirectResponse
+    {
+        $master = BarangMaster::findOrFail($id);
 
-    // public function destroyApp(Request $request, $id)
-    // {
-    //     try {
-    //         $validated = $request->validate([
-    //             'jumlah'     => 'required|integer|min:1',
-    //             'keterangan' => 'nullable|string',
-    //         ]);
-    //     } catch (ValidationException $e) {
-    //         return redirect()->back()
-    //             ->withErrors($e->validator)
-    //             ->withInput()
-    //             ->with('modal_error', 'deleteModal' . $id); // otomatis target modal sesuai ID
-    //     }
+        // Ini akan otomatis cascade ke barangs jika foreign key onDelete('cascade')
+        $master->delete();
 
-    //     $validated['barang_id'] = $id;
-
-    //     $barang = Barang::findOrFail($id);
-
-    //     if ($validated['jumlah'] > $barang->jumlah_barang) {
-    //         return redirect()->back()
-    //             ->withErrors(['jumlah' => 'Jumlah penghapusan tidak boleh melebihi jumlah barang yang ada.'])
-    //             ->withInput()
-    //             ->with('modal_error', 'deleteModal' . $id); // pastikan modal benar muncul
-    //     }
-
-    //     $penghapusan = Penghapusan::create($validated);
-
-    //     AjuanPenghapusan::create([
-    //         'user_id'         => Auth::id(),
-    //         'penghapusan_id'  => $penghapusan->id,
-    //     ]);
-
-    //     return redirect('/inventaris')->with('success', 'Ajuan penghapusan berhasil diajukan.');
-    // }
+        return redirect()
+            ->route('inventaris.index')
+            ->with('success', 'Data barang dan seluruh stok terkait berhasil dihapus permanen.');
+    }
 
     public function barangMasuk()
     {

@@ -57,10 +57,22 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     @endif
-    @if (session('error'))
+    {{-- @if (session('error'))
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
             <strong>Gagal!</strong> {{ session('error') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif --}}
+    @if ($errors->any())
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>Gagal!</strong> Ada beberapa kesalahan:
+            <ul class="mb-0">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"
+                aria-label="Close"></button>
         </div>
     @endif
     <div class="container-fluid table-responsive">
@@ -126,17 +138,27 @@
                             <div class="d-flex justify-content-center gap-2 p-0">
                                 <a class="btn btn-primary px-2 py-1 m-0"
                                     href="{{ route('inventaris.unit', $item->barang_id) }}">
-                                    Lihat
+                                    <i class="bi bi-eye me-1"></i>Lihat
                                 </a>
                                 @if (auth()->user()->role == 1)
                                     <button type="button" class="btn btn-warning px-2 py-1 m-0" data-bs-toggle="modal"
                                         data-bs-target="#editMaster{{ $item->barangMaster->id }}">
-                                        <i class="bi bi-pencil-square me-2"></i>Edit
+                                        <i class="bi bi-pencil-square me-1"></i>Edit
                                     </button>
                                     @include('inventaris.popup.edit_master')
-                                    @endif
-                                </div>
-                            </td>
+                                    <form action="{{ route('inventaris.destroy', $item->barangMaster->id) }}"
+                                            method="POST"
+                                            onsubmit="return confirm('Yakin ingin menghapus permanen?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit"
+                                                class="btn btn-danger px-2 py-1 m-0">
+                                        <i class="bi bi-x-lg"></i>
+                                        </button>
+                                    </form>
+                                @endif
+                            </div>
+                        </td>
                     </tr>
                 @empty
                     <td colspan="9" class="text-center">Tidak ada pengajuan</td>
@@ -175,6 +197,28 @@
         field: "text",
         direction: "asc"
         }
+    });
+    document.addEventListener('DOMContentLoaded', () => {
+    // Ambil semua container
+    document.querySelectorAll('.fields-container').forEach(container => {
+        container.addEventListener('click', e => {
+        // Tombol tambah
+        if (e.target.closest('.btn-add')) {
+            const template = container.querySelector('.field-row');
+            const clone    = template.cloneNode(true);
+            clone.querySelectorAll('select, input').forEach(el => el.value = '');
+            const btn = clone.querySelector('.btn-add');
+            btn.classList.replace('btn-outline-success','btn-outline-danger');
+            btn.classList.replace('btn-add','btn-remove');
+            btn.innerHTML = '<i class="bi bi-dash-lg"></i>';
+            container.appendChild(clone);
+        }
+        // Tombol hapus
+        if (e.target.closest('.btn-remove')) {
+            e.target.closest('.field-row').remove();
+        }
+        });
+    });
     });
     </script>
 </x-layout>

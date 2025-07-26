@@ -7,8 +7,6 @@ use App\Models\Pengadaan;
 use App\Models\Ruangan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Exports\PengadaanExport;
 use App\Models\BarangMaster;
@@ -19,72 +17,95 @@ class PengadaanController extends Controller
 {
     public function index()
     {
-        $pengadaans = Pengadaan::with('user', 'ruangan', 'barangMaster')->where('status', 'pending')->orderBy('created_at', 'desc')->get();
+        $pengadaans = Pengadaan::with(['user','barangMaster','items.ruangan'])
+            ->where('status', 'pending')
+            ->orderBy('created_at', 'desc')
+            ->get();
+            
         $barangs = Barang::with('ruangan')->get();
         $master = BarangMaster::with('barang')->get();
         $ruangans = Ruangan::all();
-        return view('pengadaan.app', compact('pengadaans', 'barangs', 'ruangans', 'master'));
+
+        return view('pengadaan.app', compact(
+            'pengadaans', 'barangs', 'ruangans', 'master'
+        ));
     }
 
     public function store(Request $request)
     {
-        $request->validate([
-            'tipe_pengajuan' => 'required|in:tambah,baru',
-            'jumlah' => 'required|integer|min:1',
-            'ruangan_id' => 'required|exists:ruangans,id',
-            'sumber_dana' => 'required|string|max:255',
-            'harga_perolehan' => 'required|numeric|min:0',
-            'cv_pengadaan' => 'required|string|max:255',
-        ]);
-        $data = [
-            'user_id' => Auth::id(),
-            'status' => 'pending',
-            'jumlah' => $request->jumlah,
-            'tipe_pengajuan' => $request->tipe_pengajuan,
-            'ruangan_id' => $request->ruangan_id,
-            'sumber_dana' => $request->sumber_dana,
-            'harga_perolehan' => $request->harga_perolehan,
-            'cv_pengadaan' => $request->cv_pengadaan,
-            'tahun_perolehan' => $request->tahun_perolehan,
-            'keterangan' => $request->keterangan,
-            'kondisi_barang' => 'baik',
+        // 1) Validasi master + array
+        $rules = [
+            'tipe_pengajuan'   => 'required|in:tambah,baru',
+            'sumber_dana'      => 'required|string',
+            'harga_perolehan'  => 'required|numeric|min:0',
+            'cv_pengadaan'     => 'required|string',
+            'tahun_perolehan'  => 'nullable|digits:4',
+            'keterangan'       => 'nullable|string',
+            'ruangan_id'       => 'required|array|min:1',
+            'ruangan_id.*'     => 'exists:ruangans,id',
+            'jumlah'           => 'required|array|min:1',
+            'jumlah.*'         => 'integer|min:1',
         ];
 
         if ($request->tipe_pengajuan === 'tambah') {
-            // Pengadaan barang lama
-            $request->validate([
-                'barang_id' => 'required|exists:barang_masters,id',
-            ]);
-            $data['barang_master_id'] = $request->barang_id;
-        } elseif ($request->tipe_pengajuan === 'baru') {
-            // Pengadaan barang baru
-            $request->validate([
-                'kode_barang' => 'required|string|unique:barang_masters,kode_barang',
-                'nama_barang' => 'required|string|max:255',
-            ]);
-            $data['kode_barang'] = $request->kode_barang;
-            $data['nama_barang'] = $request->nama_barang;
-            $data['jenis_barang'] = $request->jenis_barang;
-            $data['merk_barang'] = $request->merk_barang;
-            // Upload gambar jika ada
+            $rules['barang_id'] = 'required|exists:barang_masters,id';
+        } else {
+            // untuk pengajuan barang baru, tambahkan validasi jenis & merk
+            $rules['kode_barang']  = 'required|string|unique:barang_masters,kode_barang';
+            $rules['nama_barang']  = 'required|string|max:255';
+            $rules['jenis_barang'] = 'required|string|max:255';
+            $rules['merk_barang']  = 'required|string|max:255';
+            $rules['gambar_barang']= 'nullable|image';
+        }
+
+        $v = $request->validate($rules);
+
+        // 2) Siapkan data master Pengadaan (tanpa lokasi/jumlah)
+        $masterData = [
+            'user_id'         => Auth::id(),
+            'status'          => 'pending',
+            'tipe_pengajuan'  => $v['tipe_pengajuan'],
+            'sumber_dana'     => $v['sumber_dana'],
+            'harga_perolehan' => $v['harga_perolehan'],
+            'cv_pengadaan'    => $v['cv_pengadaan'],
+            'tahun_perolehan' => $v['tahun_perolehan'] ?? now()->year,
+            'keterangan'      => $v['keterangan'] ?? null,
+            'kondisi_barang'  => 'baik',
+        ];
+
+        if ($v['tipe_pengajuan'] === 'tambah') {
+            // simpan referensi master barang yang ada
+            $masterData['barang_master_id'] = $v['barang_id'];
+        } else {
+            // simpan data barang baru
+            $masterData['kode_barang']   = $v['kode_barang'];
+            $masterData['nama_barang']   = $v['nama_barang'];
+            $masterData['jenis_barang']  = $v['jenis_barang'];
+            $masterData['merk_barang']   = $v['merk_barang'];
+            // upload gambar jika ada
             if ($request->hasFile('gambar_barang')) {
-                $file = $request->file('gambar_barang');
-                $filename = time() . '_' . $file->getClientOriginalName();
-                $path = $_SERVER['DOCUMENT_ROOT'] . '/uploads/inventaris';
-
-                if (!file_exists($path)) {
-                    mkdir($path, 0777, true);
-                }
-
-                $file->move($path, $filename);
-                $data['gambar_barang'] = 'uploads/inventaris/' . $filename;
+                $file     = $request->file('gambar_barang');
+                $filename = time().'_'.$file->getClientOriginalName();
+                $file->move(public_path('uploads/inventaris'), $filename);
+                $masterData['gambar_barang'] = 'uploads/inventaris/'.$filename;
             }
         }
 
-        Pengadaan::create($data);
+        // 3) Buat master request
+        $pengadaan = Pengadaan::create($masterData);
 
-        return redirect()->back()->with('success', 'Pengajuan pengadaan berhasil diajukan dan menunggu persetujuan.');
+        // 4) Loop untuk tiap lokasi/jumlah, simpan di pengadaan_items
+        foreach ($v['ruangan_id'] as $i => $rid) {
+            $pengadaan->items()->create([
+                'ruangan_id' => $rid,
+                'jumlah'     => $v['jumlah'][$i],
+            ]);
+        }
+
+        return redirect()->back()
+            ->with('success', 'Pengajuan berhasil dibuat untuk '.count($v['ruangan_id']).' lokasi.');
     }
+
 
     public function update(Request $request, $id)
     {

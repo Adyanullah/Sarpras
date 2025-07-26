@@ -129,7 +129,7 @@
                                     value="{{ $item->id }}">
                             </td>
                         @endif
-                        <td>{{ $loop->iteration + ($barangs->currentPage() - 1) * $barangs->perPage() }}</td>
+                        <td>{{ $loop->iteration }}</td>
                         <td>{{ $item->kode_barang }}</td>
                         <td>{{ $item->barangMaster->nama_barang }}</td>
                         <td>{{ $item->barangMaster->merk_barang }}</td>
@@ -149,7 +149,7 @@
                             <div class="d-flex justify-content-center gap-2 p-0">
                                 <a class="btn btn-primary px-2 py-1 m-0"
                                     href="{{ route('inventaris.detail', $item->kode_barang) }}">
-                                    Detail
+                                    <i class="bi bi-eye me-1"></i>Detail
                                 </a>
                             </div>
                         </td>
@@ -160,7 +160,7 @@
             </tbody>
         </table>
     </div>
-    <nav aria-label="Page navigation example">
+    {{-- <nav aria-label="Page navigation example">
         <ul class="pagination justify-content-center">
             <li class="page-item {{ $barangs->onFirstPage() ? 'disabled' : '' }}">
                 <a class="page-link" href="{{ $barangs->previousPageUrl() }}" tabindex="-1">Previous</a>
@@ -176,7 +176,7 @@
                 <a class="page-link" href="{{ $barangs->nextPageUrl() }}">Next</a>
             </li>
         </ul>
-    </nav>
+    </nav> --}}
     @push('scripts')
         <script>
             document.addEventListener('DOMContentLoaded', function() {

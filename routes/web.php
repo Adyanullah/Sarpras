@@ -39,6 +39,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/inventaris/unit/aksi', [BarangController::class, 'aksi'])->name('inventaris.aksi');
     Route::put('/inventaris/detail/{id}/edit', [BarangController::class, 'update'])->name('inventaris.update');
     Route::put('/inventaris/{id}/edit', [BarangController::class, 'updateMaster'])->name('inventaris.update.master');
+    Route::delete('/inventaris/{id}', [BarangController::class, 'destroy'])->name('inventaris.destroy');
 
     Route::get('/inventaris/qr-cetak/{ukuran}', [BarangController::class, 'cetakQR'])->name('inventaris.qr.cetak');
     Route::get('/barang/scan/result', [BarangController::class, 'scanResult']);

@@ -21,6 +21,17 @@
             </div>
             <div class="modal-body">
                 <div class="mb-3">
+                    <label for="kode_barang" class="form-label">Kode Barang</label>
+                    <input type="text"
+                            class="form-control"
+                            name="kode_barang"
+                            value="{{ old('kode_barang', $item->barangMaster->kode_barang) }}"
+                            required>
+                    @error('kode_barang')
+                        <div class="text-danger">{{ $message }}</div>
+                    @enderror
+                </div>
+                <div class="mb-3">
                     <label for="nama_barang" class="form-label">Nama Barang</label>
                     <input type="text" class="form-control " name="nama_barang"
                         value="{{ old('nama_barang', $item->barangMaster->nama_barang) }}">
