@@ -26,7 +26,7 @@
                     <div class="alert alert-danger mt-2">{{ $message }}</div>
                 @enderror
                 <div class="mb-3">
-                    <label for="jenis_barang" class="form-label">Jenis Barang (Opsional)</label>
+                    <label for="jenis_barang" class="form-label">Jenis Barang</label>
                     <input type="text" class="form-control" id="jenis_barang" name="jenis_barang"
                         value="{{ old('jenis_barang') }}">
                 </div>
@@ -34,7 +34,7 @@
                     <div class="alert alert-danger mt-2">{{ $message }}</div>
                 @enderror
                 <div class="mb-3">
-                    <label for="merk_barang" class="form-label">Merk/Spesifikasi (Opsional)</label>
+                    <label for="merk_barang" class="form-label">Merk/Spesifikasi</label>
                     <input type="text" class="form-control" id="merk_barang" name="merk_barang"
                         value="{{ old('merk_barang') }}">
                 </div>
@@ -114,15 +114,15 @@
                         value="{{ old('cv_pengadaan') }}">
                 </div>
                 <div class="col-md-12 mb-3">
-                    <label for="keterangan" class="form-label">Keterangan</label>
+                    <label for="keterangan" class="form-label">Keterangan (Opsional)</label>
                     <input type="text" name="keterangan" class="form-control" id="keterangan"
-                        placeholder="Contoh : Milik Sekolah" step="0.01" value="{{ old('keterangan') }}">
+                        placeholder="Contoh : Penanggung jawab" step="0.01" value="{{ old('keterangan') }}">
                     @error('keterangan')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
                 </div>
                 <div class="mb-3">
-                    <label for="gambar_barang" class="form-label">Upload foto</label>
+                    <label for="gambar_barang" class="form-label">Upload foto (Opsional)</label>
                     <input type="file" accept="image/*" class="form-control" id="gambar_barang" name="gambar_barang">
                 </div>
                 @error('gambar_barang')

@@ -50,7 +50,7 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="biaya_perawatanEdit{{ $item->id }}" class="form-label">Biaya Perawatan</label>
+                    <label for="biaya_perawatanEdit{{ $item->id }}" class="form-label">Biaya Perawatan (Rp)</label>
                     <input type="number" id="biaya_perawatanEdit{{ $item->id }}" name="biaya_perawatan" class="form-control"
                         value="{{ old('biaya_perawatan', $item->biaya_perawatan) }}">
                     @error('biaya_perawatan')

@@ -21,8 +21,8 @@
                         <td>{{ $pengadaan->created_at->format('Y-m-d') }}</td>
                         <td>{{ $pengadaan->nama_barang ?? $pengadaan->barangMaster->nama_barang }}</td>
                         <td>{{ $pengadaan->merk_barang ?? $pengadaan->barangMaster->merk_barang }}</td>
-                        <td>{{ $pengadaan->jumlah }}</td>
-                        <td>Rp {{ number_format($pengadaan->harga_perolehan, 0, ',', '.') }}</td>
+                        <td>{{ $pengadaan->items->sum('jumlah') }} Unit</td>
+                        <td>Rp {{ number_format($pengadaan->harga_perolehan * $pengadaan->items->sum('jumlah'), 0, ',', '.') }}</td>
                         <td>
                             @if ($pengadaan->tipe_pengajuan === 'tambah')
                                 Tambah Jumlah
@@ -67,4 +67,43 @@
             });
         @endforeach
     </script>
+    
+    @push('scripts')
+        <script>
+            document.addEventListener('click', function(e) {
+                const add = e.target.closest('.btn-add');
+                if (add) {
+                    e.preventDefault();
+                    // temukan container
+                    const container = add.closest('.fields-container');
+                    const tpl       = container.querySelector('.field-row');
+                    const clone     = tpl.cloneNode(true);
+
+                    // reset semua input/select di clone
+                    clone.querySelectorAll('select, input').forEach(i => i.value = '');
+
+                    // ubah tombol di clone jadi "remove"
+                    const btn = clone.querySelector('.btn-add');
+                    btn.classList.replace('btn-outline-success', 'btn-outline-danger');
+                    btn.classList.replace('btn-add', 'btn-remove');
+                    btn.innerHTML = '<i class="bi bi-dash-lg"></i>';
+
+                    // append hanya ke container yang tepat
+                    container.appendChild(clone);
+                    return;
+                }
+
+                // hanya tangani klik pada <button class="btn-remove">
+                const rem = e.target.closest('.btn-remove');
+                if (rem) {
+                    e.preventDefault();
+                    const container = rem.closest('.fields-container');
+                    // jangan hapus kalau itu satu‐satunya baris
+                    if (container.querySelectorAll('.field-row').length > 1) {
+                    rem.closest('.field-row').remove();
+                    }
+                }
+            });
+        </script>
+    @endpush
 </x-layout>

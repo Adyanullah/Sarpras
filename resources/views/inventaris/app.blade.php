@@ -15,7 +15,7 @@
         <div>
             @if (in_array(auth()->user()->role, [1, 3]))
                 <div class="btn-group">
-                    <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
+                    <button type="button" class="btn btn-primary dropdown-toggle me-2" data-bs-toggle="dropdown"
                         aria-expanded="false">
                         <i class="bi bi-plus-circle me-2"></i>Barang Masuk
                     </button>
@@ -25,9 +25,13 @@
                         <li><a type="button" class="dropdown-item text-white" data-bs-toggle="modal"
                                 data-bs-target="#PengadaanBaru">Barang baru</a></li>
                     </ul>
+                    <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#importModal">
+                        <i class="bi bi-download me-1"></i>Import Data
+                    </button>
                 </div>
                 @include('inventaris.popup.pengadaan')
                 @include('inventaris.popup.pengadaan_baru')
+                @include('inventaris.popup.import_existing')
             @endif
         </div>
         <divtext-end">
@@ -75,6 +79,18 @@
                 aria-label="Close"></button>
         </div>
     @endif
+    @if(session('import_errors'))
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <strong>Peringatan saat import:</strong>
+            <ul class="mb-0">
+            @foreach(session('import_errors') as $msg)
+                <li>{{ $msg }}</li>
+            @endforeach
+            </ul>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"
+                aria-label="Close"></button>
+        </div>
+    @endif
     <div class="container-fluid table-responsive">
         <table id="dataTable" class="table table-bordered table-striped align-middle">
             <thead class="table-light">
@@ -107,32 +123,49 @@
                             @endif
                         </td>
                         <td>
-                            <a type="button" data-bs-toggle="modal" data-bs-target="#ImageModal{{ $loop->iteration }}">
+                            @if($item->barangMaster->gambar_barang)
+                                {{-- Tampilkan thumbnail dan modal jika ada gambar --}}
+                                <a type="button"
+                                data-bs-toggle="modal"
+                                data-bs-target="#ImageModal{{ $loop->iteration }}">
                                 <img src="{{ asset($item->barangMaster->gambar_barang) }}"
-                                    alt="{{ $item->barangMaster->nama_barang }}" class="img-fluid avatar-md rounded" />
-                            </a>
-                            <div class="modal fade" id="ImageModal{{ $loop->iteration }}" tabindex="-1"
-                                aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                    alt="{{ $item->barangMaster->nama_barang }}"
+                                    class="img-fluid avatar-md rounded" />
+                                </a>
+
+                                <div class="modal fade"
+                                    id="ImageModal{{ $loop->iteration }}"
+                                    tabindex="-1"
+                                    aria-labelledby="exampleModalCenterTitle"
+                                    aria-hidden="true">
                                 <div class="modal-dialog modal-dialog-centered">
                                     <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="exampleModalCenterTitle">
-                                                {{ $item->nama_barang }}
-                                            </h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalCenterTitle">
+                                        {{ $item->barangMaster->nama_barang }}
+                                        </h5>
+                                        <button type="button"
+                                                class="btn-close"
+                                                data-bs-dismiss="modal"
                                                 aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <img src="{{ asset($item->barangMaster->gambar_barang) }}"
-                                                class="d-block w-100" alt="{{ $item->barangMaster->nama_barang }}">
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary"
+                                    </div>
+                                    <div class="modal-body">
+                                        <img src="{{ asset($item->barangMaster->gambar_barang) }}"
+                                            class="d-block w-100"
+                                            alt="{{ $item->barangMaster->nama_barang }}">
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button"
+                                                class="btn btn-secondary"
                                                 data-bs-dismiss="modal">Kembali</button>
-                                        </div>
+                                    </div>
                                     </div>
                                 </div>
-                            </div>
+                                </div>
+                            @else
+                                {{-- Keterangan jika tidak ada gambar --}}
+                                <span class="text-muted fst-italic">Tidak ada gambar</span>
+                            @endif
                         </td>
                         <td class="align-middle">
                             <div class="d-flex justify-content-center gap-2 p-0">
@@ -199,26 +232,26 @@
         }
     });
     document.addEventListener('DOMContentLoaded', () => {
-    // Ambil semua container
-    document.querySelectorAll('.fields-container').forEach(container => {
-        container.addEventListener('click', e => {
-        // Tombol tambah
-        if (e.target.closest('.btn-add')) {
-            const template = container.querySelector('.field-row');
-            const clone    = template.cloneNode(true);
-            clone.querySelectorAll('select, input').forEach(el => el.value = '');
-            const btn = clone.querySelector('.btn-add');
-            btn.classList.replace('btn-outline-success','btn-outline-danger');
-            btn.classList.replace('btn-add','btn-remove');
-            btn.innerHTML = '<i class="bi bi-dash-lg"></i>';
-            container.appendChild(clone);
-        }
-        // Tombol hapus
-        if (e.target.closest('.btn-remove')) {
-            e.target.closest('.field-row').remove();
-        }
+        // Ambil semua container
+        document.querySelectorAll('.fields-container').forEach(container => {
+            container.addEventListener('click', e => {
+            // Tombol tambah
+            if (e.target.closest('.btn-add')) {
+                const template = container.querySelector('.field-row');
+                const clone    = template.cloneNode(true);
+                clone.querySelectorAll('select, input').forEach(el => el.value = '');
+                const btn = clone.querySelector('.btn-add');
+                btn.classList.replace('btn-outline-success','btn-outline-danger');
+                btn.classList.replace('btn-add','btn-remove');
+                btn.innerHTML = '<i class="bi bi-dash-lg"></i>';
+                container.appendChild(clone);
+            }
+            // Tombol hapus
+            if (e.target.closest('.btn-remove')) {
+                e.target.closest('.field-row').remove();
+            }
+            });
         });
-    });
     });
     </script>
 </x-layout>

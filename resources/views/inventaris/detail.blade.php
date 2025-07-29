@@ -135,8 +135,12 @@
         <div class="col-md-6">
             <div class="card shadow-sm rounded-3 mb-3">
                 <div class="card-body text-center">
-                    <img src="{{ asset($item->barangMaster->gambar_barang) }}" class="img-fluid w-50 rounded"
-                        alt="Gambar {{ $item->barangMaster->nama_barang }}">
+                    @if ($item->barangMaster->gambar_barang == null)
+                        <span class="text-muted fst-italic">Tidak ada gambar</span>
+                    @else
+                        <img src="{{ asset($item->barangMaster->gambar_barang) }}" class="img-fluid w-50 rounded"
+                            alt="Gambar {{ $item->barangMaster->nama_barang }}">
+                    @endif
                 </div>
             </div>
 

@@ -61,7 +61,7 @@
                     <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $data->perawatan->tanggal_perawatan }}</td>
-                        <td>{{ $data->perawatan->tanggal_selsesai ?? 'Belum Selesai' }}</td>
+                        <td>{{ $data->perawatan->tanggal_selesai ?? 'Belum Selesai' }}</td>
                         <td>{{ $data->barang->kode_barang }}</td>
                         <td>{{ $data->barang->barangMaster->nama_barang }}</td>
                         <td>{{ $data->barang->ruangan->nama_ruangan }}</td>

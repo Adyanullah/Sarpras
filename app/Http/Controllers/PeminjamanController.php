@@ -92,7 +92,6 @@ class PeminjamanController extends Controller
         try {
             $validated = $request->validate([
                 'tanggal_peminjaman' => 'required|date',
-                'tanggal_pengembalian' => 'required|date',
                 'nama_peminjam' => 'required|string|max:255',
                 'keterangan' => 'nullable|string|max:255',
             ]);
@@ -103,12 +102,12 @@ class PeminjamanController extends Controller
                 ->with('modal_error', 'editPeminjaman' . $id); // tandai modal edit yang error
         }
 
-        if (strtotime($validated['tanggal_peminjaman']) > strtotime($validated['tanggal_pengembalian'])) {
-            return redirect()->back()
-                ->withErrors(['tanggal_peminjaman' => 'Tanggal peminjaman tidak boleh lebih dari tanggal pengembalian.'])
-                ->withInput()
-                ->with('modal_error', 'editPeminjaman' . $id);
-        }
+        // if (strtotime($validated['tanggal_peminjaman']) > strtotime($validated['tanggal_pengembalian'])) {
+        //     return redirect()->back()
+        //         ->withErrors(['tanggal_peminjaman' => 'Tanggal peminjaman tidak boleh lebih dari tanggal pengembalian.'])
+        //         ->withInput()
+        //         ->with('modal_error', 'editPeminjaman' . $id);
+        // }
 
         $peminjaman = Peminjaman::findOrFail($id);
         $peminjaman->update($request->all());

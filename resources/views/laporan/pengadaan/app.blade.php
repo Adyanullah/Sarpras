@@ -66,19 +66,12 @@
                         <td>{{ $pengadaan->nama_barang ?? $pengadaan->barangMaster->nama_barang }}</td>
                         <td>{{ $pengadaan->jenis_barang ?? $pengadaan->barangMaster->jenis_barang }}</td>
                         <td>{{ $pengadaan->merk_barang ?? $pengadaan->barangMaster->merk_barang }}</td>
-                        <td>{{ $pengadaan->jumlah }} Unit</td>
+                        <td>{{ $pengadaan->jumlah_total }} Unit</td>
                         <td>{{ $pengadaan->sumber_dana }}</td>
                         <td>{{ $pengadaan->cv_pengadaan }}</td>
-                        <td>Rp {{ number_format($pengadaan->harga_perolehan, 0, ',', '.') }}</td>
-                        {{-- <td>
-                            @if ($pengadaan->status == 'pending')
-                                <span class="badge bg-warning">Belum disetujui</span>
-                            @elseif ($pengadaan->status == 'disetujui')
-                                <span class="badge bg-success">Disetujui</span>
-                            @else
-                                <span class="badge bg-danger">Ditolak</span>
-                            @endif
-                        </td> --}}
+                        <td>
+                            Rp {{ number_format($pengadaan->total_harga, 0, ',', '.') }}
+                        </td>
                     </tr>
                 @empty
                     <tr>

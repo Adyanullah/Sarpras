@@ -20,36 +20,45 @@
 
 <body>
     <h3>Laporan Pengadaan Barang</h3>
-    <table>
-        <thead>
+    <table id="tabelPengadaan" class="table table-bordered table-striped">
+        <thead class="table-light text-center">
             <tr>
                 <th>No</th>
-                <th>Tanggal Pengadaan</th>
+                <th>Tanggal</th>
                 <th>Nama Barang</th>
-                <th>Jenis Barang</th>
-                <th>Merk / Spesifikasi</th>
+                <th>Jenis</th>
+                <th>Merk</th>
                 <th>Jumlah Barang</th>
                 <th>Sumber Dana</th>
                 <th>Supplier</th>
                 <th>Total Harga</th>
-                {{-- <th>Status</th> --}}
             </tr>
         </thead>
         <tbody>
-            @foreach ($pengadaans as $pengadaan)
+            @forelse ($pengadaans as $p)
             <tr>
                 <td>{{ $loop->iteration }}</td>
-                <td>{{ $pengadaan->created_at->format('Y-m-d') }}</td>
-                <td>{{ $pengadaan->nama_barang ?? $pengadaan->barangMaster->nama_barang }}</td>
-                <td>{{ $pengadaan->jenis_barang ?? $pengadaan->barangMaster->jenis_barang }}</td>
-                <td>{{ $pengadaan->merk_barang ?? $pengadaan->barangMaster->merk_barang }}</td>
-                <td>{{ $pengadaan->jumlah }} Unit</td>
-                <td>{{ $pengadaan->sumber_dana }}</td>
-                <td>{{ $pengadaan->cv_pengadaan }}</td>
-                <td>Rp {{ number_format($pengadaan->harga_perolehan, 0, ',', '.') }}</td>
-                {{-- <td>{{ ucfirst($pengadaan->status) }}</td> --}}
+                <td>{{ $p->created_at->format('Y-m-d') }}</td>
+                <td>{{ $p->nama_barang ?? $p->barangMaster->nama_barang }}</td>
+                <td>{{ $p->jenis_barang ?? $p->barangMaster->jenis_barang }}</td>
+                <td>{{ $p->merk_barang ?? $p->barangMaster->merk_barang }}</td>
+
+                {{-- jumlah_total dari items --}}
+                <td class="text-center">{{ $p->jumlah_total }} Unit</td>
+
+                <td>{{ $p->sumber_dana }}</td>
+                <td>{{ $p->cv_pengadaan }}</td>
+
+                {{-- total_harga sudah dikali jumlah_total --}}
+                <td class="text-end">
+                    Rp {{ number_format($p->total_harga, 0, ',', '.') }}
+                </td>
             </tr>
-            @endforeach
+            @empty
+            <tr>
+                <td colspan="9" class="text-center">Tidak ada data</td>
+            </tr>
+            @endforelse
         </tbody>
     </table>
 </body>

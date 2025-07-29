@@ -4,10 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 use App\Models\Pengadaan;
-use App\Models\BarangMaster;
-use App\Models\Barang;
 use App\Models\BarangRusak;
 use App\Models\Peminjaman;
 use App\Models\Perawatan;
@@ -110,7 +107,7 @@ class AjuanController extends Controller
                 'id'         => $p->id,
                 'created_at' => $p->created_at->format('d M Y'),
                 'pengaju'    => $p->user->name,
-                'jenis'      => 'Perawatan',
+                'jenis'      => 'Perawatan - Biaya : Rp. ' . number_format($p->biaya_perawatan, 0, ',', '.'),
                 'barang'     => $namaBarang,
                 'jumlah'     => $p->perawatanItem->count(),
                 'status'     => $p->status_ajuan,
@@ -143,7 +140,7 @@ class AjuanController extends Controller
                 'id'         => $m->id,
                 'created_at' => $m->created_at->format('d M Y'),
                 'pengaju'    => $m->user->name,
-                'jenis'      => 'Mutasi',
+                'jenis'      => 'Pemindahan',
                 'barang'     => $namaBarang,
                 'jumlah'     => $m->mutasiItem->count(),
                 'status'     => $m->status_ajuan,
@@ -285,76 +282,4 @@ class AjuanController extends Controller
         }
     }
 
-    /**
-     * Logika pembuatan barang baru untuk Pengadaan.
-     */
-    // protected function approvePengadaan(Pengadaan $p)
-    // {
-    //     // 1) Jika barang baru, buat master-nya dulu
-    //     if ($p->tipe_pengajuan === 'baru') {
-    //         $master = BarangMaster::create([
-    //             'kode_barang'   => $p->kode_barang,
-    //             'nama_barang'   => $p->nama_barang,
-    //             'jenis_barang'  => $p->jenis_barang,
-    //             'merk_barang'   => $p->merk_barang,
-    //             'gambar_barang' => $p->gambar_barang,
-    //         ]);
-    //     } else {
-    //         // barang lama: ambil relasi
-    //         $master = $p->barangMaster;
-    //     }
-
-    //     // 2) Buat stok per detail item
-    //     $this->createBarangFromPengadaan($master, $p);
-
-    //     // 3) Tandai request sudah disetujui
-    //     $p->update(['status_ajuan' => 'disetujui']);
-    // }
-
-    // protected function createBarangFromPengadaan(BarangMaster $master, Pengadaan $p)
-    // {
-    //     $prefix = $master->kode_barang;
-
-    //     // Cari kode terakhir di tabel barangs
-    //     $last = Barang::where('kode_barang', 'like', $prefix . '-%')
-    //         ->orderByDesc('kode_barang')
-    //         ->first();
-
-    //     $lastNumber = $last
-    //         ? (int) Str::after($last->kode_barang, $prefix . '-')
-    //         : 0;
-
-    //     $nextNumber = $lastNumber + 1;
-
-    //     $rows = [];
-
-    //     // Loop setiap lokasi/jumlah di pengadaan_items
-    //     foreach ($p->items as $item) {
-    //         for ($i = 0; $i < $item->jumlah; $i++) {
-    //             $kode = $prefix . '-' . str_pad($nextNumber, 5, '0', STR_PAD_LEFT);
-
-    //             $rows[] = [
-    //                 'barang_id'        => $master->id,
-    //                 'kode_barang'      => $kode,
-    //                 'tahun_perolehan'  => $p->tahun_perolehan ?? now()->year,
-    //                 'sumber_dana'      => $p->sumber_dana,
-    //                 'harga_unit'       => $p->harga_perolehan,
-    //                 'cv_pengadaan'     => $p->cv_pengadaan,
-    //                 'ruangan_id'       => $item->ruangan_id,
-    //                 'kondisi_barang'   => 'baik',
-    //                 'keterangan'       => $p->keterangan,
-    //                 'sedia'            => 1,
-    //                 'created_at'       => now(),
-    //                 'updated_at'       => now(),
-    //             ];
-
-    //             $nextNumber++;
-    //         }
-    //     }
-
-    //     // Bulk insert semua barangs baru
-    //     if (!empty($rows)) {
-    //         Barang::insert($rows);
-    //     }
-    // }
 }

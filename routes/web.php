@@ -55,11 +55,12 @@ Route::middleware('auth')->group(function () {
 
     //pengadaan
     Route::get('/pengadaan', [PengadaanController::class, 'index'])->middleware('role:1,3');
-    // Route::get('/pengajuan/tambah-jumlah', [PengadaanController::class, 'createTambahJumlah'])->name('barang-requests.tambah-jumlah');
-    // Route::get('/pengajuan/tambah-baru', [PengadaanController::class, 'createTambahBaru'])->name('barang-requests.tambah-baru');
     Route::post('/pengajuan/store', [PengadaanController::class, 'store'])->name('pengadaan.store');
     Route::put('/pengadaan/update/{id}', [PengadaanController::class, 'update'])->name('pengadaan.update');
     Route::delete('/pengadaan/{id}', [PengadaanController::class, 'destroy'])->name('pengadaan.destroy');
+    //import
+    Route::post('pengadaan/import-existing', [PengadaanController::class, 'importExisting'])
+     ->name('pengadaan.importExisting');
 
     // Peminjaman
     Route::get('/peminjaman', [PeminjamanController::class, 'index'])->middleware('role:1,3');
@@ -123,7 +124,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/laporan/pengadaan/excel/{bulan}', [PengadaanController::class, 'exportExcel'])->name('pengadaan.excel');
 
     Route::get('/laporan/barangruang', [BarangRuangController::class, 'index'])->name('ruangan.index');
-    Route::get('/laporan-barang-ruang/{id}', [BarangRuangController::class, 'detail'])->name('ruangan.detail');
+    Route::get('/laporan/barangruang/detail/{id}', [BarangRuangController::class, 'detail'])->name('ruangan.detail');
 
     // Pengaturan
     Route::get('/pengaturan/ruangan', [DataRuanganController::class, 'index'])->middleware('role:1');

@@ -11,40 +11,40 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pengadaans', function(Blueprint $t){
-            $t->id();
-            $t->foreignId('user_id')->constrained();
-            $t->enum('tipe_pengajuan',['tambah','baru']);
-            $t->foreignId('barang_master_id')
+        Schema::create('pengadaans', function(Blueprint $table){
+            $table->id();
+            $table->foreignId('user_id')->constrained();
+            $table->enum('tipe_pengajuan',['tambah','baru']);
+            $table->foreignId('barang_master_id')
                   ->nullable()
                   ->constrained('barang_masters')
                   ->onDelete('set null');
-            $t->string('sumber_dana');
-            $t->decimal('harga_perolehan',12,2);
-            $t->string('cv_pengadaan');
-            $t->year('tahun_perolehan');
-            $t->text('keterangan')->nullable();
-            $t->enum('status',['pending','disetujui','ditolak'])->default('pending');
+            $table->string('sumber_dana');
+            $table->decimal('harga_perolehan',12,2)->nullable();
+            $table->string('cv_pengadaan')->nullable();
+            $table->year('tahun_perolehan')->nullable();
+            $table->text('keterangan')->nullable();
+            $table->enum('status',['pending','disetujui','ditolak'])->default('pending');
             // untuk tipe 'baru'
-            $t->string('kode_barang')->nullable();
-            $t->string('nama_barang')->nullable();
-            $t->string('jenis_barang')->nullable();
-            $t->string('merk_barang')->nullable();
-            $t->string('gambar_barang')->nullable();
-            $t->timestamps();
-            });
+            $table->string('kode_barang')->nullable();
+            $table->string('nama_barang')->nullable();
+            $table->string('jenis_barang')->nullable();
+            $table->string('merk_barang')->nullable();
+            $table->string('gambar_barang')->nullable();
+            $table->timestamps();
+        });
             
-            Schema::create('pengadaan_items', function (Blueprint $table) {
-                $table->id();
-                $table->foreignId('pengadaan_id')
-                    ->constrained('pengadaans')
-                    ->onDelete('cascade');
-                $table->foreignId('ruangan_id')
-                    ->constrained()
-                    ->onDelete('restrict');
-                $table->integer('jumlah');
-                $table->timestamps();
-            });
+        Schema::create('pengadaan_items', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('pengadaan_id')
+                ->constrained('pengadaans')
+                ->onDelete('cascade');
+            $table->foreignId('ruangan_id')
+                ->constrained()
+                ->onDelete('restrict');
+            $table->integer('jumlah');
+            $table->timestamps();
+        });
 
     }
 

@@ -18,7 +18,7 @@
                     <dd class="col-sm-8">{{ $pengadaan->merk_barang ?? $pengadaan->barangMaster->merk_barang }}</dd>
 
                     <dt class="col-sm-4">Jumlah Barang</dt>
-                    <dd class="col-sm-8">{{ $pengadaan->jumlah }}</dd>
+                    <dd class="col-sm-8">{{ $pengadaan->items->sum('jumlah') }} Unit</dd>
 
                     <dt class="col-sm-4">Tanggal Pengadaan</dt>
                     <dd class="col-sm-8">{{ $pengadaan->created_at->format('Y-m-d') }}</dd>
@@ -30,7 +30,7 @@
                     <dd class="col-sm-8">{{ $pengadaan->cv_pengadaan }}</dd>
 
                     <dt class="col-sm-4">Total Harga</dt>
-                    <dd class="col-sm-8">{{ $pengadaan->harga_perolehan }}</dd>
+                    <dd class="col-sm-8">Rp {{ number_format($pengadaan->harga_perolehan * $pengadaan->items->sum('jumlah'), 0, ',', '.') }}</dd>
 
                     <dt class="col-sm-4">Status Pengajuan</dt>
                     <dd class="col-sm-8">
@@ -48,9 +48,18 @@
                 </dl>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary px-3" data-bs-dismiss="modal">Kembali</button>
-                <button class="btn btn-primary px-3" data-bs-toggle="modal" data-bs-target="#modalEditPengadaan{{ $pengadaan->id }}">Edit</button>
-                <button class="btn btn-danger px-3">Hapus</button>
+                <button class="btn btn-secondary px-2 py-1" data-bs-dismiss="modal">Kembali</button>
+                <button class="btn btn-primary px-2 py-1" data-bs-toggle="modal" data-bs-target="#modalEditPengadaan{{ $pengadaan->id }}">Edit</button>
+                <form action="{{ route('pengadaan.destroy', $pengadaan->id) }}"
+              method="POST"
+              class="d-inline"
+              onsubmit="return confirm('Yakin ingin menghapus pengajuan ini?');">
+          @csrf
+          @method('DELETE')
+          <button type="submit" class="btn btn-danger px-2 py-1">
+            Batalkan
+          </button>
+        </form>
             </div>
         </div>
     </div>

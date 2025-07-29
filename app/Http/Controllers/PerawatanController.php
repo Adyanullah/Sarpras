@@ -2,12 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\AjuanPerawatan;
 use App\Models\Barang;
 use App\Models\Perawatan;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;

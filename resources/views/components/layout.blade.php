@@ -13,7 +13,7 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 
-    <link rel="shortcut icon" href="{{ asset('assets/images/favicon.ico') }}">
+    <link rel="shortcut icon" href="{{ asset('assets/images/logo-sm.png') }}">
 
     <link href="{{ asset('/assets/css/vendor.min.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('/assets/css/icons.min.css') }}" rel="stylesheet" type="text/css" />
@@ -271,14 +271,18 @@
         <!-- ========== App Menu Start ========== -->
         <div class="main-nav">
             <!-- Sidebar Logo -->
-            <div class="logo-box">
+            <div class="logo-box" style="text-align: center;">
                 <a href="/" class="logo-light">
-                    <img src="https://imersa.co.id/img/logo-web.png" class="logo-sm" alt="logo sm">
-                    <img src="https://imersa.co.id/img/logo-web.png" class="logo-lg" alt="logo light">
+                    {{-- <img src="https://imersa.co.id/img/logo-web.png" class="logo-sm" alt="logo sm"> --}}
+                    {{-- <img src="https://imersa.co.id/img/logo-web.png" class="logo-lg" alt="logo light"> --}}
+                    <img src="{{ asset('/assets/images/logo.png') }}" class="logo-sm" alt="logo sm">
+                    <img src="{{ asset('/assets/images/logo.png') }}" class="logo-lg mt-2" style="max-width:50%; height:auto;" alt="logo sm">
                 </a>
                 <a href="/" class="logo-dark">
-                    <img src="https://imersa.co.id/img/logo-web.png" class="logo-sm" alt="logo sm">
-                    <img src="https://imersa.co.id/img/logo-web.png" class="logo-lg" alt="logo light">
+                    {{-- <img src="https://imersa.co.id/img/logo-web.png" class="logo-sm" alt="logo sm">
+                    <img src="https://imersa.co.id/img/logo-web.png" class="logo-lg" alt="logo light"> --}}
+                    <img src="{{ asset('/assets/images/logo2.png') }}" class="logo-sm" alt="logo sm">
+                    <img src="{{ asset('/assets/images/logo2.png') }}" class="logo-lg mt-2" style="max-width:50%; height:auto;" alt="logo sm">
                 </a>
             </div>
 

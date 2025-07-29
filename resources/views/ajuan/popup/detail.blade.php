@@ -16,12 +16,12 @@
                     <dt class="col-sm-4">Nama Pengaju</dt>
                     <dd class="col-sm-6">{{ $item['pengaju'] }}</dd>
                     
-                    @if (in_array($item['jenis'], ['Pengadaan Tambah','Pengadaan Baru', 'Mutasi']))
+                    @if (in_array($item['jenis'], ['Pengadaan Tambah','Pengadaan Baru', 'Pemindahan']))
                         <dt class="col-sm-4">Ruangan</dt>
                         <dd class="col-sm-6">{{ $item['ruangan'] }}
                             {{-- Jika Mutasi, tampilkan “ke {tambahan}” --}}
-                            @if ($item['jenis'] === 'Mutasi' && $item['tambahan'])
-                                &nbsp;→ ke {{ $item['tambahan'] }}
+                            @if ($item['jenis'] === 'Pemindahan' && $item['tambahan'])
+                                &nbsp;ke → {{ $item['tambahan'] }}
                             @endif
                         </dd>
                         

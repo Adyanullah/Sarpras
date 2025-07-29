@@ -1,14 +1,22 @@
 <x-layout>
     <div class="container mt-4">
-        
-        <a href="{{ route('ruangan.index') }}" class="btn btn-secondary mb-3">← Kembali</a>
 
+        <a href="{{ route('ruangan.index') }}" class="btn btn-secondary mb-3">← Kembali</a>
         <a href="#" class="btn btn-success mb-3" onclick="window.print(); return false;">
             <i class="bi bi-printer"></i> Cetak
         </a>
 
         <div id="printableTable">
+            {{-- kop surat --}}
+            <div id="kop-surat" class="text-center mb-4">
+                <img src="{{ asset('assets/images/kop_surat.svg') }}"
+                    alt="Kop Surat SMK Negeri 1 Kertosono"
+                    style="max-width:100%; height:auto;"/>
+            </div>
+
+            {{-- Judul Ruangan --}}
             <h3>{{ $ruangan->nama_ruangan }} ({{ $ruangan->kode_ruangan }})</h3>
+
             <table class="table table-bordered table-striped">
                 <thead class="table-light">
                     <tr>
@@ -32,7 +40,7 @@
                         <td>{{ $barang->barangMaster->merk_barang ?? '-' }}</td>
                         <td>{{ $barang->tahun_perolehan }}</td>
                         <td>{{ $barang->sumber_dana }}</td>
-                        <td>{{ $barang->kondisi_barang }}</td>
+                        <td>{{ ucfirst($barang->kondisi_barang) }}</td>
                     </tr>
                     @empty
                     <tr>

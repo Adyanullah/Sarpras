@@ -20,24 +20,40 @@ class PengadaanExport implements FromArray, WithHeadings
     {
         $tanggalMulai = Carbon::now()->subMonths($this->bulan);
 
-        $pengadaans = Pengadaan::with('barangMaster')
+        // 1) Ambil semua pengadaan disetujui sejak tanggalMulai, beserta items & barangMaster
+        $pengadaans = Pengadaan::with(['barangMaster', 'items'])
             ->whereDate('created_at', '>=', $tanggalMulai)
+            ->where('status', 'disetujui')
             ->get();
 
         $result = [];
         $no = 1;
 
-        foreach ($pengadaans as $pengadaan) {
+        foreach ($pengadaans as $p) {
+            // 2) Hitung total unit dan total harga
+            $jumlahTotal = $p->items->sum('jumlah');
+            $totalHarga  = $jumlahTotal * $p->harga_perolehan;
+
             $result[] = [
                 $no++,
-                $pengadaan->created_at->format('Y-m-d'),
-                $pengadaan->nama_barang ?? ($pengadaan->barangMaster->nama_barang ?? '-'),
-                $pengadaan->jenis_barang ?? ($pengadaan->barangMaster->jenis_barang ?? '-'),
-                $pengadaan->merk_barang ?? ($pengadaan->barangMaster->merk_barang ?? '-'),
-                $pengadaan->jumlah . ' Unit',
-                $pengadaan->sumber_dana ?? '-',
-                $pengadaan->cv_pengadaan ?? '-',
-                'Rp ' . number_format($pengadaan->harga_perolehan, 0, ',', '.'),
+                $p->created_at->format('Y-m-d'),
+                // Nama, jenis, merk
+                $p->nama_barang 
+                    ?? optional($p->barangMaster)->nama_barang 
+                    ?? '-',
+                $p->jenis_barang 
+                    ?? optional($p->barangMaster)->jenis_barang 
+                    ?? '-',
+                $p->merk_barang 
+                    ?? optional($p->barangMaster)->merk_barang 
+                    ?? '-',
+                // Jumlah unit
+                $jumlahTotal . ' Unit',
+                // Sumber dana & supplier
+                $p->sumber_dana ?? '-',
+                $p->cv_pengadaan ?? '-',
+                // Total harga
+                'Rp ' . number_format($totalHarga, 0, ',', '.'),
             ];
         }
 

@@ -28,52 +28,6 @@ class MutasiController extends Controller
         return view('mutasi.app', compact('mutasi', 'ruangans', 'ruangan', 'barangs'));
     }
 
-    // public function store(Request $request)
-    // {
-    //     try {
-    //         $validated = $request->validate([
-    //             'tanggal_mutasi'  => 'required|date',
-    //             'nama_mutasi'     => 'required|string|max:255',
-    //             'barang_id'       => 'required|exists:barangs,id',
-    //             'jumlah_barang'   => 'required|integer|min:1',
-    //             'tujuan'          => 'required|integer|exists:ruangans,id',
-    //             'keterangan'      => 'nullable|string',
-    //         ]);
-    //     } catch (ValidationException $e) {
-    //         return redirect()->back()
-    //             ->withErrors($e->validator)
-    //             ->withInput()
-    //             ->with('modal_error', 'modalMutasiBarang');
-    //     }
-
-    //     $barangAsal = Barang::findOrFail($validated['barang_id']);
-
-    //     // Cek jika ruangan tujuan sama dengan asal
-    //     if ($validated['tujuan'] == $barangAsal->ruangan_id) {
-    //         return redirect()->back()
-    //             ->withErrors(['tujuan' => 'Ruangan tujuan tidak boleh sama dengan ruangan asal.'])
-    //             ->withInput()
-    //             ->with('modal_error', 'modalMutasiBarang');
-    //     }
-
-    //     // Validasi stok
-    //     if ($validated['jumlah_barang'] > $barangAsal->jumlah_barang) {
-    //         return redirect()->back()
-    //             ->withErrors(['jumlah_barang' => 'Jumlah melebihi stok yang tersedia.'])
-    //             ->withInput()
-    //             ->with('modal_error', 'modalMutasiBarang');
-    //     }
-
-    //     $mutasi = Mutasi::create($validated);
-
-    //     AjuanMutasi::create([
-    //         'user_id' => Auth::id(),
-    //         'mutasi_id' => $mutasi->id,
-    //     ]);
-
-    //     return redirect()->back()->with('success', 'Data mutasi berhasil disimpan.');
-    // }
-
     public function laporan(Request $request)
     {
         $search = $request->input('search');
