@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\Auth;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Exports\PengadaanExport;
 use App\Imports\PengadaanExistingImport;
-use App\Imports\PengadaanNewImport;
 use App\Models\BarangMaster;
 use Maatwebsite\Excel\Facades\Excel;
 use Carbon\Carbon;
@@ -20,17 +19,20 @@ class PengadaanController extends Controller
 {
     public function index()
     {
-        $pengadaans = Pengadaan::with(['user','barangMaster','items.ruangan'])
+        $pengadaans = Pengadaan::with(['user', 'barangMaster', 'items.ruangan'])
             ->where('status', 'pending')
             ->orderBy('created_at', 'desc')
             ->get();
-            
+
         $barangs = Barang::with('ruangan')->get();
         $master = BarangMaster::with('barang')->get();
         $ruangans = Ruangan::all();
 
         return view('pengadaan.app', compact(
-            'pengadaans', 'barangs', 'ruangans', 'master'
+            'pengadaans',
+            'barangs',
+            'ruangans',
+            'master'
         ));
     }
 
@@ -55,17 +57,18 @@ class PengadaanController extends Controller
         } else {
             // untuk pengajuan barang baru, tambahkan validasi jenis & merk
             $rules['kode_barang'] = [
-                'required','string',
+                'required',
+                'string',
                 // tidak boleh ada di tabel barang_masters
-                Rule::unique('barang_masters','kode_barang'),
+                Rule::unique('barang_masters', 'kode_barang'),
                 // tidak boleh ada di pengadaans dengan status = pending
-                Rule::unique('pengadaans','kode_barang')
-                    ->where(fn($q) => $q->where('status','pending')),
+                Rule::unique('pengadaans', 'kode_barang')
+                    ->where(fn($q) => $q->where('status', 'pending')),
             ];
             $rules['nama_barang']  = 'required|string|max:255';
             $rules['jenis_barang'] = 'required|string|max:255';
             $rules['merk_barang']  = 'required|string|max:255';
-            $rules['gambar_barang']= 'nullable|image';
+            $rules['gambar_barang'] = 'nullable|image';
         }
         $messages = [
             'kode_barang.unique' => 'Kode barang sudah ada atau masih dalam pengajuan pending.',
@@ -97,9 +100,9 @@ class PengadaanController extends Controller
             // upload gambar jika ada
             if ($request->hasFile('gambar_barang')) {
                 $file     = $request->file('gambar_barang');
-                $filename = time().'_'.$file->getClientOriginalName();
+                $filename = time() . '_' . $file->getClientOriginalName();
                 $file->move(public_path('uploads/inventaris'), $filename);
-                $masterData['gambar_barang'] = 'uploads/inventaris/'.$filename;
+                $masterData['gambar_barang'] = 'uploads/inventaris/' . $filename;
             }
         }
 
@@ -115,7 +118,7 @@ class PengadaanController extends Controller
         }
 
         return redirect()->back()
-            ->with('success', 'Pengajuan berhasil dibuat untuk '.count($v['ruangan_id']).' lokasi.');
+            ->with('success', 'Pengajuan berhasil dibuat untuk ' . count($v['ruangan_id']) . ' lokasi.');
     }
 
     public function importExisting(Request $request)
@@ -163,6 +166,18 @@ class PengadaanController extends Controller
         if ($pengadaan->tipe_pengajuan === 'tambah') {
             $rules['barang_id'] = 'required|exists:barang_masters,id';
         } else {
+            // Tambahkan validasi kode_barang
+            $rules['kode_barang'] = [
+                'required',
+                'string',
+                'max:255',
+                // unik di barang_masters
+                Rule::unique('barang_masters', 'kode_barang'),
+                // unik di pengadaans pending, kecuali diri sendiri
+                Rule::unique('pengadaans', 'kode_barang')
+                    ->where('status', 'pending')
+                    ->ignore($pengadaan->id),
+            ];
             $rules['nama_barang']  = 'required|string|max:255';
             $rules['jenis_barang'] = 'required|string|max:255';
             $rules['merk_barang']  = 'required|string|max:255';
@@ -182,6 +197,7 @@ class PengadaanController extends Controller
         if ($pengadaan->tipe_pengajuan === 'tambah') {
             $data['barang_master_id'] = $v['barang_id'];
         } else {
+            $data['kode_barang']   = $v['kode_barang'];
             $data['nama_barang']  = $v['nama_barang'];
             $data['jenis_barang'] = $v['jenis_barang'];
             $data['merk_barang']  = $v['merk_barang'];
@@ -193,9 +209,9 @@ class PengadaanController extends Controller
                 unlink(public_path($pengadaan->gambar_barang));
             }
             $file     = $request->file('gambar_barang');
-            $filename = time().'_'.$file->getClientOriginalName();
+            $filename = time() . '_' . $file->getClientOriginalName();
             $file->move(public_path('uploads/inventaris'), $filename);
-            $data['gambar_barang'] = 'uploads/inventaris/'.$filename;
+            $data['gambar_barang'] = 'uploads/inventaris/' . $filename;
         }
 
         $pengadaan->update($data);
@@ -209,7 +225,7 @@ class PengadaanController extends Controller
             ]);
         }
 
-        return back()->with('success','Data pengadaan berhasil diperbarui.');
+        return back()->with('success', 'Data pengadaan berhasil diperbarui.');
     }
 
     public function destroy($id)
@@ -226,56 +242,68 @@ class PengadaanController extends Controller
 
     public function laporan(Request $request)
     {
-        $search = $request->input('search');
-        $tahun  = $request->input('tahun');
+        $search    = $request->input('search');
+        $startDate = $request->input('start_date');
+        $endDate   = $request->input('end_date');
 
-        $pengadaans = Pengadaan::with(['barangMaster', 'items'])
+        $query = Pengadaan::with(['barangMaster', 'items'])
             ->where('status', 'disetujui')
-            ->when($search, function ($query, $search) {
-                $query->whereHas('barangMaster', function ($q) use ($search) {
-                    $q->where('nama_barang', 'like', "%{$search}%")
-                    ->orWhere('kode_barang', 'like', "%{$search}%");
-                });
-            })
-            ->when($tahun, function ($query, $tahun) {
-                // jika pakai kolom created_at:
-                $query->whereYear('created_at', $tahun);
-            })
-            ->get()
-            // Tambahkan properti dinamis
-            ->map(function ($p) {
-                $p->jumlah_total = $p->items->sum('jumlah');
-                $p->total_harga  = $p->jumlah_total * $p->harga_perolehan;
-                return $p;
-            });
+            // server-side search tetap optional
+            ->when($search, fn($q) => $q->whereHas(
+                'barangMaster',
+                fn($qb) =>
+                $qb->where('nama_barang', 'like', "%{$search}%")
+                    ->orWhere('kode_barang', 'like', "%{$search}%")
+            ))
+            // filter tanggal jika keduanya ada
+            ->when(
+                $startDate && $endDate,
+                fn($q) =>
+                $q->whereDate('created_at', '>=', $startDate)
+                    ->whereDate('created_at', '<=', $endDate)
+            );
+
+        $pengadaans = $query->get()
+            ->map(fn($p) => tap($p, function ($x) {
+                $x->jumlah_total = $x->items->sum('jumlah');
+                $x->total_harga  = $x->jumlah_total * $x->harga_perolehan;
+            }));
 
         return view('laporan.pengadaan.app', compact('pengadaans'));
     }
 
 
-    public function exportPDF($bulan)
+    public function exportPDF(Request $request)
     {
-        $tanggalMulai = Carbon::now()->subMonths($bulan);
+        $start = $request->input('start_date');
+        $end   = $request->input('end_date');
 
-        // 1) Eager‐load barangMaster & items
-        $pengadaans = Pengadaan::with(['barangMaster','items'])
-            ->whereDate('created_at', '>=', $tanggalMulai)
+        $query = Pengadaan::with(['barangMaster', 'items'])
             ->where('status', 'disetujui')
-            ->get()
-            // 2) Tambahkan properti dinamis jumlah_total & total_harga
-            ->map(function ($p) {
-                $p->jumlah_total = $p->items->sum('jumlah');
-                $p->total_harga  = $p->jumlah_total * $p->harga_perolehan;
-                return $p;
-            });
+            ->when(
+                $start && $end,
+                fn($q) =>
+                $q->whereDate('created_at', '>=', $start)
+                    ->whereDate('created_at', '<=', $end)
+            );
 
-        // 3) Generate PDF
-        $pdf = Pdf::loadView('laporan.pengadaan.pdf', compact('pengadaans'));
-        return $pdf->download("laporan-pengadaan-{$bulan}-bulan.pdf");
+        $pengadaans = $query->get()->map(fn($p) => tap($p, function ($x) {
+            $x->jumlah_total = $x->items->sum('jumlah');
+            $x->total_harga  = $x->jumlah_total * $x->harga_perolehan;
+        }));
+
+        $pdf = Pdf::loadView('laporan.pengadaan.pdf', compact('pengadaans', 'start', 'end'));
+        return $pdf->download("laporan-pengadaan-{$start}-{$end}.pdf");
     }
 
-    public function exportExcel($bulan)
+    public function exportExcel(Request $request)
     {
-        return Excel::download(new PengadaanExport($bulan), "laporan-pengadaan-{$bulan}-bulan.xlsx");
+        $start = $request->input('start_date');
+        $end   = $request->input('end_date');
+
+        return Excel::download(
+            new PengadaanExport($start, $end),
+            "laporan-pengadaan-{$start}-{$end}.xlsx"
+        );
     }
 }

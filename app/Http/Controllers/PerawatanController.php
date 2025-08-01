@@ -101,43 +101,60 @@ class PerawatanController extends Controller
 
     public function laporan(Request $request)
     {
+        $start = $request->input('start_date');
+        $end   = $request->input('end_date');
         $search = $request->input('search');
-        $query = PerawatanItem::with('barang.ruangan', 'perawatan.user', 'barang.barangMaster')->whereHas('perawatan', function ($q) {
-            $q->where('status_ajuan', 'disetujui');
-        });
-        // $query = PerawatanItem::all();
-        // dd($query->get());
 
-        // Fitur pencarian berdasarkan nama barang
-        if ($request->has('search') && $request->search != '') {
-            $search = $request->search;
-            $query->whereHas('barang.barangMaster', function ($q) use ($search) {
-                $q->where('nama_barang', 'like', '%' . $search . '%');
+        $query = PerawatanItem::with('barang.ruangan','perawatan.user','barang.barangMaster')
+            ->whereHas('perawatan', function($q) use($start,$end) {
+                $q->where('status_ajuan','disetujui')
+                ->when($start && $end, fn($q2) =>
+                    $q2->whereDate('tanggal_perawatan','>=',$start)
+                        ->whereDate('tanggal_perawatan','<=',$end)
+                );
             });
+
+        // server-side search (optional)
+        if ($search) {
+            $query->whereHas('barang.barangMaster', fn($q2) =>
+                $q2->where('nama_barang','like', "%{$search}%")
+            );
         }
 
         $dataPerawatan = $query->get();
-        // $dataPerawatan = Perawatan::with('barang.ruangan', 'ajuan')->get();
+
         return view('laporan.perawatan.app', compact('dataPerawatan'));
     }
 
-    public function exportPDF($bulan)
+    // 2) EXPORT PDF
+    public function exportPDF(Request $request)
     {
-        $tanggalMulai = Carbon::now()->subMonths($bulan);
-        // $dataPerawatan = Perawatan::with('perawatanItem.barang.ruangan', 'user')
-        //     ->where('tanggal_perawatan', '>=', $tanggalMulai)
-        //     ->get();
-        $dataPerawatan = PerawatanItem::with('barang.ruangan', 'perawatan.user', 'barang.barangMaster')->whereHas('perawatan', function ($q) use ($tanggalMulai) {
-            $q->where('status_ajuan', 'disetujui')
-            ->where('tanggal_perawatan', '>=', $tanggalMulai);
-        })->get();
+        $start = $request->input('start_date');
+        $end   = $request->input('end_date');
 
-        $pdf = Pdf::loadView('laporan.perawatan.pdf', compact('dataPerawatan'));
-        return $pdf->download("laporan-perawatan-{$bulan}-bulan.pdf");
+        $dataPerawatan = PerawatanItem::with('barang.ruangan','perawatan.user','barang.barangMaster')
+            ->whereHas('perawatan', function($q) use($start,$end) {
+                $q->where('status_ajuan','disetujui')
+                ->when($start && $end, fn($q2) =>
+                    $q2->whereDate('tanggal_perawatan','>=',$start)
+                        ->whereDate('tanggal_perawatan','<=',$end)
+                );
+            })
+            ->get();
+
+        $pdf = Pdf::loadView('laporan.perawatan.pdf', compact('dataPerawatan','start','end'));
+        return $pdf->download("laporan-perawatan-{$start}_{$end}.pdf");
     }
 
-    public function exportExcel($bulan)
+    // 3) EXPORT EXCEL
+    public function exportExcel(Request $request)
     {
-        return Excel::download(new PerawatanExport($bulan), "laporan-perawatan-{$bulan}-bulan.xlsx");
+        $start = $request->input('start_date');
+        $end   = $request->input('end_date');
+
+        return Excel::download(
+            new PerawatanExport($start, $end),
+            "laporan-perawatan-{$start}_{$end}.xlsx"
+        );
     }
 }

@@ -45,7 +45,7 @@
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
                 </div>
-
+                {{-- @dd($item->sumber_dana) --}}
                 <div class="mb-3">
                     <label for="sumber_dana" class="form-label">Sumber Dana</label>
                     <select id="sumber_dana_edit" name="sumber_dana" class="form-select">
@@ -55,6 +55,9 @@
                         <option value="Komite" @if ($item->sumber_dana == 'Komite') selected @endif>Komite</option>
                         <option value="DAK" @if ($item->sumber_dana == 'DAK') selected @endif>DAK</option>
                         <option value="Hibah" @if ($item->sumber_dana == 'Hibah') selected @endif>Hibah</option>
+                        @if (@isset($item->sumber_dana)&& $item->sumber_dana != "BOS" && $item->sumber_dana != "BPOPP" && $item->sumber_dana != "Komite" && $item->sumber_dana != "DAK" && $item->sumber_dana != "Hibah")
+                            <option value="{{ $item->sumber_dana }}" selected>{{ $item->sumber_dana }}</option>
+                        @endif
                     </select>
                 </div>
 

@@ -10,6 +10,9 @@
             </div>
             <div class="modal-body d-flex">
                 <dl class="row">
+                    <dt class="col-sm-4">Jenis Ajuan</dt>
+                    <dd class="col-sm-6">{{ $item['jenis'] }}</dd>
+                    
                     <dt class="col-sm-4">Tanggal Pengajuan</dt>
                     <dd class="col-sm-6">{{ $item['created_at'] }}</dd>
                     
@@ -27,12 +30,14 @@
                         
                     @endif
 
-                    <dt class="col-sm-4">Jenis Ajuan</dt>
-                    <dd class="col-sm-6">{{ $item['jenis'] }}</dd>
+                    @if ($item['model_type'] === 'perawatan')
+                        <dt class="col-sm-4">Biaya Perawatan</dt>
+                        <dd class="col-sm-6">{{ $item['tambahan'] }}</dd>
+                    @endif
 
                     <dt class="col-sm-4">Barang</dt>
                     <dd class="col-sm-6">
-                        {{ $item['jumlah'] }} Unit {{ $item['barang'] }}
+                        {{ $item['barang'] }} <span class="text-muted fst-italic">( {{ $item['jumlah'] }} @if ($item['model_type'] !== 'barang_rusak') Unit @endif )</span>
                     </dd>
 
                     <dt class="col-sm-4">Keperluan / Keterangan</dt>

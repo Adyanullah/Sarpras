@@ -23,7 +23,7 @@
                     <th>Jumlah</th>
                     <th>Biaya (Rp)</th>
                     <th>Keterangan</th>
-                    <th>Status pengajuan</th>
+                    <th>Status</th>
                     <th>Aksi</th>
                 </tr>
             </thead>
@@ -32,14 +32,23 @@
                     <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $item->tanggal_perawatan }}</td>
-                        <td>{{ $item->perawatanItem[0]->barang->barangMaster->nama_barang }}</td>
+                        <td>@if($item->perawatanItem[0]->barang->barangMaster->nama_barang){{ $item->perawatanItem[0]->barang->barangMaster->nama_barang }}@else<span class="text-muted fst-italic">Tidak ada nama</span>@endif</td>
                         <td>{{ $item->perawatanItem[0]->barang->ruangan->nama_ruangan }}</td>
                         <td>{{ $item->jenis_perawatan }}</td>
                         <td>{{ $item->perawatanItem->count() ?? '-' }}</td>
                         <td>{{ $item->biaya_perawatan == 0 ? '-' : 'Rp. ' . number_format($item->biaya_perawatan, 0, ',', '.') }}</td>
                         <td>{{ $item->keterangan ?? '-' }}</td>
-                        <td><span class="badge @if ($item->status_ajuan == 'pending') bg-warning @elseif ($item->status_ajuan == 'disetujui') bg-success
-                        @endif">{{ $item->status_ajuan }}</span></td>
+                        <td>
+                            <span class="badge bg-warning">
+                                @if ($item->status_ajuan == 'pending')
+                                    pending
+                                @elseif ($item->status_ajuan == 'disetujui' && $item->status_perawatan == 'belum')
+                                    dalam perawatan
+                                @else
+                                    {{ $item->status_ajuan }}
+                                @endif
+                            </span>
+                        </td>
                         <td>
                             <div class="d-flex gap-1">
                                 <button type="button" class="btn btn-info px-2 py-1" data-bs-toggle="modal" data-bs-target="#modalDetail{{ $loop->iteration }}">

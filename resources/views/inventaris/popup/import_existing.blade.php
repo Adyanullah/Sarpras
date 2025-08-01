@@ -12,28 +12,30 @@
       </div>
 
       <div class="modal-body">
-        <p>Unggah file Excel/CSV dengan **header** (baris pertama) seperti berikut:</p>
-        <ul>
-          <li><strong>kode_master</strong> – awalan kode barang</li>
-          <li><strong>ruangan_id</strong> – ID ruangan sesuai <code>ruangans.id</code></li>
-          <li><strong>jumlah</strong> – jumlah unit yang diajukan</li>
-          <li><strong>harga_perolehan</strong> – harga satuan (tanpa koma ribuan, titik desimal)</li>
-          <li><strong>keterangan</strong> – teks keterangan (opsional)</li>
-          <li><strong>cv_pengadaan</strong> – nama supplier (opsional)</li>
-          <li><strong>sumber_dana</strong> – misal “BOS”, “DAK”, “Komite”, dll.</li>
-        </ul>
-        <div class="mb-3">
-          <label class="form-label">File (.xlsx, .csv)</label>
-          <input type="file" 
-                 name="file" 
-                 accept=".xlsx,.csv" 
-                 class="form-control" 
-                 required>
-          @error('file')
-            <div class="text-danger mt-1">{{ $message }}</div>
-          @enderror
-        </div>
-      </div>
+  <p><strong>Cara cepat import:</strong></p>
+  <p class="mb-1">Untuk mengimpor data pengadaan barang, Anda dapat menggunakan file Excel (.xlsx) atau CSV (.csv) pastikan dengan kolom berikut:</p>
+  <p class="mb-1"><u>1. Tambah Jumlah Barang (existing)</u></p>
+  <ul class="ps-4 mb-2">
+    <code>kode_awal</code>, <code>ruangan</code>, <code>jumlah</code>,
+    <code>harga_perolehan</code>, <code>keterangan</code>,
+    <code>cv_pengadaan</code>, <code>sumber_dana</code>
+  </ul>
+
+  <p class="mb-1"><u>2. Pengadaan Barang Baru</u></p>
+  <ul class="ps-4 mb-3">
+    <code>kode_awal</code> (buat baru), <code>ruangan</code>, <code>jumlah</code>,
+    <code>harga_perolehan</code>, <code>keterangan</code>,
+    <code>cv_pengadaan</code>, <code>sumber_dana</code>,
+    <code>nama_barang</code> (opsional), <code>jenis_barang</code> (opsional), <code>merk_barang</code> (opsional)
+  </ul>
+
+  <div class="mb-3">
+    <label class="form-label">Pilih file (.xlsx, .csv)</label>
+    <input type="file" name="file" accept=".xlsx,.csv" class="form-control" required>
+    @error('file') <div class="text-danger mt-1">{{ $message }}</div> @enderror
+  </div>
+</div>
+
 
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>

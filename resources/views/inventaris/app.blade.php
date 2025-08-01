@@ -15,7 +15,7 @@
         <div>
             @if (in_array(auth()->user()->role, [1, 3]))
                 <div class="btn-group">
-                    <button type="button" class="btn btn-primary dropdown-toggle me-2" data-bs-toggle="dropdown"
+                    <button type="button" class="btn btn-primary dropdown-toggle me-1" data-bs-toggle="dropdown"
                         aria-expanded="false">
                         <i class="bi bi-plus-circle me-2"></i>Barang Masuk
                     </button>
@@ -25,10 +25,10 @@
                         <li><a type="button" class="dropdown-item text-white" data-bs-toggle="modal"
                                 data-bs-target="#PengadaanBaru">Barang baru</a></li>
                     </ul>
-                    <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#importModal">
-                        <i class="bi bi-download me-1"></i>Import Data
-                    </button>
                 </div>
+                <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#importModal">
+                    <i class="bi bi-download me-1"></i>Import Data
+                </button>
                 @include('inventaris.popup.pengadaan')
                 @include('inventaris.popup.pengadaan_baru')
                 @include('inventaris.popup.import_existing')
@@ -61,12 +61,12 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     @endif
-    {{-- @if (session('error'))
+    @if (session('error'))
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
             <strong>Gagal!</strong> {{ session('error') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
-    @endif --}}
+    @endif
     @if ($errors->any())
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
             <strong>Gagal!</strong> Ada beberapa kesalahan:
@@ -110,9 +110,27 @@
                     <tr>
                         <td>{{ $loop->iteration + ($barangs->currentPage() - 1) * $barangs->perPage() }}</td>
                         <td>{{ $item->barangMaster->kode_barang }}</td>
-                        <td>{{ $item->barangMaster->nama_barang }}</td>
-                        <td>{{ $item->barangMaster->jenis_barang }}</td>
-                        <td>{{ $item->barangMaster->merk_barang }}</td>
+                        <td>
+                        @if($item->barangMaster->nama_barang)
+                            {{ $item->barangMaster->nama_barang }}
+                        @else
+                            <span class="text-muted fst-italic">Tidak ada nama</span>
+                        @endif
+                        </td>
+                        <td>
+                        @if($item->barangMaster->jenis_barang)
+                            {{ $item->barangMaster->jenis_barang }}
+                        @else
+                            <span class="text-muted fst-italic">Tidak ada jenis</span>
+                        @endif
+                        </td>
+                        <td>
+                        @if($item->barangMaster->merk_barang)
+                            {{ $item->barangMaster->merk_barang }}
+                        @else
+                            <span class="text-muted fst-italic">Tidak ada merk</span>
+                        @endif
+                        </td>
                         @php
                             $ajuanJumlah = $ajuan[$item->barang_id]->total_ajuan ?? 0;
                         @endphp

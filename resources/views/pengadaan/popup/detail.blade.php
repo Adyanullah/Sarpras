@@ -9,13 +9,13 @@
             <div class="modal-body">
                 <dl class="row">
                     <dt class="col-sm-4">Nama Barang</dt>
-                    <dd class="col-sm-8">{{ $pengadaan->nama_barang ?? $pengadaan->barangMaster->nama_barang }}</dd>
+                    <dd class="col-sm-8">@if (optional($pengadaan->barangMaster)->nama_barang){{ optional($pengadaan->barangMaster)->kode_barang }} - {{ optional($pengadaan->barangMaster)->nama_barang }}@elseif($pengadaan->nama_barang){{ $pengadaan->kode_barang }} - {{ $pengadaan->nama_barang }}@else<span class="text-muted fst-italic">Tidak ada nama</span>@endif</dd>
 
                     <dt class="col-sm-4">Jenis Barang</dt>
-                    <dd class="col-sm-8">{{ $pengadaan->jenis_barang ?? $pengadaan->barangMaster->jenis_barang }}</dd>
+                    <dd class="col-sm-8">@if (optional($pengadaan->barangMaster)->jenis_barang){{ optional($pengadaan->barangMaster)->jenis_barang }}@elseif($pengadaan->jenis_barang){{ $pengadaan->jenis_barang }}@else<span class="text-muted fst-italic">Tidak ada jenis</span>@endif</dd>
 
                     <dt class="col-sm-4">Merk / Spesifikasi</dt>
-                    <dd class="col-sm-8">{{ $pengadaan->merk_barang ?? $pengadaan->barangMaster->merk_barang }}</dd>
+                    <dd class="col-sm-8">@if (optional($pengadaan->barangMaster)->merk_barang){{ optional($pengadaan->barangMaster)->merk_barang }}@elseif($pengadaan->merk_barang){{ $pengadaan->merk_barang }}@else<span class="text-muted fst-italic">Tidak ada merk</span>@endif</dd>
 
                     <dt class="col-sm-4">Jumlah Barang</dt>
                     <dd class="col-sm-8">{{ $pengadaan->items->sum('jumlah') }} Unit</dd>

@@ -28,7 +28,7 @@
                     <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $item->created_at->format('Y-m-d') }}</td>
-                        <td>{{ $item->penghapusanItem[0]->barang->barangMaster->nama_barang }}</td>
+                        <td>@if($item->penghapusanItem[0]->barang->barangMaster->nama_barang){{ $item->penghapusanItem[0]->barang->barangMaster->nama_barang }}@else<span class="text-muted fst-italic">Tidak ada nama</span>@endif</td>
                         <td>{{ $item->penghapusanItem->count() }}</td>
                         <td>{{ $item->keterangan }}</td>
                         <td><span class="badge bg-warning">{{ $item->status_ajuan }}</span></td>

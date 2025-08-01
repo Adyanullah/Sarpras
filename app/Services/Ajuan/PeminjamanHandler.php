@@ -16,7 +16,7 @@ class PeminjamanHandler implements AjuanHandlerInterface
         foreach ($ajuan->peminjamanItem as $item) {
             $barang = $item->barang;
             if ($barang) {
-                $barang->sedia = 0; // dianggap dipinjam
+                $barang->sedia = 0.1; // dianggap dipinjam
                 $barang->save();
             }
         }

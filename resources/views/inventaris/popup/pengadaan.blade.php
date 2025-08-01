@@ -96,7 +96,7 @@
                 <div class="col-md-12 mb-3">
                     <label for="keterangan" class="form-label">Keterangan</label>
                     <input type="text" name="keterangan" class="form-control" id="keterangan"
-                        placeholder="Contoh : Milik Sekolah" step="0.01" value="{{ old('keterangan') }}">
+                        placeholder="Contoh : Penanggung jawab" step="0.01" value="{{ old('keterangan') }}">
                     @error('keterangan')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror

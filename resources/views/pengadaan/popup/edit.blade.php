@@ -57,6 +57,16 @@
                         @endforeach
                     </div>
                 @else
+                    {{-- Field Kode Barang --}}
+                    <div class="mb-3">
+                        <label class="form-label">Kode Barang</label>
+                        <input type="text" name="kode_barang"
+                            class="form-control @error('kode_barang') is-invalid @enderror"
+                            value="{{ old('kode_barang', $pengadaan->kode_barang) }}" required>
+                        @error('kode_barang')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
                     {{-- 1) Field Master Baru --}}
                     <div class="mb-3">
                         <label class="form-label">Nama Barang</label>
@@ -76,31 +86,31 @@
 
                     {{-- 2) Multi‑ruangan & jumlah --}}
                     <div id="fields-container-{{ $pengadaan->id }}" class="fields-container">
-                        @foreach($pengadaan->items as $idx => $item)
-                        <div class="row mb-3 field-row">
-                            <div class="col-md-6">
-                            <label class="form-label">Lokasi</label>
-                            <select name="ruangan_id[]" class="form-select" required>
-                                @foreach($ruangans as $r)
-                                <option value="{{ $r->id }}"
-                                    {{ $item->ruangan_id == $r->id ? 'selected' : '' }}>
-                                    {{ $r->nama_ruangan }}
-                                </option>
-                                @endforeach
-                            </select>
+                        @foreach ($pengadaan->items as $idx => $item)
+                            <div class="row mb-3 field-row">
+                                <div class="col-md-6">
+                                    <label class="form-label">Lokasi</label>
+                                    <select name="ruangan_id[]" class="form-select" required>
+                                        @foreach ($ruangans as $r)
+                                            <option value="{{ $r->id }}"
+                                                {{ $item->ruangan_id == $r->id ? 'selected' : '' }}>
+                                                {{ $r->nama_ruangan }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Jumlah</label>
+                                    <input type="number" name="jumlah[]" class="form-control" min="1"
+                                        value="{{ $item->jumlah }}" required>
+                                </div>
+                                <div class="col-md-2 d-flex align-items-end">
+                                    <button type="button"
+                                        class="btn btn-outline-{{ $idx === 0 ? 'success btn-add' : 'danger btn-remove' }}">
+                                        <i class="bi bi-{{ $idx === 0 ? 'plus' : 'dash' }}-lg"></i>
+                                    </button>
+                                </div>
                             </div>
-                            <div class="col-md-4">
-                            <label class="form-label">Jumlah</label>
-                            <input type="number" name="jumlah[]" class="form-control" min="1"
-                                    value="{{ $item->jumlah }}" required>
-                            </div>
-                            <div class="col-md-2 d-flex align-items-end">
-                            <button type="button"
-                                    class="btn btn-outline-{{ $idx===0 ? 'success btn-add' : 'danger btn-remove' }}">
-                                <i class="bi bi-{{ $idx===0 ? 'plus' : 'dash' }}-lg"></i>
-                            </button>
-                            </div>
-                        </div>
                         @endforeach
                     </div>
                 @endif
@@ -116,7 +126,8 @@
                     <select id="sumber_dana_{{ $pengadaan->id }}" name="sumber_dana" class="form-select">
                         <option disabled>--Pilih--</option>
                         @foreach (['BOS', 'BPOPP', 'Komite', 'DAK', 'Hibah'] as $sd)
-                            <option value="{{ $sd }}" {{ $pengadaan->sumber_dana == $sd ? 'selected' : '' }}>
+                            <option value="{{ $sd }}"
+                                {{ $pengadaan->sumber_dana == $sd ? 'selected' : '' }}>
                                 {{ $sd }}
                             </option>
                         @endforeach

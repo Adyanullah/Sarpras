@@ -1,4 +1,16 @@
 <x-layout>
+    @if ($errors->any())
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>Gagal!</strong> Ada beberapa kesalahan:
+            <ul class="mb-0">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"
+                aria-label="Close"></button>
+        </div>
+    @endif
     <div class="table-responsive">
         <table id="tabelPengadaan" class="table table-bordered table-striped align-middle">
             <thead class="table-light text-center">
@@ -19,8 +31,8 @@
                     <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $pengadaan->created_at->format('Y-m-d') }}</td>
-                        <td>{{ $pengadaan->nama_barang ?? $pengadaan->barangMaster->nama_barang }}</td>
-                        <td>{{ $pengadaan->merk_barang ?? $pengadaan->barangMaster->merk_barang }}</td>
+                        <td>@if (optional($pengadaan->barangMaster)->nama_barang){{ optional($pengadaan->barangMaster)->kode_barang }} - {{ optional($pengadaan->barangMaster)->nama_barang }}@elseif($pengadaan->nama_barang){{ $pengadaan->kode_barang }} - {{ $pengadaan->nama_barang }}@else<span class="text-muted fst-italic">Tidak ada nama</span>@endif</td>
+                        <td>@if (optional($pengadaan->barangMaster)->merk_barang){{ $pengadaan->barangMaster->merk_barang }}@elseif($pengadaan->merk_barang){{ $pengadaan->merk_barang }}@else<span class="text-muted fst-italic">Tidak ada merk</span>@endif</td>
                         <td>{{ $pengadaan->items->sum('jumlah') }} Unit</td>
                         <td>Rp {{ number_format($pengadaan->harga_perolehan * $pengadaan->items->sum('jumlah'), 0, ',', '.') }}</td>
                         <td>

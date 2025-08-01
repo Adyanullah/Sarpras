@@ -2,44 +2,49 @@
 
 namespace App\Exports;
 
-use App\Models\Perawatan;
-use Carbon\Carbon;
+use App\Models\PerawatanItem;
 use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 
 class PerawatanExport implements FromArray, WithHeadings
 {
-    protected $bulan;
+    protected $startDate;
+    protected $endDate;
 
-    public function __construct($bulan)
+    public function __construct($start, $end)
     {
-        $this->bulan = $bulan;
+        $this->startDate = $start;
+        $this->endDate   = $end;
     }
 
     public function array(): array
     {
-        $tanggalMulai = Carbon::now()->subMonths($this->bulan);
-        $data = Perawatan::with('perawatanItem.barang.ruangan', 'user')
-            ->where('tanggal_perawatan', '>=', $tanggalMulai)
-            ->get();
+        $query = PerawatanItem::with('barang.ruangan','perawatan','barang.barangMaster')
+            ->whereHas('perawatan', function($q) {
+                $q->where('status_ajuan','disetujui');
+            })
+            ->when($this->startDate && $this->endDate, fn($q) =>
+                $q->whereHas('perawatan', fn($q2) =>
+                    $q2->whereDate('tanggal_perawatan','>=',$this->startDate)
+                       ->whereDate('tanggal_perawatan','<=',$this->endDate)
+                )
+            );
 
         $result = [];
         $no = 1;
-
-        foreach ($data as $perawatan) {
-            foreach ($perawatan->perawatanItem as $item) {
-                $result[] = [
-                    $no++,
-                    $perawatan->tanggal_perawatan,
-                    $perawatan->perawatan->tanggal_selesai ?? 'Belum Selesai',
-                    $item->barang->kode_barang ?? '-',
-                    $item->barang->barangMaster->nama_barang ?? '-',
-                    $item->barang->ruangan->nama_ruangan ?? '-',
-                    $perawatan->jenis_perawatan,
-                    $perawatan->biaya_perawatan,
-                    $perawatan->keterangan,
-                ];
-            }
+        foreach ($query->get() as $data) {
+            $p = $data->perawatan;
+            $result[] = [
+                $no++,
+                $p->tanggal_perawatan,
+                $p->tanggal_selesai       ?? 'Belum Selesai',
+                $data->barang->kode_barang ?? '-',
+                $data->barang->barangMaster->nama_barang ?? '-',
+                $data->barang->ruangan->nama_ruangan       ?? '-',
+                $p->jenis_perawatan,
+                'Rp. '.number_format($p->biaya_perawatan, 0, ',', '.'),
+                $p->keterangan               ?? '-',
+            ];
         }
 
         return $result;
@@ -55,7 +60,7 @@ class PerawatanExport implements FromArray, WithHeadings
             'Nama Barang',
             'Unit',
             'Jenis Perawatan',
-            'Biaya (Rp)',
+            'Biaya',
             'Keterangan',
         ];
     }

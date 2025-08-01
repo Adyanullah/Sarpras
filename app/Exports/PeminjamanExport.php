@@ -3,50 +3,54 @@
 namespace App\Exports;
 
 use App\Models\PeminjamanItem;
-use Carbon\Carbon;
 use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 
 class PeminjamanExport implements FromArray, WithHeadings
 {
-    protected $bulan;
+    protected $start;
+    protected $end;
 
-    public function __construct($bulan)
+    public function __construct($start, $end)
     {
-        $this->bulan = $bulan;
+        $this->start = $start;
+        $this->end   = $end;
     }
 
     public function array(): array
     {
-        $tanggalMulai = Carbon::now()->subMonths($this->bulan);
-
-        $data = PeminjamanItem::with(['peminjaman', 'barang.ruangan', 'barang.barangMaster'])
-            ->whereHas('peminjaman', function ($query) use ($tanggalMulai) {
-                $query->whereDate('tanggal_peminjaman', '>=', $tanggalMulai);
+        $query = PeminjamanItem::with(['peminjaman','barang.ruangan','barang.barangMaster'])
+            ->whereHas('peminjaman', function($q) {
+                $q->where('status_ajuan','disetujui');
             })
-            ->get();
+            ->when($this->start && $this->end, fn($q) =>
+                $q->whereHas('peminjaman', fn($q2) =>
+                    $q2->whereDate('tanggal_peminjaman','>=',$this->start)
+                       ->whereDate('tanggal_peminjaman','<=',$this->end)
+                )
+            );
 
         $result = [];
         $no = 1;
+        foreach ($query->get() as $item) {
+            $pem = $item->peminjaman;
+            $tglKembali = $pem->status_peminjaman=='Hilang'
+                         ? 'Hilang'
+                         : ($pem->tanggal_pengembalian ?? 'Belum Dikembalikan');
 
-        foreach ($data as $item) {
-            if ($item->peminjaman->status_peminjaman == 'Hilang')
-                $tanggal_pengembalian = 'Hilang';
-            else
-                $tanggal_pengembalian = $item->peminjaman->tanggal_pengembalian ?? 'Belum Dikembalikan';
             $result[] = [
                 $no++,
-                $item->peminjaman->tanggal_peminjaman,
-                $tanggal_pengembalian,
-                $item->barang->kode_barang ?? '-',
+                $pem->tanggal_peminjaman,
+                $tglKembali,
+                $item->barang->kode_barang          ?? '-',
                 $item->barang->barangMaster->nama_barang ?? '-',
                 $item->barang->barangMaster->jenis_barang ?? '-',
-                $item->barang->barangMaster->merk_barang ?? '-',
-                $item->barang->ruangan->nama_ruangan ?? '-',
-                $item->peminjaman->nama_peminjam ?? '-',
+                $item->barang->barangMaster->merk_barang  ?? '-',
+                $item->barang->ruangan->nama_ruangan      ?? '-',
+                $pem->nama_peminjam                       ?? '-',
+                $pem->keterangan ?? '-',
             ];
         }
-
         return $result;
     }
 
@@ -55,13 +59,14 @@ class PeminjamanExport implements FromArray, WithHeadings
         return [
             'No',
             'Tanggal Pinjam',
-            'Tanggal Pengembalian',
+            'Tanggal Kembali',
             'Kode Barang',
             'Nama Barang',
-            'Jenis Barang',
-            'Merk Barang',
+            'Jenis',
+            'Merk',
             'Unit',
             'Nama Peminjam',
+            'Keterangan',
         ];
     }
 }

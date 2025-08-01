@@ -39,11 +39,21 @@ class Barang extends Model
         return $this->hasMany(PenghapusanItem::class, 'barang_id');
     }
 
-     protected static function booted()
+    public function barangRusak()
     {
-        // Sebelum dihapus
-        static::deleting(function ($barang) {
-            Penghapusan::create($barang);
+        return $this->hasMany(BarangRusak::class);
+    }
+    protected static function booted()
+    {
+        static::deleting(function(Barang $unit) {
+            // 3) Hapus semua ajuan terkait unit ini
+            $unit->mutasiItem()->delete();
+            $unit->peminjamanItem()->delete();
+            $unit->perawatanItem()->delete();
+            $unit->penghapusanItem()->delete();
+            if ($unit->barangRusak) {
+                $unit->barangRusak()->delete();
+            }
         });
     }
 }

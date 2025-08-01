@@ -25,8 +25,10 @@
                         <th>Nama Barang</th>
                         <th>Jenis</th>
                         <th>Merk</th>
+                        <th>Harga Satuan</th>
                         <th>Tahun</th>
                         <th>Sumber Dana</th>
+                        <th>Supplier</th>
                         <th>Kondisi</th>
                     </tr>
                 </thead>
@@ -38,9 +40,21 @@
                         <td>{{ $barang->barangMaster->nama_barang ?? '-' }}</td>
                         <td>{{ $barang->barangMaster->jenis_barang ?? '-' }}</td>
                         <td>{{ $barang->barangMaster->merk_barang ?? '-' }}</td>
+                        <td>Rp. {{ number_format($barang->harga_unit, 0, ',', '.') }}</td>
                         <td>{{ $barang->tahun_perolehan }}</td>
                         <td>{{ $barang->sumber_dana }}</td>
-                        <td>{{ ucfirst($barang->kondisi_barang) }}</td>
+                        <td>{{ $barang->cv_pengadaan ?? '-' }}</td>
+                        <td>
+                            @if ($barang->kondisi_barang == 'baik')
+                                Baik
+                            @elseif ($barang->kondisi_barang == 'rusak')
+                                Rusak Ringan
+                            @elseif ($barang->kondisi_barang == 'berat')
+                                Rusak Berat
+                            @else
+                                Tidak Diketahui
+                            @endif
+                        </td>
                     </tr>
                     @empty
                     <tr>

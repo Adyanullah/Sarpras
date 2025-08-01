@@ -143,8 +143,20 @@
                         @endif
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $item->kode_barang }}</td>
-                        <td>{{ $item->barangMaster->nama_barang }}</td>
-                        <td>{{ $item->barangMaster->merk_barang }}</td>
+                        <td>
+                        @if($item->barangMaster->nama_barang)
+                            {{ $item->barangMaster->nama_barang }}
+                        @else
+                            <span class="text-muted fst-italic">Tidak ada nama</span>
+                        @endif
+                        </td>
+                        <td>
+                        @if($item->barangMaster->merk_barang)
+                            {{ $item->barangMaster->merk_barang }}
+                        @else
+                            <span class="text-muted fst-italic">Tidak ada merk</span>
+                        @endif
+                        </td>
                         <td>{{ $item->sumber_dana }}</td>
                         <td>{{ $item->tahun_perolehan }}</td>
                         <td>

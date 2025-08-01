@@ -19,7 +19,7 @@
                 <th>Nama Barang</th>
                 <th>Unit</th>
                 <th>Jenis Perawatan</th>
-                <th>Biaya (Rp)</th>
+                <th>Biaya</th>
                 <th>Keterangan</th>
             </tr>
         </thead>
@@ -34,7 +34,7 @@
                         <td>{{ $perawatan->barang->barangMaster->nama_barang ?? '-' }}</td>
                         <td>{{ $perawatan->barang->ruangan->nama_ruangan ?? '-' }}</td>
                         <td>{{ $perawatan->perawatan->jenis_perawatan }}</td>
-                        <td>{{ number_format($perawatan->biaya_perawatan, 0, ',', '.') }}</td>
+                        <td>Rp. {{ number_format($perawatan->perawatan->biaya_perawatan, 0, ',', '.') }}</td>
                         <td>{{ $perawatan->perawatan->keterangan ?? '-' }}</td>
                     </tr>
                 {{-- @endforeach --}}

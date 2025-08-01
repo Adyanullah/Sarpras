@@ -39,9 +39,9 @@
             <tr>
                 <td>{{ $loop->iteration }}</td>
                 <td>{{ $p->created_at->format('Y-m-d') }}</td>
-                <td>{{ $p->nama_barang ?? $p->barangMaster->nama_barang }}</td>
-                <td>{{ $p->jenis_barang ?? $p->barangMaster->jenis_barang }}</td>
-                <td>{{ $p->merk_barang ?? $p->barangMaster->merk_barang }}</td>
+                <td>{{ $p->barangMaster->nama_barang ?? '-' }}</td>
+                <td>{{ $p->barangMaster->jenis_barang ?? '-' }}</td>
+                <td>{{ $p->barangMaster->merk_barang ?? '-' }}</td>
 
                 {{-- jumlah_total dari items --}}
                 <td class="text-center">{{ $p->jumlah_total }} Unit</td>

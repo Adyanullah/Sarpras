@@ -27,9 +27,9 @@ class AjuanController extends Controller
 
         foreach ($pengadaans as $p) {
             // Nama barang: jika tambah pakai master, jika baru pakai kolom sendiri
-            $namaBarang = $p->tipe_pengajuan === 'tambah'
-                ? optional($p->barangMaster)->nama_barang
-                : $p->nama_barang;
+            $barang = $p->tipe_pengajuan === 'tambah'
+                ? optional($p->barangMaster)
+                : $p;
 
             // Tipe ajuan
             $jenis = 'Pengadaan ' . ($p->tipe_pengajuan === 'baru' ? 'Baru' : 'Tambah');
@@ -52,7 +52,7 @@ class AjuanController extends Controller
                 'created_at' => $p->created_at->format('d M Y'),
                 'pengaju'    => $p->user->name,
                 'jenis'      => $jenis,
-                'barang'     => $namaBarang,
+                'barang'     => $barang->kode_barang. ' - '.$barang->nama_barang ?? 'Belum diisi',
                 'jumlah'     => $jumlahTotal,
                 'status'     => $p->status,
                 'ruangan'    => $ruanganAsal,
@@ -69,18 +69,17 @@ class AjuanController extends Controller
             ->where('status_ajuan', 'pending')
             ->get();
         foreach ($peminjamans as $p) {
-            $namaBarang = $p->peminjamanItem
+            $barang = $p->peminjamanItem
                 ->first()
                 ->barang
-                ->barangMaster
-                ->nama_barang;
+                ->barangMaster;
 
             $dataAjuan->push([
                 'id'         => $p->id,
                 'created_at' => $p->created_at->format('d M Y'),
                 'pengaju'    => $p->user->name,
                 'jenis'      => 'Peminjaman',
-                'barang'     => $namaBarang,
+                'barang'     => $barang->kode_barang . ' - ' . $barang->nama_barang,
                 'jumlah'     => $p->peminjamanItem->count(),
                 'status'     => $p->status_ajuan,
                 'ruangan'    => '-',
@@ -97,22 +96,21 @@ class AjuanController extends Controller
             ->where('status_ajuan', 'pending')
             ->get();
         foreach ($perawatans as $p) {
-            $namaBarang = $p->perawatanItem
+            $barang = $p->perawatanItem
                 ->first()
                 ->barang
-                ->barangMaster
-                ->nama_barang;
+                ->barangMaster;
 
             $dataAjuan->push([
                 'id'         => $p->id,
                 'created_at' => $p->created_at->format('d M Y'),
                 'pengaju'    => $p->user->name,
-                'jenis'      => 'Perawatan - Biaya : Rp. ' . number_format($p->biaya_perawatan, 0, ',', '.'),
-                'barang'     => $namaBarang,
+                'jenis'      => 'Perawatan - '.$p->jenis_perawatan,
+                'barang'     => $barang->kode_barang . ' - ' . $barang->nama_barang,
                 'jumlah'     => $p->perawatanItem->count(),
                 'status'     => $p->status_ajuan,
                 'ruangan'    => '-',
-                'tambahan'   => null,
+                'tambahan'   => 'Rp. ' . number_format($p->biaya_perawatan, 0, ',', '.'),
                 'model_type' => 'perawatan',
                 'keterangan' => $p->keterangan ?? '-',
             ]);
@@ -132,7 +130,7 @@ class AjuanController extends Controller
 
         foreach ($mutasis as $m) {
             $firstItem = $m->mutasiItem->first();
-            $namaBarang = optional($firstItem->barang->barangMaster)->nama_barang;
+            $barang = optional($firstItem->barang->barangMaster);
             $ruanganAsal = optional($firstItem->barang->ruangan)->nama_ruangan ?? '-';
             $ruanganTujuan = $ruangans[$m->tujuan] ?? '-';
 
@@ -141,7 +139,7 @@ class AjuanController extends Controller
                 'created_at' => $m->created_at->format('d M Y'),
                 'pengaju'    => $m->user->name,
                 'jenis'      => 'Pemindahan',
-                'barang'     => $namaBarang,
+                'barang'     => $barang->kode_barang . ' - ' . $barang->nama_barang,
                 'jumlah'     => $m->mutasiItem->count(),
                 'status'     => $m->status_ajuan,
                 'ruangan'    => $ruanganAsal,
@@ -159,14 +157,14 @@ class AjuanController extends Controller
             ->get();
         foreach ($penghapusans as $p) {
             $firstItem  = $p->penghapusanItem()->first();
-            $namaBarang = optional($firstItem->barang->barangMaster)->nama_barang;
+            $barang = optional($firstItem->barang->barangMaster);
 
             $dataAjuan->push([
                 'id'         => $p->id,
                 'created_at' => $p->created_at->format('d M Y'),
                 'pengaju'    => $p->user->name,
                 'jenis'      => 'Penghapusan',
-                'barang'     => $namaBarang,
+                'barang'     => $barang->kode_barang.' - '.$barang->nama_barang,
                 'jumlah'     => $p->penghapusanItem()->count(),
                 'status'     => $p->status_ajuan,
                 'ruangan'    => '-',
@@ -183,7 +181,7 @@ class AjuanController extends Controller
             ->where('status_ajuan', 'pending')
             ->get();
         foreach ($barangRusak as $r) {
-            $namaBarang = optional($r->barang->barangMaster)->nama_barang;
+            $barang = optional($r->barang->barangMaster);
             $ruangan    = optional($r->barang->ruangan)->nama_ruangan ?? '-';
             $kondisi    = $r->kondisi_barang === 'berat' ? 'Rusak Berat' : 'Rusak Ringan';
 
@@ -192,7 +190,8 @@ class AjuanController extends Controller
                 'created_at' => $r->created_at->format('d M Y'),
                 'pengaju'    => $r->user->name,
                 'jenis'      => 'Barang Rusak - ' . $kondisi,
-                'barang'     => $namaBarang,
+                // dd($barang->kode_barang),
+                'barang'     => $barang->kode_barang.' - '.$barang->nama_barang,
                 'jumlah'     => $r->barang->kode_barang,
                 'status'     => $r->status_ajuan,
                 'ruangan'    => $ruangan,

@@ -44,15 +44,33 @@
                             </tr>
                             <tr>
                                 <th>Nama Barang</th>
-                                <td>{{ $item->barangMaster->nama_barang }}</td>
+                                <td>
+                                @if($item->barangMaster->nama_barang)
+                                    {{ $item->barangMaster->nama_barang }}
+                                @else
+                                    <span class="text-muted fst-italic">Tidak ada nama</span>
+                                @endif
+                                </td>
                             </tr>
                             <tr>
                                 <th>Jenis Barang</th>
-                                <td>{{ $item->barangMaster->jenis_barang }}</td>
+                                <td>
+                                @if($item->barangMaster->jenis_barang)
+                                    {{ $item->barangMaster->jenis_barang }}
+                                @else
+                                    <span class="text-muted fst-italic">Tidak ada jenis</span>
+                                @endif
+                                </td>
                             </tr>
                             <tr>
                                 <th>Merk / Spesifikasi</th>
-                                <td>{{ $item->barangMaster->merk_barang }}</td>
+                                <td>
+                                @if($item->barangMaster->merk_barang)
+                                    {{ $item->barangMaster->merk_barang }}
+                                @else
+                                    <span class="text-muted fst-italic">Tidak ada merk</span>
+                                @endif
+                                </td>
                             </tr>
                             <tr>
                                 <th>Tahun Perolehan</th>
@@ -90,9 +108,9 @@
                             <tr>
                                 <th>Keterangan</th>
                                 <td>@if ($item->sedia == 0.1)
-                                    <span><span class="badge bg-warning">Sedang dalam Peminjaman</span> - 
+                                    <span><span class="badge bg-warning">Sedang Dipinjam</span> - 
                                     @elseif ($item->sedia == 0)
-                                    <span class="badge bg-warning">Sedang dalam Perawatan</span> - 
+                                    <span class="badge bg-warning">Dalam Perawatan</span> - 
                                 @endif
                                     {{ $item->keterangan }}</td>
                             </tr>

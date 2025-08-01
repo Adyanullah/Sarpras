@@ -28,28 +28,6 @@ class MutasiController extends Controller
         return view('mutasi.app', compact('mutasi', 'ruangans', 'ruangan', 'barangs'));
     }
 
-    public function laporan(Request $request)
-    {
-        $search = $request->input('search');
-        $ruangans = Ruangan::pluck('nama_ruangan', 'id')->toArray();
-
-        $mutasi = MutasiItem::with(['barang.ruangan', 'mutasi.user', 'barang.barangMaster'])
-            ->whereHas('mutasi', function ($q) {
-                $q->where('status_ajuan', 'disetujui');
-            })
-            ->when($search, function ($query, $search) {
-                $query->where(function ($q) use ($search) {
-                    $q->whereHas('barang.barangMaster', function ($q2) use ($search) {
-                        $q2->where('nama_barang', 'like', "%{$search}%")
-                        ->orWhere('kode_barang', 'like', "%{$search}%");
-                    });
-                });
-            })
-            ->get();
-
-        return view('laporan.mutasi.app', compact('mutasi', 'ruangans'));
-    }
-
     public function update(Request $request, $id)
     {
         try {
@@ -94,29 +72,65 @@ class MutasiController extends Controller
 
         return redirect()->back()->with('success', 'Data peminjaman berhasil dibatalkan.');
     }
-
-    public function exportPDF($bulan)
+    
+    // 1) Laporan avec rentang tanggal
+    public function laporan(Request $request)
     {
-        $tanggalMulai = Carbon::now()->subMonths($bulan);
+        $start   = $request->input('start_date');
+        $end     = $request->input('end_date');
+        $search  = $request->input('search');
+        $ruangans = Ruangan::pluck('nama_ruangan','id')->toArray();
 
-        // $mutasi = MutasiItem::with(['barang.ruangan', 'user'])
-        //     ->whereDate('tanggal_mutasi', '>=', $tanggalMulai)
-        //     ->get();
-        
-        $mutasi = MutasiItem::with(['barang.ruangan', 'barang.barangMaster', 'mutasi.user'])
-        ->whereHas('mutasi', function ($q) use ($tanggalMulai) {
-            $q->where('status_ajuan', 'disetujui')
-            ->whereDate('tanggal_mutasi', '>=', $tanggalMulai);
-        })->get();
+        $query = MutasiItem::with(['barang.ruangan','barang.barangMaster','mutasi.user'])
+            ->whereHas('mutasi', function($q) use($start,$end) {
+                $q->where('status_ajuan','disetujui')
+                  ->when($start && $end, fn($q2) =>
+                      $q2->whereDate('tanggal_mutasi','>=',$start)
+                         ->whereDate('tanggal_mutasi','<=',$end)
+                  );
+            })
+            // server-side search optional
+            ->when($search, fn($q) =>
+                $q->whereHas('barang.barangMaster', fn($q2) =>
+                    $q2->where('nama_barang','like', "%{$search}%")
+                       ->orWhere('kode_barang','like', "%{$search}%")
+                )
+            );
 
-        $ruangans = Ruangan::pluck('nama_ruangan', 'id')->toArray();
+        $mutasi = $query->get();
 
-        $pdf = Pdf::loadView('laporan.mutasi.pdf', compact('mutasi', 'ruangans'));
-        return $pdf->download("laporan-mutasi-{$bulan}-bulan.pdf");
+        return view('laporan.mutasi.app', compact('mutasi','ruangans'));
     }
 
-    public function exportExcel($bulan)
+    // 2) Export PDF
+    public function exportPDF(Request $request)
     {
-        return Excel::download(new MutasiExport($bulan), "laporan-mutasi-{$bulan}-bulan.xlsx");
+        $start   = $request->input('start_date');
+        $end     = $request->input('end_date');
+        $ruangans = Ruangan::pluck('nama_ruangan','id')->toArray();
+
+        $mutasi = MutasiItem::with(['barang.ruangan','barang.barangMaster','mutasi.user'])
+            ->whereHas('mutasi', function($q) use($start,$end) {
+                $q->where('status_ajuan','disetujui')
+                  ->when($start && $end, fn($q2) =>
+                      $q2->whereDate('tanggal_mutasi','>=',$start)
+                         ->whereDate('tanggal_mutasi','<=',$end)
+                  );
+            })->get();
+
+        $pdf = Pdf::loadView('laporan.mutasi.pdf', compact('mutasi','ruangans','start','end'));
+        return $pdf->download("laporan-mutasi-{$start}_{$end}.pdf");
+    }
+
+    // 3) Export Excel
+    public function exportExcel(Request $request)
+    {
+        $start = $request->input('start_date');
+        $end   = $request->input('end_date');
+
+        return Excel::download(
+            new \App\Exports\MutasiExport($start, $end),
+            "laporan-mutasi-{$start}_{$end}.xlsx"
+        );
     }
 }

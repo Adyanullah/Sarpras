@@ -16,25 +16,69 @@ class PengadaanExistingImport implements ToCollection, WithHeadingRow
 
     public function collection(Collection $rows)
     {
-        foreach ($rows as $index => $row) {
-            $baris      = $index + 2;
-            $prefix     = trim($row['kode_awal'] ?? '');
-            $rawRuangan = trim($row['ruangan']   ?? '');
-            $jumlah     = $row['jumlah'] ?? null;
-            $harga      = $row['harga_perolehan'] ?? null;
-            $cv         = trim($row['cv_pengadaan'] ?? '');
-            $sumber     = $row['sumber_dana'] ?? null;
-            $tahun      = $row['tahun_perolehan'] ?? now()->year;
-            $keterangan = $row['keterangan'] ?? null;
+        // 1) Pastikan ada baris sama sekali
+        if ($rows->isEmpty()) {
+            $this->errors[] = "File import kosong.";
+            return;
+        }
 
-            // 1) Cek kode_awal
-            $master = BarangMaster::where('kode_barang', 'like', "$prefix%")->first();
-            if (! $master) {
-                $this->errors[] = "Baris {$baris}: kode_awal “{$prefix}” tidak ditemukan di master.";
+        // 2) Cek header (nama kolom) di baris pertama
+        $first       = $rows->first()->toArray();
+        $presentCols = array_keys($first);
+
+        $required = [
+            'kode_awal',
+            'ruangan',
+            'jumlah',
+            'harga_satuan',
+            'keterangan',
+            'cv_pengadaan',
+            'sumber_dana',
+        ];
+
+        $missing = array_diff($required, $presentCols);
+        if (! empty($missing)) {
+            foreach ($missing as $col) {
+                $this->errors[] = "Kolom “{$col}” tidak ditemukan pada file import.";
+            }
+            return; // stop import jika ada header hilang
+        }
+
+        // 3) Proses setiap baris
+        foreach ($rows as $idx => $row) {
+            $baris      = $idx + 2;
+            $prefix     = trim($row['kode_awal']);
+            $rawRuangan = trim($row['ruangan']);
+            $jumlah     = $row['jumlah'];
+            $harga      = $row['harga_satuan'];
+            $cv         = trim($row['cv_pengadaan']);
+            $sumber     = $row['sumber_dana'];
+            $tahun      = $row['tahun_perolehan'] ?? now()->year;
+            $keterangan = $row['keterangan'];
+
+            // Validasi wajib non-empty
+            if ($prefix === '') {
+                $this->errors[] = "Baris {$baris}: kode_awal wajib diisi.";
+                continue;
+            }
+            if ($jumlah === null) {
+                $this->errors[] = "Baris {$baris}: jumlah wajib diisi.";
+                continue;
+            }
+            if ($harga === null) {
+                $this->errors[] = "Baris {$baris}: harga_satuan wajib diisi.";
+                continue;
+            }
+            if ($cv === '') {
+                $this->errors[] = "Baris {$baris}: cv_pengadaan wajib diisi.";
+                continue;
+            }
+            if ($sumber === null) {
+                $this->errors[] = "Baris {$baris}: sumber_dana wajib diisi.";
                 continue;
             }
 
-            // 2) Cek ruangan
+            // 4) Resolve ruangan
             $ruangan = is_numeric($rawRuangan)
                 ? Ruangan::find($rawRuangan)
                 : Ruangan::where('nama_ruangan', $rawRuangan)->first();
@@ -43,24 +87,34 @@ class PengadaanExistingImport implements ToCollection, WithHeadingRow
                 continue;
             }
 
-            // 3) Cek supplier (cv_pengadaan)
-            if ($cv === '') {
-                $this->errors[] = "Baris {$baris}: cv_pengadaan wajib diisi.";
-                continue;
-            }
+            // 5) Resolve master (existing vs new)
+            $master = BarangMaster::where('kode_barang', 'like', "$prefix%")->first();
 
-            // 4) Simpan only jika semua valid
-            $peng = Pengadaan::create([
+            // 6) Build payload pengadaan
+            $data = [
                 'user_id'          => auth()->id(),
-                'tipe_pengajuan'   => 'tambah',
-                'barang_master_id' => $master->id,
                 'sumber_dana'      => $sumber,
                 'harga_perolehan'  => $harga,
                 'cv_pengadaan'     => $cv,
                 'tahun_perolehan'  => $tahun,
                 'keterangan'       => $keterangan,
-            ]);
+            ];
 
+            if ($master) {
+                // existing → tambah
+                $data['tipe_pengajuan']   = 'tambah';
+                $data['barang_master_id'] = $master->id;
+            } else {
+                // baru → pakai kolom kode_awal, nama/jenis/merk bisa null
+                $data['tipe_pengajuan'] = 'baru';
+                $data['kode_barang']    = $prefix;
+                $data['nama_barang']    = trim($row['nama_barang']  ?? '') ?: null;
+                $data['jenis_barang']   = trim($row['jenis_barang'] ?? '') ?: null;
+                $data['merk_barang']    = trim($row['merk_barang']  ?? '') ?: null;
+            }
+
+            // 7) Simpan pengadaan & detail item
+            $peng = Pengadaan::create($data);
             PengadaanItem::create([
                 'pengadaan_id' => $peng->id,
                 'ruangan_id'   => $ruangan->id,
@@ -70,8 +124,6 @@ class PengadaanExistingImport implements ToCollection, WithHeadingRow
     }
 
     /**
-     * Dipanggil oleh controller untuk mengambil semua pesan error.
-     *
      * @return string[]
      */
     public function getErrors(): array

@@ -21,6 +21,7 @@
                 <th>Merk Barang</th>
                 <th>Unit</th>
                 <th>Nama Peminjam</th>
+                <th>Keterangan</th>
             </tr>
         </thead>
         <tbody>
@@ -36,11 +37,12 @@
                         @endif
                     </td>
                     <td>{{ $item->barang->kode_barang }}</td>
-                    <td>{{ $item->barang->barangMaster->nama_barang }}</td>
-                    <td>{{ $item->barang->barangMaster->jenis_barang }}</td>
-                    <td>{{ $item->barang->barangMaster->merk_barang }}</td>
+                    <td>{{ $item->barang->barangMaster->nama_barang ?? '-' }}</td>
+                    <td>{{ $item->barang->barangMaster->jenis_barang ?? '-' }}</td>
+                    <td>{{ $item->barang->barangMaster->merk_barang ?? '-' }}</td>
                     <td>{{ $item->barang->ruangan->nama_ruangan }}</td>
                     <td>{{ $item->peminjaman->nama_peminjam }}</td>
+                    <td>{{ $item->peminjaman->keterangan ?? '-' }}</td>
                 </tr>
             @endforeach
         </tbody>

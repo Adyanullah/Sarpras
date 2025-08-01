@@ -54,7 +54,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/ruang/ubah/{id}', [DataRuanganController::class, 'edit']);
 
     //pengadaan
-    Route::get('/pengadaan', [PengadaanController::class, 'index'])->middleware('role:1,3');
+    Route::get('/pengadaan', [PengadaanController::class, 'index'])->middleware('role:1,3')->name('pengadaan.app');
     Route::post('/pengajuan/store', [PengadaanController::class, 'store'])->name('pengadaan.store');
     Route::put('/pengadaan/update/{id}', [PengadaanController::class, 'update'])->name('pengadaan.update');
     Route::delete('/pengadaan/{id}', [PengadaanController::class, 'destroy'])->name('pengadaan.destroy');
@@ -69,8 +69,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/peminjaman/{id}', [PeminjamanController::class, 'checkItem'])->name('peminjaman.checkItem');
     Route::delete('/peminjaman/{id}', [PeminjamanController::class, 'destroy'])->name('peminjaman.destroy');
     Route::put('/peminjaman/{id}/updateStatus', [PeminjamanController::class, 'updateStatus'])->name('peminjaman.updateStatus');
-    Route::get('/laporan/peminjaman/pdf', [PeminjamanController::class, 'cetakPDF'])->name('peminjaman.cetakPDF');
-    Route::get('/laporan/peminjaman/excel', [PeminjamanController::class, 'exportExcel'])->name('peminjaman.exportExcel');
 
     // Ajuan
     // Route::get('/verifikasiAjuan', [AjuanController::class, 'index'])->middleware('role:1,2');
@@ -108,20 +106,22 @@ Route::middleware('auth')->group(function () {
     Route::get('/laporan/mutasi', [MutasiController::class, 'laporan'])->middleware('role:1,2,4')->name('mutasi.laporan');
     Route::get('/laporan/penghapusan', [PenghapusanController::class, 'laporan'])->name('penghapusan.laporan');
 
-    Route::get('/laporan/perawatan/pdf/{bulan}', [PerawatanController::class, 'exportPDF']);
-    Route::get('/laporan/perawatan/excel/{bulan}', [PerawatanController::class, 'exportExcel']);
+    Route::get('/laporan/perawatan/pdf', [PerawatanController::class, 'exportPDF']);
+    Route::get('/laporan/perawatan/excel', [PerawatanController::class, 'exportExcel']);
 
-    Route::get('/laporan/peminjaman/pdf/{bulan}', [PeminjamanController::class, 'exportPDF'])->name('peminjaman.pdf');
-    Route::get('/laporan/peminjaman/excel/{bulan}', [PeminjamanController::class, 'exportExcel'])->name('peminjaman.excel');
+    Route::get('/laporan/peminjaman/pdf', [PeminjamanController::class, 'exportPDF'])->name('peminjaman.pdf');
+    Route::get('/laporan/peminjaman/excel', [PeminjamanController::class, 'exportExcel'])->name('peminjaman.excel');
 
-    Route::get('/laporan/mutasi/pdf/{bulan}', [MutasiController::class, 'exportPDF'])->name('mutasi.pdf');
-    Route::get('/laporan/mutasi/excel/{bulan}', [MutasiController::class, 'exportExcel'])->name('mutasi.excel');
+    Route::get('/laporan/mutasi/pdf', [MutasiController::class, 'exportPDF'])->name('mutasi.pdf');
+    Route::get('/laporan/mutasi/excel', [MutasiController::class, 'exportExcel'])->name('mutasi.excel');
 
-    Route::get('/laporan/penghapusan/pdf/{bulan}', [PenghapusanController::class, 'exportPDF'])->name('penghapusan.pdf');
-    Route::get('/laporan/penghapusan/excel/{bulan}', [PenghapusanController::class, 'exportExcel'])->name('penghapusan.excel');
+    Route::get('/laporan/penghapusan/pdf', [PenghapusanController::class, 'exportPDF'])->name('penghapusan.pdf');
+    Route::get('/laporan/penghapusan/excel', [PenghapusanController::class, 'exportExcel'])->name('penghapusan.excel');
 
-    Route::get('/laporan/pengadaan/pdf/{bulan}', [PengadaanController::class, 'exportPDF'])->name('pengadaan.pdf');
-    Route::get('/laporan/pengadaan/excel/{bulan}', [PengadaanController::class, 'exportExcel'])->name('pengadaan.excel');
+    Route::get('laporan/pengadaan/pdf',     [PengadaanController::class,'exportPDF'])
+     ->name('pengadaan.pdf');
+    Route::get('laporan/pengadaan/excel',   [PengadaanController::class,'exportExcel'])
+     ->name('pengadaan.excel');
 
     Route::get('/laporan/barangruang', [BarangRuangController::class, 'index'])->name('ruangan.index');
     Route::get('/laporan/barangruang/detail/{id}', [BarangRuangController::class, 'detail'])->name('ruangan.detail');
@@ -137,12 +137,4 @@ Route::middleware('auth')->group(function () {
     Route::get('/ganti-password', [UserController::class, 'editPassword'])->name('user.password.edit');
     Route::post('/ganti-password', [UserController::class, 'updatePassword'])->name('user.password.update');
 
-    
-
-    // Route::post('/inventaris/tambah', [BarangController::class, 'store'])->name('inventaris.store');
-    // Route::delete('/inventaris/hapus/{id}', [BarangController::class, 'destroy'])->name('inventaris.destroy');
-    // Route::delete('/inventaris/ajukanHapus/{id}', [BarangController::class, 'destroyApp'])->name('inventaris.destroy.app');
-
-    // Route::post('/inventaris/pengadaan', [BarangController::class, 'pengadaan'])->name('inventaris.pengadaan');
-    // Route::post('/inventaris/pengadaan/baru', [BarangController::class, 'pengadaanBaru'])->name('inventaris.pengadaan.baru');
 });

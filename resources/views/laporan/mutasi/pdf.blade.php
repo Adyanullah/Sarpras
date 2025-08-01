@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Laporan Mutasi Barang</title>
+    <title>Laporan Pemindahan Barang</title>
     <style>
         table { width: 100%; border-collapse: collapse; font-size: 12px; }
         th, td { border: 1px solid black; padding: 5px; text-align: left; }
@@ -9,12 +9,12 @@
     </style>
 </head>
 <body>
-    <h3>Laporan Mutasi Barang</h3>
+    <h3>Laporan Pemindahan Barang</h3>
     <table>
         <thead>
             <tr>
                 <th>No</th>
-                <th>Tanggal Mutasi</th>
+                <th>Tanggal Pindah</th>
                 <th>Kode Barang</th>
                 <th>Nama Barang</th>
                 <th>Jenis Barang</th>
@@ -30,9 +30,9 @@
                     <td>{{ $loop->iteration }}</td>
                     <td>{{ $item->mutasi->tanggal_mutasi }}</td>
                     <td>{{ $item->barang->kode_barang }}</td>
-                    <td>{{ $item->barang->barangMaster->nama_barang }}</td>
-                    <td>{{ $item->barang->barangMaster->jenis_barang }}</td>
-                    <td>{{ $item->barang->barangMaster->merk_barang }}</td>
+                    <td>{{ $item->barang->barangMaster->nama_barang ?? '-' }}</td>
+                    <td>{{ $item->barang->barangMaster->jenis_barang ?? '-' }}</td>
+                    <td>{{ $item->barang->barangMaster->merk_barang ?? '-' }}</td>
                     <td>{{ $ruangans[$item->mutasi->asal] }}</td>
                     <td>{{ $ruangans[$item->mutasi->tujuan] }}</td>
                     <td>{{ $item->mutasi->keterangan ?? '-' }}</td>

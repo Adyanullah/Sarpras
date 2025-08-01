@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\DB;
 use App\Models\PeminjamanItem;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Maatwebsite\Excel\Facades\Excel;
-use Carbon\Carbon;
 use Illuminate\Validation\ValidationException;
 
 class PeminjamanController extends Controller
@@ -19,7 +18,6 @@ class PeminjamanController extends Controller
     {
         $barangs = Barang::with('ruangan')->get();
         $items = Peminjaman::with(['peminjamanItem.barang.ruangan', 'user'])->whereNot('status_ajuan', 'ditolak')->where('status_peminjaman', 'Dipinjam')->get();
-        // dd($items);
         return view('peminjaman.app', compact('items', 'barangs'));
     }
 
@@ -50,41 +48,6 @@ class PeminjamanController extends Controller
         }
 
         return back()->with('success', 'Status peminjaman berhasil diperbarui.');
-    }
-
-    public function laporan(Request $request)
-    {
-        $status = $request->input('status');
-        $search = $request->input('search');
-
-        // Query awal dengan relasi
-        $query = PeminjamanItem::with(['barang.ruangan', 'barang.barangMaster', 'peminjaman.user'])
-        ->whereHas('peminjaman', function ($q) {
-            $q->where('status_ajuan', 'disetujui');
-        })
-        ;
-
-        // Filter status dari relasi peminjaman
-        if ($status) {
-            $query->whereHas('peminjaman', function ($q) use ($status) {
-                $q->where('status_peminjaman', $status);
-            });
-        }
-
-        // Filter pencarian: nama_peminjam dari relasi peminjaman, atau nama_barang dari relasi barang -> barangMaster
-        if ($search) {
-            $query->where(function ($q) use ($search) {
-                $q->whereHas('peminjaman', function ($q2) use ($search) {
-                    $q2->where('nama_peminjam', 'like', "%{$search}%");
-                })->orWhereHas('barang.barangMaster', function ($q2) use ($search) {
-                    $q2->where('nama_barang', 'like', "%{$search}%");
-                });
-            });
-        }
-
-        $items = $query->get();
-
-        return view('laporan.peminjaman.app', compact('items'));
     }
 
     public function update(Request $request, $id)
@@ -136,28 +99,68 @@ class PeminjamanController extends Controller
 
         return redirect()->back()->with('success', 'Data peminjaman berhasil dibatalkan.');
     }
-
-    public function exportPDF($bulan)
+    
+    public function laporan(Request $request)
     {
-        $tanggalMulai = Carbon::now()->subMonths($bulan);
+        $start  = $request->input('start_date');
+        $end    = $request->input('end_date');
+        $search = $request->input('search');
+        $status = $request->input('status');
 
-        // $items = Peminjaman::with(['barang.ruangan', 'ajuan'])
-        //     ->where('status_ajuan', 'disetujui')
-        //     ->whereDate('tanggal_peminjaman', '>=', $tanggalMulai)
-        //     ->get();
+        $query = PeminjamanItem::with(['barang.ruangan','barang.barangMaster','peminjaman.user'])
+            ->whereHas('peminjaman', function($q) use($start,$end,$status) {
+                $q->where('status_ajuan', 'disetujui')
+                  ->when($status, fn($q2) => $q2->where('status_peminjaman', $status))
+                  ->when($start && $end, fn($q2) =>
+                      $q2->whereDate('tanggal_peminjaman','>=',$start)
+                         ->whereDate('tanggal_peminjaman','<=',$end)
+                  );
+            });
 
-        $items = PeminjamanItem::with(['barang.ruangan', 'barang.barangMaster', 'peminjaman.user'])
-        ->whereHas('peminjaman', function ($q) use ($tanggalMulai) {
-            $q->where('status_ajuan', 'disetujui')
-            ->whereDate('tanggal_peminjaman', '>=', $tanggalMulai);
-        })->get();
+        if ($search) {
+            $query->where(function($q) use($search) {
+                $q->whereHas('peminjaman', fn($q2) =>
+                       $q2->where('nama_peminjam','like', "%{$search}%")
+                   )
+                  ->orWhereHas('barang.barangMaster', fn($q2) =>
+                       $q2->where('nama_barang','like', "%{$search}%")
+                  );
+            });
+        }
 
-        $pdf = Pdf::loadView('laporan.peminjaman.pdf', compact('items'));
-        return $pdf->download("laporan-peminjaman-{$bulan}-bulan.pdf");
+        $items = $query->get();
+        return view('laporan.peminjaman.app', compact('items'));
     }
 
-    public function exportExcel($bulan)
+    // 2) Export PDF
+    public function exportPDF(Request $request)
     {
-        return Excel::download(new PeminjamanExport($bulan), "laporan-peminjaman-{$bulan}-bulan.xlsx");
+        $start = $request->input('start_date');
+        $end   = $request->input('end_date');
+
+        $items = PeminjamanItem::with(['barang.ruangan','barang.barangMaster','peminjaman.user'])
+            ->whereHas('peminjaman', function($q) use($start,$end) {
+                $q->where('status_ajuan','disetujui')
+                  ->when($start && $end, fn($q2) =>
+                      $q2->whereDate('tanggal_peminjaman','>=',$start)
+                         ->whereDate('tanggal_peminjaman','<=',$end)
+                  );
+            })
+            ->get();
+
+        $pdf = Pdf::loadView('laporan.peminjaman.pdf', compact('items','start','end'));
+        return $pdf->download("laporan-peminjaman-{$start}_{$end}.pdf");
+    }
+
+    // 3) Export Excel
+    public function exportExcel(Request $request)
+    {
+        $start = $request->input('start_date');
+        $end   = $request->input('end_date');
+
+        return Excel::download(
+            new PeminjamanExport($start, $end),
+            "laporan-peminjaman-{$start}_{$end}.xlsx"
+        );
     }
 }

@@ -3,60 +3,46 @@
 namespace App\Exports;
 
 use App\Models\Pengadaan;
-use Carbon\Carbon;
 use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 
 class PengadaanExport implements FromArray, WithHeadings
 {
-    protected $bulan;
+    protected $startDate;
+    protected $endDate;
 
-    public function __construct($bulan)
+    public function __construct($startDate, $endDate)
     {
-        $this->bulan = $bulan;
+        $this->startDate = $startDate;
+        $this->endDate   = $endDate;
     }
 
     public function array(): array
     {
-        $tanggalMulai = Carbon::now()->subMonths($this->bulan);
-
-        // 1) Ambil semua pengadaan disetujui sejak tanggalMulai, beserta items & barangMaster
-        $pengadaans = Pengadaan::with(['barangMaster', 'items'])
-            ->whereDate('created_at', '>=', $tanggalMulai)
-            ->where('status', 'disetujui')
-            ->get();
+        $query = Pengadaan::with(['barangMaster','items'])
+            ->where('status','disetujui')
+            ->when($this->startDate && $this->endDate, fn($q) =>
+                $q->whereDate('created_at','>=',$this->startDate)
+                ->whereDate('created_at','<=',$this->endDate)
+            );
 
         $result = [];
-        $no = 1;
-
-        foreach ($pengadaans as $p) {
-            // 2) Hitung total unit dan total harga
-            $jumlahTotal = $p->items->sum('jumlah');
-            $totalHarga  = $jumlahTotal * $p->harga_perolehan;
-
+        $no     = 1;
+        foreach ($query->get() as $p) {
+            $jumlah = $p->items->sum('jumlah');
+            $harga  = $jumlah * $p->harga_perolehan;
             $result[] = [
                 $no++,
                 $p->created_at->format('Y-m-d'),
-                // Nama, jenis, merk
-                $p->nama_barang 
-                    ?? optional($p->barangMaster)->nama_barang 
-                    ?? '-',
-                $p->jenis_barang 
-                    ?? optional($p->barangMaster)->jenis_barang 
-                    ?? '-',
-                $p->merk_barang 
-                    ?? optional($p->barangMaster)->merk_barang 
-                    ?? '-',
-                // Jumlah unit
-                $jumlahTotal . ' Unit',
-                // Sumber dana & supplier
+                $p->barangMaster->nama_barang ?? '-',
+                $p->barangMaster->jenis_barang ?? '-',
+                $p->barangMaster->merk_barang  ?? '-',
+                $jumlah . ' Unit',
                 $p->sumber_dana ?? '-',
                 $p->cv_pengadaan ?? '-',
-                // Total harga
-                'Rp ' . number_format($totalHarga, 0, ',', '.'),
+                'Rp ' . number_format($harga,0,',','.'),
             ];
         }
-
         return $result;
     }
 

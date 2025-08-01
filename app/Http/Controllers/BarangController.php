@@ -9,6 +9,7 @@ use App\Models\Mutasi;
 use App\Models\MutasiItem;
 use App\Models\Peminjaman;
 use App\Models\PeminjamanItem;
+use App\Models\Pengadaan;
 use App\Models\Penghapusan;
 use App\Models\PenghapusanItem;
 use App\Models\Perawatan;
@@ -448,14 +449,38 @@ class BarangController extends Controller
 
     public function destroy(int $id): RedirectResponse
     {
-        $master = BarangMaster::findOrFail($id);
+        $master     = BarangMaster::findOrFail($id);
+        $barangIds  = $master->barang()->pluck('id')->toArray();
 
-        // Ini akan otomatis cascade ke barangs jika foreign key onDelete('cascade')
-        $master->delete();
+        // 1) Cek pending
+        if (Pengadaan::where('barang_master_id', $id)->where('status', 'pending')->exists()) {
+            return back()->with('error', 'Tidak dapat menghapus "' 
+                . $master->nama_barang . '" ada pengadaan pending.');
+        }
 
-        return redirect()
-            ->route('inventaris.index')
-            ->with('success', 'Data barang dan seluruh stok terkait berhasil dihapus permanen.');
+        // 2) Transaksi & hapus dependensi
+        DB::transaction(function() use ($barangIds, $master) {
+            Peminjaman::whereHas('peminjamanItem', fn($q) => 
+                $q->whereIn('barang_id', $barangIds)
+            )->delete();
+
+            Perawatan::whereHas('perawatanItem', fn($q) => 
+                $q->whereIn('barang_id', $barangIds)
+            )->delete();
+
+            Mutasi::whereHas('mutasiItem', fn($q) => 
+                $q->whereIn('barang_id', $barangIds)
+            )->delete();
+
+            Penghapusan::whereHas('penghapusanItem', fn($q) => 
+                $q->whereIn('barang_id', $barangIds)
+            )->delete();
+
+            $master->delete();
+        });
+
+        return back()->with('success', 'Master barang "' 
+            . $master->nama_barang . '" berhasil dihapus.');
     }
 
     public function barangMasuk()

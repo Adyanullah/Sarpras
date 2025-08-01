@@ -35,11 +35,17 @@
                         {{-- <td>{{ $item->tanggal_pengembalian }}</td> --}}
                         <td>{{ $item->nama_peminjam }}</td>
                         <td>{{ $item->peminjamanItem[0]->barang->ruangan->nama_ruangan }}</td>
-                        <td>{{ $item->peminjamanItem[0]->barang->barangMaster->nama_barang }}</td>
+                        <td>@if($item->peminjamanItem[0]->barang->barangMaster->nama_barang){{ $item->peminjamanItem[0]->barang->barangMaster->nama_barang }}@else<span class="text-muted fst-italic">Tidak ada nama</span>@endif</td>
                         <td>{{ $item->peminjamanItem->count() }}</td>
                         <td>
-                            <span
-                                class="badge @if ($item->status_ajuan == 'pending') bg-warning  @elseif ($item->status_ajuan == 'disetujui') bg-success @else bg-danger @endif text-white">{{ $item->status_ajuan }}
+                            <span class="badge bg-warning text-white">
+                                @if ($item->status_ajuan == 'pending')
+                                    pending
+                                @elseif ($item->status_ajuan == 'disetujui' && $item->status_peminjaman == 'Dipinjam')
+                                    sedang dipinjam
+                                @else
+                                    {{ $item->status_ajuan }}
+                                @endif
                             </span>
                         </td>
                         <td>

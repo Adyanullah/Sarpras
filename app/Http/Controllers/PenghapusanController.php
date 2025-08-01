@@ -21,26 +21,6 @@ class PenghapusanController extends Controller
         return view('penghapusan.app', compact('data', 'barangs'));
     }
 
-    public function laporan(Request $request)
-    {
-        $search = $request->input('search');
-        $query = PenghapusanItem::with(['barang.ruangan', 'penghapusan', 'barang.barangMaster'])
-        ->whereHas('penghapusan', function ($q) {
-            $q->where('status_ajuan', 'disetujui');
-        });
-
-        // Filter berdasarkan pencarian barang
-        if ($search) {
-            $query->whereHas('barang.barangMaster', function ($q) use ($search) {
-                $q->where('nama_barang', 'like', '%' . $search . '%');
-            });
-        }
-
-        $data = $query->get();
-        // $data = Penghapusan::with(['barang.ruangan', 'ajuan'])->get();
-        return view('laporan.penghapusan.app', compact('data'));
-    }
-
     public function update(Request $request, $id)
     {
         $request->validate([
@@ -78,22 +58,60 @@ class PenghapusanController extends Controller
 
         return redirect()->back()->with('success', 'Data penghapusan berhasil dibatalkan.');
     }
-
-    public function exportPDF($bulan)
+    
+    // 1) Laporan dengan rentang tanggal
+    public function laporan(Request $request)
     {
-        $tanggalMulai = Carbon::now()->subMonths($bulan);
+        $start = $request->input('start_date');
+        $end   = $request->input('end_date');
+        $search= $request->input('search');
 
-        $data = PenghapusanItem::with(['barang.ruangan', 'penghapusan', 'barang.barangMaster'])
-        ->whereHas('penghapusan', function ($q) {
-            $q->where('status_ajuan', 'disetujui');
-        })->get();
+        $query = PenghapusanItem::with(['barang.ruangan','barang.barangMaster','penghapusan'])
+            ->whereHas('penghapusan', function($q) use($start,$end) {
+                $q->where('status_ajuan','disetujui')
+                  ->when($start && $end, fn($q2) =>
+                      $q2->whereDate('created_at','>=',$start)
+                         ->whereDate('created_at','<=',$end)
+                  );
+            })
+            ->when($search, fn($q) =>
+                $q->whereHas('barang.barangMaster', fn($q2) =>
+                    $q2->where('nama_barang','like', "%{$search}%")
+                )
+            );
 
-        $pdf = Pdf::loadView('laporan.penghapusan.pdf', compact('data'));
-        return $pdf->download("laporan-penghapusan-{$bulan}-bulan.pdf");
+        $data = $query->get();
+        return view('laporan.penghapusan.app', compact('data'));
     }
 
-    public function exportExcel($bulan)
+    // 2) Export PDF
+    public function exportPDF(Request $request)
     {
-        return Excel::download(new PenghapusanExport($bulan), "laporan-penghapusan-{$bulan}-bulan.xlsx");
+        $start = $request->input('start_date');
+        $end   = $request->input('end_date');
+
+        $data = PenghapusanItem::with(['barang.ruangan','barang.barangMaster','penghapusan'])
+            ->whereHas('penghapusan', function($q) use($start,$end) {
+                $q->where('status_ajuan','disetujui')
+                  ->when($start && $end, fn($q2) =>
+                      $q2->whereDate('created_at','>=',$start)
+                         ->whereDate('created_at','<=',$end)
+                  );
+            })->get();
+
+        $pdf = Pdf::loadView('laporan.penghapusan.pdf', compact('data','start','end'));
+        return $pdf->download("laporan-penghapusan-{$start}_{$end}.pdf");
+    }
+
+    // 3) Export Excel
+    public function exportExcel(Request $request)
+    {
+        $start = $request->input('start_date');
+        $end   = $request->input('end_date');
+
+        return Excel::download(
+            new \App\Exports\PenghapusanExport($start, $end),
+            "laporan-penghapusan-{$start}_{$end}.xlsx"
+        );
     }
 }

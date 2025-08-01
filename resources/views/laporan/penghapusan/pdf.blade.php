@@ -17,7 +17,8 @@
                 <th>Kode Barang</th>
                 <th>Nama Barang</th>
                 <th>Jenis Barang</th>
-                <th>Mesk Barang</th>
+                <th>Merk Barang</th>
+                <th>Unit</th>
                 <th>Keterangan</th>
             </tr>
         </thead>
@@ -27,9 +28,10 @@
                 <td>{{ $loop->iteration }}</td>
                 <td>{{ $item->created_at->format('Y-m-d') }}</td>
                 <td>{{ $item->barang->kode_barang }}</td>
-                <td>{{ $item->barang->barangMaster->nama_barang }}</td>
-                <td>{{ $item->barang->barangMaster->jenis_barang }}</td>
-                <td>{{ $item->barang->barangMaster->merk_barang }}</td>
+                <td>{{ $item->barang->barangMaster->nama_barang ?? '-' }}</td>
+                <td>{{ $item->barang->barangMaster->jenis_barang ?? '-' }}</td>
+                <td>{{ $item->barang->barangMaster->merk_barang ?? '-' }}</td>
+                <td>{{ $item->barang->ruangan->nama_ruangan ?? '-' }}</td>
                 <td>{{ $item->penghapusan->keterangan ?? '-' }}</td>
             </tr>
             @empty

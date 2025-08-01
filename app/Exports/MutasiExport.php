@@ -4,46 +4,48 @@ namespace App\Exports;
 
 use App\Models\MutasiItem;
 use App\Models\Ruangan;
-use Carbon\Carbon;
 use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 
 class MutasiExport implements FromArray, WithHeadings
 {
-    protected $bulan;
+    protected $start, $end, $ruangans;
 
-    public function __construct($bulan)
+    public function __construct($start, $end)
     {
-        $this->bulan = $bulan;
+        $this->start    = $start;
+        $this->end      = $end;
+        $this->ruangans = Ruangan::pluck('nama_ruangan','id')->toArray();
     }
 
     public function array(): array
     {
-        $tanggalMulai = Carbon::now()->subMonths($this->bulan);
-
-        $data = MutasiItem::with(['mutasi', 'barang.ruangan', 'barang.barangMaster'])
-            ->whereHas('mutasi', function ($query) use ($tanggalMulai) {
-                $query->whereDate('tanggal_mutasi', '>=', $tanggalMulai);
+        $query = MutasiItem::with(['mutasi','barang.ruangan','barang.barangMaster'])
+            ->whereHas('mutasi', function($q) {
+                $q->where('status_ajuan','disetujui');
             })
-            ->get();
-        $ruangans = Ruangan::pluck('nama_ruangan', 'id')->toArray();
-        $result = [];
-        $no = 1;
+            ->when($this->start && $this->end, fn($q) =>
+                $q->whereHas('mutasi', fn($q2) =>
+                    $q2->whereDate('tanggal_mutasi','>=',$this->start)
+                       ->whereDate('tanggal_mutasi','<=',$this->end)
+                )
+            );
 
-        foreach ($data as $item) {
+        $result = []; $no = 1;
+        foreach ($query->get() as $item) {
+            $m = $item->mutasi;
             $result[] = [
                 $no++,
-                $item->mutasi->tanggal_mutasi,
-                $item->barang->kode_barang ?? '-',
+                $m->tanggal_mutasi,
+                $item->barang->kode_barang              ?? '-',
                 $item->barang->barangMaster->nama_barang ?? '-',
                 $item->barang->barangMaster->jenis_barang ?? '-',
-                $item->barang->barangMaster->merk_barang ?? '-',
-                $ruangans[$item->mutasi->asal],
-                $ruangans[$item->mutasi->tujuan],
-                $item->mutasi->keterangan ?? '-',
+                $item->barang->barangMaster->merk_barang  ?? '-',
+                $this->ruangans[$m->asal]               ?? '-',
+                $this->ruangans[$m->tujuan]             ?? '-',
+                $m->keterangan                             ?? '-',
             ];
         }
-
         return $result;
     }
 
@@ -51,7 +53,7 @@ class MutasiExport implements FromArray, WithHeadings
     {
         return [
             'No',
-            'Tanggal Mutasi',
+            'Tanggal Pindah',
             'Kode Barang',
             'Nama Barang',
             'Jenis Barang',
@@ -62,3 +64,4 @@ class MutasiExport implements FromArray, WithHeadings
         ];
     }
 }
+
