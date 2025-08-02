@@ -4,60 +4,59 @@ namespace App\Http\Controllers;
 
 use App\Models\Barang;
 use App\Models\BarangRusak;
-use Illuminate\Http\Request;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        $totalBarang = Barang::where('sedia','>', '-1')->count();
-        $barangRusak = Barang::whereIn('kondisi_barang', ['rusak','berat'])->where('sedia','>', '-1')->count();
-        // $barangBaru2025 = Barang::where('tahun_perolehan',now()->year())->count();
-        $tahunSekarang = date('Y');
-        $barangBaru2025 = Barang::where('tahun_perolehan', $tahunSekarang)->where('sedia','>', '-1')->count();
-        $tahunSekarang = now()->year();
+        // Ambil tahun sekarang sekali saja
+        $tahunSekarang = now()->year;
 
-        // Ambil jumlah barang baru per tahun
-        $barangBaruPerTahun = DB::table('barangs')
-            ->select('tahun_perolehan', DB::raw('count(*) as total'))
-            ->groupBy('tahun_perolehan')
-            ->pluck('total', 'tahun_perolehan');
+        // 1) Total semua barang (sedia > -1)
+        $totalBarang = Barang::where('sedia', '>', -1)->count();
 
-        // Ambil jumlah barang rusak per tahun
-        // $barangRusakPerTahun = DB::table('barangs')
-        //     ->select('tahun_perolehan', DB::raw('count(*) as total'))
-        //     ->whereIn('kondisi_barang', ['rusak','berat'])
-        //     ->groupBy('tahun_perolehan')
-        //     ->pluck('total', 'tahun_perolehan');
-        $barangRusakPerTahun = BarangRusak::selectRaw('YEAR(created_at) as tahun, COUNT(*) as total')
+        // 2) Total barang rusak/berat
+        $barangRusak = Barang::whereIn('kondisi_barang', ['rusak', 'berat'])
+            ->where('sedia', '>', -1)
+            ->count();
+
+        // 3) Barang masuk tahun ini (gunakan whereYear untuk kolom DATE)
+        $barangMasukThisYear = Barang::whereYear('tahun_perolehan', $tahunSekarang)
+            ->where('sedia', '>', -1)
+            ->count();
+
+        // 4) Hitung jumlah barang masuk per tahun
+        $masukPerTahun = Barang::selectRaw('YEAR(tahun_perolehan) as tahun, COUNT(*) as total')
+            ->where('sedia', '>', -1)
+            ->groupBy('tahun')
+            ->orderBy('tahun')
+            ->pluck('total', 'tahun');
+
+        // 5) Hitung jumlah barang rusak per tahun (dari kolom created_at)
+        $rusakPerTahun = BarangRusak::selectRaw('YEAR(created_at) as tahun, COUNT(*) as total')
             ->where('status_ajuan', 'disetujui')
             ->groupBy(DB::raw('YEAR(created_at)'))
             ->pluck('total', 'tahun');
 
-        // Gabungkan semua tahun sebagai x-axis
-        $tahunLabels = $barangBaruPerTahun->keys()
-            ->merge($barangRusakPerTahun->keys())
+        // 6) Buat label tahun unik (gabungan masuk + rusak)
+        $tahunLabels = $masukPerTahun->keys()
+            ->merge($rusakPerTahun->keys())
             ->unique()
             ->sort()
             ->values();
 
-        $dataBarangBaru = [];
-        $dataBarangRusak = [];
-
-        foreach ($tahunLabels as $tahun) {
-            $dataBarangBaru[] = $barangBaruPerTahun[$tahun] ?? 0;
-            $dataBarangRusak[] = $barangRusakPerTahun[$tahun] ?? 0;
-        }
+        // 7) Susun array data untuk chart
+        $dataBarangMasuk = $tahunLabels->map(fn($t) => $masukPerTahun[$t] ?? 0)->toArray();
+        $dataBarangRusak = $tahunLabels->map(fn($t) => $rusakPerTahun[$t] ?? 0)->toArray();
 
         return view('dashboard.app', compact(
             'totalBarang',
             'barangRusak',
-            'barangBaru2025',
+            'barangMasukThisYear',
             'tahunSekarang',
             'tahunLabels',
-            'dataBarangBaru',
+            'dataBarangMasuk',
             'dataBarangRusak'
         ));
     }

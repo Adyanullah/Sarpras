@@ -38,8 +38,8 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="tahun_perolehan" class="form-label">Tahun Perolehan</label>
-                    <input type="number" class="form-control" name="tahun_perolehan"
+                    <label for="tahun_perolehan" class="form-label">Tanggal Perolehan</label>
+                    <input type="date" min="1900-01-01" max="{{ now()->toDateString() }}" step="1" class="form-control" name="tahun_perolehan"
                         value="{{ old('tahun_perolehan', $item->tahun_perolehan) }}">
                     @error('tahun_perolehan')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>

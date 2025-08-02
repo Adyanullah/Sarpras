@@ -29,20 +29,29 @@
                     <input type="email" class="form-control" name="email" id="email{{ $user->id }}" value="{{ old('email', $user->email) }}" required>
                 </div>
 
-                {{-- <div class="mb-3">
+                <div class="mb-3">
                     <label for="password{{ $user->id }}" class="form-label">Password (opsional)</label>
                     <input type="password" class="form-control" name="password" id="password{{ $user->id }}" placeholder="Kosongkan jika tidak diubah">
-                </div> --}}
-
-                <div class="mb-3">
-                    <label for="role{{ $user->id }}" class="form-label">Role</label>
-                    <select class="form-select" name="role" id="role{{ $user->id }}">
-                        <option value="1" {{ $user->role == '1' ? 'selected' : '' }}>Admin</option>
-                        <option value="2" {{ $user->role == '2' ? 'selected' : '' }}>Waka</option>
-                        <option value="3" {{ $user->role == '3' ? 'selected' : '' }}>Petugas</option>
-                        <option value="4" {{ $user->role == '4' ? 'selected' : '' }}>Kepala Sekolah</option>
-                    </select>
                 </div>
+
+                @if($user->id == 2)
+                    <div class="mb-3">
+                        <label for="role{{ $user->id }}" class="form-label">Role</label>
+                        <select class="form-select" name="role" id="role{{ $user->id }}" disabled>
+                            <option value="1" selected>Admin</option>
+                        </select>
+                    </div>
+                @else
+                    <div class="mb-3">
+                        <label for="role{{ $user->id }}" class="form-label">Role</label>
+                        <select class="form-select" name="role" id="role{{ $user->id }}">
+                            <option value="1" {{ $user->role == '1' ? 'selected' : '' }}>Admin</option>
+                            <option value="2" {{ $user->role == '2' ? 'selected' : '' }}>Waka</option>
+                            <option value="3" {{ $user->role == '3' ? 'selected' : '' }}>Petugas</option>
+                            <option value="4" {{ $user->role == '4' ? 'selected' : '' }}>Kepala Sekolah</option>
+                        </select>
+                    </div>
+                @endif
 
                 <div class="mb-3">
                     <label for="photo{{ $user->id }}" class="form-label">Foto (opsional)</label>

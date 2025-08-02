@@ -18,6 +18,11 @@
                     
                     <dt class="col-sm-4">Nama Pengaju</dt>
                     <dd class="col-sm-6">{{ $item['pengaju'] }}</dd>
+
+                    @if ($item['model_type'] === 'peminjaman')
+                        <dt class="col-sm-4">Nama Peminjam</dt>
+                        <dd class="col-sm-6">{{ $item['tambahan'] }}</dd>
+                    @endif
                     
                     @if (in_array($item['jenis'], ['Pengadaan Tambah','Pengadaan Baru', 'Pemindahan']))
                         <dt class="col-sm-4">Ruangan</dt>

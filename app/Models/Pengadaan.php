@@ -25,4 +25,9 @@ class Pengadaan extends Model
     {
         return $this->hasMany(PengadaanItem::class, 'pengadaan_id');
     }
+
+    // protected $casts = [
+    //     // Pastikan field ini di-cast jadi instance Carbon
+    //     'tahun_perolehan' => 'date',
+    // ];
 }

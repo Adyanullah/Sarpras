@@ -45,35 +45,35 @@
                             <tr>
                                 <th>Nama Barang</th>
                                 <td>
-                                @if($item->barangMaster->nama_barang)
-                                    {{ $item->barangMaster->nama_barang }}
-                                @else
-                                    <span class="text-muted fst-italic">Tidak ada nama</span>
-                                @endif
+                                    @if ($item->barangMaster->nama_barang)
+                                        {{ $item->barangMaster->nama_barang }}
+                                    @else
+                                        <span class="text-muted fst-italic">Tidak ada nama</span>
+                                    @endif
                                 </td>
                             </tr>
                             <tr>
                                 <th>Jenis Barang</th>
                                 <td>
-                                @if($item->barangMaster->jenis_barang)
-                                    {{ $item->barangMaster->jenis_barang }}
-                                @else
-                                    <span class="text-muted fst-italic">Tidak ada jenis</span>
-                                @endif
+                                    @if ($item->barangMaster->jenis_barang)
+                                        {{ $item->barangMaster->jenis_barang }}
+                                    @else
+                                        <span class="text-muted fst-italic">Tidak ada jenis</span>
+                                    @endif
                                 </td>
                             </tr>
                             <tr>
                                 <th>Merk / Spesifikasi</th>
                                 <td>
-                                @if($item->barangMaster->merk_barang)
-                                    {{ $item->barangMaster->merk_barang }}
-                                @else
-                                    <span class="text-muted fst-italic">Tidak ada merk</span>
-                                @endif
+                                    @if ($item->barangMaster->merk_barang)
+                                        {{ $item->barangMaster->merk_barang }}
+                                    @else
+                                        <span class="text-muted fst-italic">Tidak ada merk</span>
+                                    @endif
                                 </td>
                             </tr>
                             <tr>
-                                <th>Tahun Perolehan</th>
+                                <th>Tanggal Perolehan</th>
                                 <td>{{ $item->tahun_perolehan }}</td>
                             </tr>
                             <tr>
@@ -107,12 +107,14 @@
                             </tr>
                             <tr>
                                 <th>Keterangan</th>
-                                <td>@if ($item->sedia == 0.1)
-                                    <span><span class="badge bg-warning">Sedang Dipinjam</span> - 
-                                    @elseif ($item->sedia == 0)
-                                    <span class="badge bg-warning">Dalam Perawatan</span> - 
-                                @endif
-                                    {{ $item->keterangan }}</td>
+                                <td>
+                                    @if ($item->sedia == 0.1)
+                                        <span><span class="badge bg-warning">Sedang Dipinjam</span> -
+                                        @elseif ($item->sedia == 0)
+                                            <span class="badge bg-warning">Dalam Perawatan</span> -
+                                    @endif
+                                    {{ $item->keterangan }}
+                                </td>
                             </tr>
                             {{-- <tr>
                                 <th>Penanggung Jawab</th>
@@ -120,15 +122,15 @@
                             </tr> --}}
                         </tbody>
                     </table>
-                    @if (in_array(auth()->user()->role, [1,3]))
-                        <div class="d-flex justify-content-end gap-2 mt-3">
+                    @if (in_array(auth()->user()->role, [1, 3]))
+                        <div class="d-flex justify-content-end flex-wrap gap-2 mt-3">
                             @include('inventaris.popup.dropdown', ['disabled' => false])
                             @include('peminjaman.popup.peminjaman', ['selectedIds' => $item->id])
                             @include('perawatan.popup.perawatan', ['selectedIds' => $item->id])
                             @include('mutasi.popup.mutasi', ['selectedIds' => $item->id])
                             @if ($item->kondisi_barang != 'berat')
                                 <button class="btn btn-warning px-2 py-1" data-bs-toggle="modal"
-                                    data-bs-target="#barangRusak">Barang Rusak</button>
+                                    data-bs-target="#barangRusak"><i class="bi bi-exclamation-triangle-fill me-1"></i>Rusak</button>
                                 @include('inventaris.popup.rusak')
                             @endif
                             @if (auth()->user()->role == 1)
@@ -140,7 +142,7 @@
                             @endif
                             <button type="button" class="btn btn-danger" id="trigger-delete" data-bs-toggle="modal"
                                 data-bs-target="#hapusModal">
-                                <i class="bi bi-trash me-2"></i>Hapus Barang
+                                <i class="bi bi-trash me-2"></i>Hapus
                             </button>
                             @include('inventaris.popup.penghapusan', ['selectedIds' => $item->id])
                         </div>
@@ -187,8 +189,8 @@
     new TomSelect("#sumber_dana_edit", {
         create: true, // Mengizinkan input baru
         sortField: {
-        field: "text",
-        direction: "asc"
+            field: "text",
+            direction: "asc"
         }
     });
 </script>

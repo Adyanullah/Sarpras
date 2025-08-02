@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('sumber_dana');
             $table->decimal('harga_perolehan',12,2)->nullable();
             $table->string('cv_pengadaan')->nullable();
-            $table->year('tahun_perolehan')->nullable();
+            $table->date('tahun_perolehan')->nullable();
             $table->text('keterangan')->nullable();
             $table->enum('status',['pending','disetujui','ditolak'])->default('pending');
             // untuk tipe 'baru'

@@ -6,8 +6,10 @@ use App\Models\Pengadaan;
 use App\Models\PengadaanItem;
 use App\Models\BarangMaster;
 use App\Models\Ruangan;
+use PhpOffice\PhpSpreadsheet\Shared\Date;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\{ToCollection, WithHeadingRow};
+use Carbon\Carbon;
 
 class PengadaanExistingImport implements ToCollection, WithHeadingRow
 {
@@ -21,7 +23,6 @@ class PengadaanExistingImport implements ToCollection, WithHeadingRow
             $this->errors[] = "File import kosong.";
             return;
         }
-
         // 2) Cek header (nama kolom) di baris pertama
         $first       = $rows->first()->toArray();
         $presentCols = array_keys($first);
@@ -34,6 +35,7 @@ class PengadaanExistingImport implements ToCollection, WithHeadingRow
             'keterangan',
             'cv_pengadaan',
             'sumber_dana',
+            'tanggal_perolehan',          // tambah kolom tanggal
         ];
 
         $missing = array_diff($required, $presentCols);
@@ -53,7 +55,7 @@ class PengadaanExistingImport implements ToCollection, WithHeadingRow
             $harga      = $row['harga_satuan'];
             $cv         = trim($row['cv_pengadaan']);
             $sumber     = $row['sumber_dana'];
-            $tahun      = $row['tahun_perolehan'] ?? now()->year;
+            $rawTanggal = trim($row['tanggal_perolehan']);
             $keterangan = $row['keterangan'];
 
             // Validasi wajib non-empty
@@ -77,8 +79,33 @@ class PengadaanExistingImport implements ToCollection, WithHeadingRow
                 $this->errors[] = "Baris {$baris}: sumber_dana wajib diisi.";
                 continue;
             }
+            if ($rawTanggal === '') {
+                $this->errors[] = "Baris {$baris}: tanggal_perolehan wajib diisi.";
+                continue;
+            }
+            // 4) Parse tanggal perolehan
+            try {
+                if (is_numeric($rawTanggal)) {
+                    // Excel serial → DateTime
+                    $dt = Date::excelToDateTimeObject((float) $rawTanggal);
+                    $tanggalPerolehan = Carbon::instance($dt)->toDateString();
+                }
+                elseif (preg_match('#^\d{1,2}/\d{1,2}/\d{4}$#', $rawTanggal)) {
+                    // Excel-style dd/mm/YYYY
+                    $tanggalPerolehan = Carbon::createFromFormat('d/m/Y', $rawTanggal)
+                        ->format('Y-m-d');
+                }
+                else {
+                    // format lain (YYYY-MM-DD, dll)
+                    $tanggalPerolehan = Carbon::parse($rawTanggal)
+                        ->toDateString();
+                }
+            } catch (\Exception $e) {
+                $this->errors[] = "Baris {$baris}: format tanggal_perolehan “{$rawTanggal}” tidak valid.";
+                continue;
+            }
 
-            // 4) Resolve ruangan
+            // 5) Resolve ruangan
             $ruangan = is_numeric($rawRuangan)
                 ? Ruangan::find($rawRuangan)
                 : Ruangan::where('nama_ruangan', $rawRuangan)->first();
@@ -87,16 +114,16 @@ class PengadaanExistingImport implements ToCollection, WithHeadingRow
                 continue;
             }
 
-            // 5) Resolve master (existing vs new)
+            // 6) Resolve master (existing vs new)
             $master = BarangMaster::where('kode_barang', 'like', "$prefix%")->first();
 
-            // 6) Build payload pengadaan
+            // 7) Build payload pengadaan
             $data = [
                 'user_id'          => auth()->id(),
                 'sumber_dana'      => $sumber,
                 'harga_perolehan'  => $harga,
                 'cv_pengadaan'     => $cv,
-                'tahun_perolehan'  => $tahun,
+                'tahun_perolehan'  => $tanggalPerolehan,
                 'keterangan'       => $keterangan,
             ];
 
@@ -113,7 +140,7 @@ class PengadaanExistingImport implements ToCollection, WithHeadingRow
                 $data['merk_barang']    = trim($row['merk_barang']  ?? '') ?: null;
             }
 
-            // 7) Simpan pengadaan & detail item
+            // 8) Simpan pengadaan & detail item
             $peng = Pengadaan::create($data);
             PengadaanItem::create([
                 'pengadaan_id' => $peng->id,

@@ -372,10 +372,10 @@
                                     <a class="sub-nav-link" href="/laporan/pengadaan">Pengadaan</a>
                                 </li>
                                 <li class="sub-nav-item">
-                                    <a class="sub-nav-link" href="/laporan/perawatan">Perawatan</a>
+                                    <a class="sub-nav-link" href="/laporan/peminjaman">Peminjaman</a>
                                 </li>
                                 <li class="sub-nav-item">
-                                    <a class="sub-nav-link" href="/laporan/peminjaman">Peminjaman</a>
+                                    <a class="sub-nav-link" href="/laporan/perawatan">Perawatan</a>
                                 </li>
                                 <li class="sub-nav-item">
                                     <a class="sub-nav-link" href="/laporan/mutasi">Pemindahan</a>

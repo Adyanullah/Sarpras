@@ -31,7 +31,7 @@
                     <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $item->tanggal_mutasi }}</td>
-                        <td>@if ($item->mutasiItem[0]->barang->barangMaster->nama_barang){{ $item->mutasiItem[0]->barang->barangMaster->nama_barang }}@else<span class="text-muted fst-italic">Tidak ada nama</span>@endif</td>
+                        <td>{{ $item->mutasiItem[0]->barang->barangMaster->kode_barang }} - @if ($item->mutasiItem[0]->barang->barangMaster->nama_barang){{ $item->mutasiItem[0]->barang->barangMaster->nama_barang }}@else<span class="text-muted fst-italic">Tidak ada nama</span>@endif</td>
                         <td>{{ $item->mutasiItem->count() }}</td>
                         <td>{{ $item->mutasiItem[0]->barang->ruangan->nama_ruangan }}</td>
                         <td>

@@ -6,7 +6,7 @@
                 <input type="text" id="searchInput" class="form-control" placeholder="Cari data barang...">
             </div>
         </div>
-        <div class="row align-items-center mb-4">
+        <div class="row d-flex align-items-center flex-wrap gap-2 mb-4">
             <!-- Tanggal Mulai -->
             <div class="col-md-3">
                 <input type="date" name="start_date" id="start_date" class="form-control"
@@ -50,10 +50,12 @@
                 @forelse ($pengadaans as $pengadaan)
                     <tr>
                         <td>{{ $loop->iteration }}</td>
-                        <td>{{ $pengadaan->created_at->format('Y-m-d') }}</td>
+                        <td>{{ $pengadaan->tahun_perolehan }}</td>
                         <td>
                             @if (optional($pengadaan->barangMaster)->nama_barang)
                                 {{ optional($pengadaan->barangMaster)->nama_barang }}
+                            @elseif($pengadaan->nama_barang)
+                                {{ $pengadaan->nama_barang }}
                             @else
                                 <span class="text-muted fst-italic">Tidak ada nama</span>
                             @endif
@@ -61,6 +63,8 @@
                         <td>
                             @if (optional($pengadaan->barangMaster)->jenis_barang)
                                 {{ optional($pengadaan->barangMaster)->jenis_barang }}
+                            @elseif($pengadaan->jenis_barang)
+                                {{ $pengadaan->jenis_barang }}
                             @else
                                 <span class="text-muted fst-italic">Tidak ada jenis</span>
                             @endif
@@ -68,6 +72,8 @@
                         <td>
                             @if (optional($pengadaan->barangMaster)->merk_barang)
                                 {{ optional($pengadaan->barangMaster)->merk_barang }}
+                            @elseif($pengadaan->merk_barang)
+                                {{ $pengadaan->merk_barang }}
                             @else
                                 <span class="text-muted fst-italic">Tidak ada merk</span>
                             @endif

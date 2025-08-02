@@ -7,31 +7,32 @@
                 <input type="text" id="searchInput" class="form-control" placeholder="Cari berdasarkan nama atau kode ruangan...">
             </div>
         </div>
-
-        <table class="table table-bordered table-striped" id="ruanganTable">
-            <thead class="table-light">
-                <tr>
-                    <th>No</th>
-                    <th>Kode Ruangan</th>
-                    <th>Nama Ruangan</th>
-                    <th>Jumlah Barang</th>
-                    <th>Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($ruangans as $index => $ruangan)
-                <tr>
-                    <td>{{ $index + 1 }}</td>
-                    <td class="kode">{{ $ruangan->kode_ruangan }}</td>
-                    <td class="nama">{{ $ruangan->nama_ruangan }}</td>
-                    <td>{{ $ruangan->barang_aktif_count }}</td>
-                    <td>
-                        <a href="{{ route('ruangan.detail', $ruangan->id) }}" class="btn btn-sm btn-primary">Detail</a>
-                    </td>
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped" id="ruanganTable">
+                <thead class="table-light">
+                    <tr>
+                        <th>No</th>
+                        <th>Kode Ruangan</th>
+                        <th>Nama Ruangan</th>
+                        <th>Jumlah Barang</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($ruangans as $index => $ruangan)
+                    <tr>
+                        <td>{{ $index + 1 }}</td>
+                        <td class="kode">{{ $ruangan->kode_ruangan }}</td>
+                        <td class="nama">{{ $ruangan->nama_ruangan }}</td>
+                        <td>{{ $ruangan->barang_aktif_count }}</td>
+                        <td>
+                            <a href="{{ route('ruangan.detail', $ruangan->id) }}" class="btn btn-sm btn-primary"><i class="bi bi-eye me-1"></i>Detail</a>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
     </div>
 
     {{-- Script Filter --}}

@@ -83,7 +83,7 @@ class AjuanController extends Controller
                 'jumlah'     => $p->peminjamanItem->count(),
                 'status'     => $p->status_ajuan,
                 'ruangan'    => '-',
-                'tambahan'   => null,
+                'tambahan'   => $p->nama_peminjam ?? '-',
                 'model_type' => 'peminjaman',
                 'keterangan' => $p->keterangan ?? '-',
             ]);

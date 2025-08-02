@@ -10,51 +10,61 @@
             </div>
         </div>
     </div>
-    
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <div>
+
+    <div class="row mb-3">
+        <div class="col-12 col-md-8 d-flex flex-wrap align-items-center gap-2 mb-2 mb-md-0">
             @if (in_array(auth()->user()->role, [1, 3]))
                 <div class="btn-group">
-                    <button type="button" class="btn btn-primary dropdown-toggle me-1" data-bs-toggle="dropdown"
+                    <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
                         aria-expanded="false">
-                        <i class="bi bi-plus-circle me-2"></i>Barang Masuk
+                        <i class="bi bi-plus-circle me-1"></i> Barang Masuk
                     </button>
-                    <ul class="dropdown-menu bg-primary" style=" min-width: 100%;">
-                        <li><a type="button" class="dropdown-item text-white" data-bs-toggle="modal"
-                                data-bs-target="#Pengadaan">Barang yang sudah ada</a></li>
-                        <li><a type="button" class="dropdown-item text-white" data-bs-toggle="modal"
-                                data-bs-target="#PengadaanBaru">Barang baru</a></li>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#Pengadaan">Barang yang
+                                sudah ada</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#PengadaanBaru">Barang
+                                baru</a>
+                        </li>
                     </ul>
                 </div>
                 <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#importModal">
-                    <i class="bi bi-download me-1"></i>Import Data
+                    <i class="bi bi-download me-1"></i> Import Data
                 </button>
+
                 @include('inventaris.popup.pengadaan')
                 @include('inventaris.popup.pengadaan_baru')
                 @include('inventaris.popup.import_existing')
             @endif
         </div>
-        <divtext-end">
+
+        <div class="col-12 col-md-4 text-md-end mb-2 mb-md-0">
             <a href="/scan" class="btn btn-outline-primary d-inline-flex align-items-center">
-                <i class="bi bi-qr-code-scan me-2"></i> Scan QR
+                <i class="bi bi-qr-code-scan me-1"></i> Scan QR
             </a>
         </div>
     </div>
-    <div class="container-fluid col-md-12 text-end">
-        <form method="GET" action="{{ route('inventaris.index') }}">
-            <div class="d-flex align-items-between md-12 gap-2 mb-3">
-                <div class="col-md-8">
-                    <input type="text" id="globalSearch" name="search" class="form-control"
-                        placeholder="Cari nama barang....">
+
+    <div class="row mb-3">
+        <div class="col-12 col-md-8">
+            <form method="GET" action="{{ route('inventaris.index') }}">
+                <div class="row g-2 align-items-center">
+                    <div class="col">
+                        <input type="text" name="search" id="globalSearch" class="form-control"
+                            placeholder="Cari nama barang...." value="{{ request('search') }}">
+                    </div>
+                    <div class="col-auto">
+                        <button class="btn btn-primary px-2" type="submit">
+                            <i class="ri-search-line me-1"></i> Filter
+                        </button>
+                    </div>
                 </div>
-                <div class="col-md-1">
-                    <button type="submit" class="btn btn-primary">
-                        <i class="ri-search-line me-1"></i>Filter
-                    </button>
-                </div>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
+
     @if (session('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             <strong>Berhasil!</strong> {{ session('success') }}
@@ -75,23 +85,21 @@
                     <li>{{ $error }}</li>
                 @endforeach
             </ul>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"
-                aria-label="Close"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     @endif
-    @if(session('import_errors'))
+    @if (session('import_errors'))
         <div class="alert alert-warning alert-dismissible fade show" role="alert">
             <strong>Peringatan saat import:</strong>
             <ul class="mb-0">
-            @foreach(session('import_errors') as $msg)
-                <li>{{ $msg }}</li>
-            @endforeach
+                @foreach (session('import_errors') as $msg)
+                    <li>{{ $msg }}</li>
+                @endforeach
             </ul>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"
-                aria-label="Close"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     @endif
-    <div class="container-fluid table-responsive">
+    <div class="table-responsive">
         <table id="dataTable" class="table table-bordered table-striped align-middle">
             <thead class="table-light">
                 <tr>
@@ -111,25 +119,25 @@
                         <td>{{ $loop->iteration + ($barangs->currentPage() - 1) * $barangs->perPage() }}</td>
                         <td>{{ $item->barangMaster->kode_barang }}</td>
                         <td>
-                        @if($item->barangMaster->nama_barang)
-                            {{ $item->barangMaster->nama_barang }}
-                        @else
-                            <span class="text-muted fst-italic">Tidak ada nama</span>
-                        @endif
+                            @if ($item->barangMaster->nama_barang)
+                                {{ $item->barangMaster->nama_barang }}
+                            @else
+                                <span class="text-muted fst-italic">Tidak ada nama</span>
+                            @endif
                         </td>
                         <td>
-                        @if($item->barangMaster->jenis_barang)
-                            {{ $item->barangMaster->jenis_barang }}
-                        @else
-                            <span class="text-muted fst-italic">Tidak ada jenis</span>
-                        @endif
+                            @if ($item->barangMaster->jenis_barang)
+                                {{ $item->barangMaster->jenis_barang }}
+                            @else
+                                <span class="text-muted fst-italic">Tidak ada jenis</span>
+                            @endif
                         </td>
                         <td>
-                        @if($item->barangMaster->merk_barang)
-                            {{ $item->barangMaster->merk_barang }}
-                        @else
-                            <span class="text-muted fst-italic">Tidak ada merk</span>
-                        @endif
+                            @if ($item->barangMaster->merk_barang)
+                                {{ $item->barangMaster->merk_barang }}
+                            @else
+                                <span class="text-muted fst-italic">Tidak ada merk</span>
+                            @endif
                         </td>
                         @php
                             $ajuanJumlah = $ajuan[$item->barang_id]->total_ajuan ?? 0;
@@ -141,44 +149,37 @@
                             @endif
                         </td>
                         <td>
-                            @if($item->barangMaster->gambar_barang)
+                            @if ($item->barangMaster->gambar_barang)
                                 {{-- Tampilkan thumbnail dan modal jika ada gambar --}}
-                                <a type="button"
-                                data-bs-toggle="modal"
-                                data-bs-target="#ImageModal{{ $loop->iteration }}">
-                                <img src="{{ asset($item->barangMaster->gambar_barang) }}"
-                                    alt="{{ $item->barangMaster->nama_barang }}"
-                                    class="img-fluid avatar-md rounded" />
+                                <a type="button" data-bs-toggle="modal"
+                                    data-bs-target="#ImageModal{{ $loop->iteration }}">
+                                    <img src="{{ asset($item->barangMaster->gambar_barang) }}"
+                                        alt="{{ $item->barangMaster->nama_barang }}"
+                                        class="img-fluid avatar-md rounded" />
                                 </a>
 
-                                <div class="modal fade"
-                                    id="ImageModal{{ $loop->iteration }}"
-                                    tabindex="-1"
-                                    aria-labelledby="exampleModalCenterTitle"
-                                    aria-hidden="true">
-                                <div class="modal-dialog modal-dialog-centered">
-                                    <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="exampleModalCenterTitle">
-                                        {{ $item->barangMaster->nama_barang }}
-                                        </h5>
-                                        <button type="button"
-                                                class="btn-close"
-                                                data-bs-dismiss="modal"
-                                                aria-label="Close"></button>
+                                <div class="modal fade" id="ImageModal{{ $loop->iteration }}" tabindex="-1"
+                                    aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalCenterTitle">
+                                                    {{ $item->barangMaster->nama_barang }}
+                                                </h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <img src="{{ asset($item->barangMaster->gambar_barang) }}"
+                                                    class="d-block w-100"
+                                                    alt="{{ $item->barangMaster->nama_barang }}">
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-bs-dismiss="modal">Kembali</button>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="modal-body">
-                                        <img src="{{ asset($item->barangMaster->gambar_barang) }}"
-                                            class="d-block w-100"
-                                            alt="{{ $item->barangMaster->nama_barang }}">
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button"
-                                                class="btn btn-secondary"
-                                                data-bs-dismiss="modal">Kembali</button>
-                                    </div>
-                                    </div>
-                                </div>
                                 </div>
                             @else
                                 {{-- Keterangan jika tidak ada gambar --}}
@@ -192,19 +193,18 @@
                                     <i class="bi bi-eye me-1"></i>Lihat
                                 </a>
                                 @if (auth()->user()->role == 1)
-                                    <button type="button" class="btn btn-warning px-2 py-1 m-0" data-bs-toggle="modal"
+                                    <button type="button" class="btn btn-warning px-2 py-1 m-0"
+                                        data-bs-toggle="modal"
                                         data-bs-target="#editMaster{{ $item->barangMaster->id }}">
                                         <i class="bi bi-pencil-square me-1"></i>Edit
                                     </button>
                                     @include('inventaris.popup.edit_master')
                                     <form action="{{ route('inventaris.destroy', $item->barangMaster->id) }}"
-                                            method="POST"
-                                            onsubmit="return confirm('Yakin ingin menghapus permanen?');">
+                                        method="POST" onsubmit="return confirm('Yakin ingin menghapus permanen?');">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit"
-                                                class="btn btn-danger px-2 py-1 m-0">
-                                        <i class="bi bi-x-lg"></i>
+                                        <button type="submit" class="col btn btn-danger h-100 px-2 py-1 m-0">
+                                            <i class="bi bi-x-lg"></i>
                                         </button>
                                     </form>
                                 @endif
@@ -235,41 +235,41 @@
         </ul>
     </nav>
     <script>
-    new TomSelect("#sumber_dana_baru", {
-        create: true, // Mengizinkan input baru
-        sortField: {
-        field: "text",
-        direction: "asc"
-        }
-    });
-    new TomSelect("#sumber_dana_lama", {
-        create: true, // Mengizinkan input baru
-        sortField: {
-        field: "text",
-        direction: "asc"
-        }
-    });
-    document.addEventListener('DOMContentLoaded', () => {
-        // Ambil semua container
-        document.querySelectorAll('.fields-container').forEach(container => {
-            container.addEventListener('click', e => {
-            // Tombol tambah
-            if (e.target.closest('.btn-add')) {
-                const template = container.querySelector('.field-row');
-                const clone    = template.cloneNode(true);
-                clone.querySelectorAll('select, input').forEach(el => el.value = '');
-                const btn = clone.querySelector('.btn-add');
-                btn.classList.replace('btn-outline-success','btn-outline-danger');
-                btn.classList.replace('btn-add','btn-remove');
-                btn.innerHTML = '<i class="bi bi-dash-lg"></i>';
-                container.appendChild(clone);
+        new TomSelect("#sumber_dana_baru", {
+            create: true, // Mengizinkan input baru
+            sortField: {
+                field: "text",
+                direction: "asc"
             }
-            // Tombol hapus
-            if (e.target.closest('.btn-remove')) {
-                e.target.closest('.field-row').remove();
+        });
+        new TomSelect("#sumber_dana_lama", {
+            create: true, // Mengizinkan input baru
+            sortField: {
+                field: "text",
+                direction: "asc"
             }
+        });
+        document.addEventListener('DOMContentLoaded', () => {
+            // Ambil semua container
+            document.querySelectorAll('.fields-container').forEach(container => {
+                container.addEventListener('click', e => {
+                    // Tombol tambah
+                    if (e.target.closest('.btn-add')) {
+                        const template = container.querySelector('.field-row');
+                        const clone = template.cloneNode(true);
+                        clone.querySelectorAll('select, input').forEach(el => el.value = '');
+                        const btn = clone.querySelector('.btn-add');
+                        btn.classList.replace('btn-outline-success', 'btn-outline-danger');
+                        btn.classList.replace('btn-add', 'btn-remove');
+                        btn.innerHTML = '<i class="bi bi-dash-lg"></i>';
+                        container.appendChild(clone);
+                    }
+                    // Tombol hapus
+                    if (e.target.closest('.btn-remove')) {
+                        e.target.closest('.field-row').remove();
+                    }
+                });
             });
         });
-    });
     </script>
 </x-layout>

@@ -487,9 +487,8 @@ class BarangController extends Controller
     {
         $latestYear = Barang::max('tahun_perolehan');
 
-        $dataInventaris = Barang::where('tahun_perolehan', $latestYear)->where('sedia','>', '-1')
+        $dataInventaris = Barang::whereYear('tahun_perolehan', $latestYear)->where('sedia','>', '-1')
             ->paginate(10);
-
         return view('dashboard.barangMasuk', compact('dataInventaris', 'latestYear'));
     }
 }

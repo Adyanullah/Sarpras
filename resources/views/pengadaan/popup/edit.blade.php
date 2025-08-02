@@ -117,9 +117,9 @@
 
                 {{-- common fields --}}
                 <div class="mb-3">
-                    <label class="form-label">Tahun Perolehan</label>
-                    <input type="number" name="tahun_perolehan" min="1900" max="{{ date('Y') }}"
-                        class="form-control" value="{{ old('tahun_perolehan', $pengadaan->tahun_perolehan) }}">
+                    <label class="form-label">Tanggal Perolehan</label>
+                    <input type="date" name="tahun_perolehan" min="1900-01-01" max="{{ now()->toDateString() }}" step="1"
+                        class="form-control" value="{{ old('tahun_perolehan', \Carbon\Carbon::parse($pengadaan->tahun_perolehan)->format('Y-m-d')) }}">
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Sumber Dana</label>

@@ -1,4 +1,4 @@
-@if ($errors->any())
+{{-- @if ($errors->any())
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const modalEl = document.getElementById('tambahUser');
@@ -24,7 +24,7 @@
             }, 200);
         });
     </script>
-@endif
+@endif --}}
 <div class="modal fade" id="tambahUser" tabindex="-1" aria-labelledby="tambahUserTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <form class="modal-content" action="{{ route('user.store') }}" method="post" enctype="multipart/form-data">

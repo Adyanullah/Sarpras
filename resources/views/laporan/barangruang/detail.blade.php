@@ -16,7 +16,6 @@
 
             {{-- Judul Ruangan --}}
             <h3>{{ $ruangan->nama_ruangan }} ({{ $ruangan->kode_ruangan }})</h3>
-
             <table class="table table-bordered table-striped">
                 <thead class="table-light">
                     <tr>

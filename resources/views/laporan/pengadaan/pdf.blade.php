@@ -38,10 +38,34 @@
             @forelse ($pengadaans as $p)
             <tr>
                 <td>{{ $loop->iteration }}</td>
-                <td>{{ $p->created_at->format('Y-m-d') }}</td>
-                <td>{{ $p->barangMaster->nama_barang ?? '-' }}</td>
-                <td>{{ $p->barangMaster->jenis_barang ?? '-' }}</td>
-                <td>{{ $p->barangMaster->merk_barang ?? '-' }}</td>
+                <td>{{ $p->tahun_perolehan }}</td>
+                <td>
+                    @if (optional($p->barangMaster)->nama_barang)
+                        {{ optional($p->barangMaster)->nama_barang }}
+                    @elseif($p->nama_barang)
+                        {{ $p->nama_barang }}
+                    @else
+                         - 
+                    @endif
+                </td>
+                <td>
+                    @if (optional($p->barangMaster)->jenis_barang)
+                        {{ optional($p->barangMaster)->jenis_barang }}
+                    @elseif($p->jenis_barang)
+                        {{ $p->jenis_barang }}
+                    @else
+                         - 
+                    @endif
+                </td>
+                <td>
+                    @if (optional($p->barangMaster)->merk_barang)
+                        {{ optional($p->barangMaster)->merk_barang }}
+                    @elseif($p->merk_barang)
+                        {{ $p->merk_barang }}
+                    @else
+                         - 
+                    @endif
+                </td>
 
                 {{-- jumlah_total dari items --}}
                 <td class="text-center">{{ $p->jumlah_total }} Unit</td>

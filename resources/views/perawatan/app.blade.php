@@ -32,7 +32,7 @@
                     <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $item->tanggal_perawatan }}</td>
-                        <td>@if($item->perawatanItem[0]->barang->barangMaster->nama_barang){{ $item->perawatanItem[0]->barang->barangMaster->nama_barang }}@else<span class="text-muted fst-italic">Tidak ada nama</span>@endif</td>
+                        <td>{{ $item->perawatanItem[0]->barang->barangMaster->kode_barang }} - @if($item->perawatanItem[0]->barang->barangMaster->nama_barang){{ $item->perawatanItem[0]->barang->barangMaster->nama_barang }}@else<span class="text-muted fst-italic">Tidak ada nama</span>@endif</td>
                         <td>{{ $item->perawatanItem[0]->barang->ruangan->nama_ruangan }}</td>
                         <td>{{ $item->jenis_perawatan }}</td>
                         <td>{{ $item->perawatanItem->count() ?? '-' }}</td>

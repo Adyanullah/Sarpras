@@ -6,7 +6,7 @@
                 <input type="text" id="searchInput" class="form-control" placeholder="Cari data barang...">
             </div>
         </div>
-        <div class="row align-items-center mb-4">
+        <div class="row d-flex align-items-center flex-wrap gap-2 mb-4">
             <!-- Tanggal Mulai -->
             <div class="col-md-3">
                 <input type="date" name="start_date" id="start_date" class="form-control"

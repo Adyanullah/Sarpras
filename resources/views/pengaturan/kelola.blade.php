@@ -26,34 +26,36 @@
             </thead>
             <tbody>
                 @foreach ($user as $user)
-                    <tr>
-                        <td>{{ $loop->iteration }}</td>
-                        <td>{{ $user->name }}</td>
-                        <td>{{ $user->email }}</td>
-                        <td>
-                            @if ($user->role == 1)
-                                Admin
-                            @elseif ($user->role == 2)
-                                Waka
-                            @elseif ($user->role == 3)
-                                Petugas
-                            @elseif ($user->role == 4)
-                                Kepala Sekolah
-                            @else
-                                Unknown
-                            @endif
-                        </td>
-                        <td>
-                            <button class="btn btn-primary px-2 py-1" data-bs-toggle="modal" data-bs-target="#editUser{{ $user->id }}">Edit</button>
-                            {{-- <a href="{{ route('pengaturan.edit', $user->id) }}" class="btn btn-primary px-2 py-1">Edit</a> --}}
-                            @include('pengaturan.popup.edit_user')
-                            {{-- <form action="{{ route('user.destroy', $user->id) }}" method="POST" class="d-inline">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-danger px-2 py-1">Hapus</button>
-                            </form> --}}
-                        </td>
-                    </tr>
+                    @if($user->id !== 1)
+                        <tr>
+                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ $user->name }}</td>
+                            <td>{{ $user->email }}</td>
+                            <td>
+                                @if ($user->role == 1)
+                                    Admin
+                                @elseif ($user->role == 2)
+                                    Waka
+                                @elseif ($user->role == 3)
+                                    Petugas
+                                @elseif ($user->role == 4)
+                                    Kepala Sekolah
+                                @else
+                                    Unknown
+                                @endif
+                            </td>
+                            <td>
+                                <button class="btn btn-primary px-2 py-1" data-bs-toggle="modal" data-bs-target="#editUser{{ $user->id }}">Edit</button>
+                                {{-- <a href="{{ route('pengaturan.edit', $user->id) }}" class="btn btn-primary px-2 py-1">Edit</a> --}}
+                                @include('pengaturan.popup.edit_user')
+                                {{-- <form action="{{ route('user.destroy', $user->id) }}" method="POST" class="d-inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger px-2 py-1">Hapus</button>
+                                </form> --}}
+                            </td>
+                        </tr>
+                    @endif
                 @endforeach
             </tbody>
         </table>

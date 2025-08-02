@@ -23,7 +23,7 @@ class PengadaanExport implements FromArray, WithHeadings
             ->where('status','disetujui')
             ->when($this->startDate && $this->endDate, fn($q) =>
                 $q->whereDate('created_at','>=',$this->startDate)
-                ->whereDate('created_at','<=',$this->endDate)
+                  ->whereDate('created_at','<=',$this->endDate)
             );
 
         $result = [];
@@ -31,18 +31,38 @@ class PengadaanExport implements FromArray, WithHeadings
         foreach ($query->get() as $p) {
             $jumlah = $p->items->sum('jumlah');
             $harga  = $jumlah * $p->harga_perolehan;
+
+            $namaBarang = optional($p->barangMaster)->nama_barang
+                ?: ($p->nama_barang
+                    ? $p->nama_barang
+                    : '-'
+                  );
+
+            $jenisBarang = optional($p->barangMaster)->jenis_barang
+                ?: ($p->jenis_barang
+                    ? $p->jenis_barang
+                    : '-'
+                  );
+
+            $merkBarang = optional($p->barangMaster)->merk_barang
+                ?: ($p->merk_barang
+                    ? $p->merk_barang
+                    : '-'
+                  );
+
             $result[] = [
                 $no++,
-                $p->created_at->format('Y-m-d'),
-                $p->barangMaster->nama_barang ?? '-',
-                $p->barangMaster->jenis_barang ?? '-',
-                $p->barangMaster->merk_barang  ?? '-',
-                $jumlah . ' Unit',
-                $p->sumber_dana ?? '-',
-                $p->cv_pengadaan ?? '-',
-                'Rp ' . number_format($harga,0,',','.'),
+                $p->tahun_perolehan,
+                $namaBarang,
+                $jenisBarang,
+                $merkBarang   ?? '-',
+                "{$jumlah} Unit",
+                $p->sumber_dana                  ?? '-',
+                $p->cv_pengadaan                 ?? '-',
+                'Rp ' . number_format($harga, 0, ',', '.'),
             ];
         }
+
         return $result;
     }
 

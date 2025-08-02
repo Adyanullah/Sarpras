@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('barang_id')->constrained('barang_masters')->onDelete('cascade');
             $table->string('kode_barang')->unique();
-            $table->year('tahun_perolehan')->nullable();
+            $table->date('tahun_perolehan')->nullable();
             $table->string('sumber_dana');
             $table->integer('harga_unit')->nullable();
             $table->string('cv_pengadaan')->nullable();

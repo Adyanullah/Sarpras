@@ -65,7 +65,7 @@
                     </div>
 
                     <div class="col-md-2">
-                        <button type="submit" class="btn btn-primary">
+                        <button type="submit" class="col btn btn-primary w-100">
                             <i class="ri-search-line me-1"></i>Filter
                         </button>
                     </div>
@@ -74,13 +74,13 @@
         </div>
     </div>
     @if (in_array(auth()->user()->role, [1,3]))
-        <div class="col-md-6 d-flex gap-2 mb-3">
+        <div class="col-md-6 d-flex align-items-center gap-2 mb-3">
             @csrf
             @include('inventaris.popup.dropdown')
             @include('inventaris.popup.cetak')
             <button type="button" class="btn btn-danger px-2" id="trigger-delete" disabled data-bs-toggle="modal"
                 data-bs-target="#hapusModal">
-                <i class="bi bi-trash me-2"></i>Hapus Terpilih
+                <i class="bi bi-trash me-2"></i>Hapus
             </button>
         </div>
         @include('peminjaman.popup.peminjaman')
@@ -126,7 +126,7 @@
                     <th scope="col">Nama Barang</th>
                     <th scope="col">Merk</th>
                     <th scope="col">Sumber Dana</th>
-                    <th scope="col">Tahun Perolehan</th>
+                    <th scope="col">Tanggal Perolehan</th>
                     <th scope="col">Kondisi</th>
                     <th scope="col">Lokasi</th>
                     <th scope="col">Aksi</th>
