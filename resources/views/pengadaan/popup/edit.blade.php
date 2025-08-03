@@ -30,8 +30,8 @@
                     {{-- multi ruangan & jumlah --}}
                     <div id="fields-container-{{ $pengadaan->id }}" class="fields-container">
                         @foreach ($pengadaan->items as $item)
-                            <div class="row mb-3 field-row">
-                                <div class="col-md-6">
+                            <div class="row mb-3 field-row g-2 align-items-end">
+                                <div class="col-12 col-md-6">
                                     <label class="form-label">Lokasi</label>
                                     <select name="ruangan_id[]" class="form-select">
                                         @foreach ($ruangans as $r)
@@ -42,14 +42,14 @@
                                         @endforeach
                                     </select>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-12 col-md-4">
                                     <label class="form-label">Jumlah</label>
                                     <input type="number" name="jumlah[]" class="form-control" min="1"
                                         value="{{ $item->jumlah }}">
                                 </div>
-                                <div class="col-md-2 d-flex align-items-end">
+                                <div class="col-12 col-md-2 d-flex justify-content-md-end">
                                     <button type="button"
-                                        class="btn btn-outline-{{ $loop->first ? 'success' : 'danger' }} {{ $loop->first ? 'btn-add' : 'btn-remove' }}">
+                                        class="btn btn-outline-{{ $loop->first ? 'success' : 'danger' }} {{ $loop->first ? 'btn-add' : 'btn-remove' }} w-100 w-md-auto">
                                         <i class="bi bi-{{ $loop->first ? 'plus' : 'dash' }}-lg"></i>
                                     </button>
                                 </div>
@@ -87,8 +87,8 @@
                     {{-- 2) Multi‑ruangan & jumlah --}}
                     <div id="fields-container-{{ $pengadaan->id }}" class="fields-container">
                         @foreach ($pengadaan->items as $idx => $item)
-                            <div class="row mb-3 field-row">
-                                <div class="col-md-6">
+                            <div class="row mb-3 field-row g-2 align-items-end">
+                                <div class="col-12 col-md-6">
                                     <label class="form-label">Lokasi</label>
                                     <select name="ruangan_id[]" class="form-select" required>
                                         @foreach ($ruangans as $r)
@@ -99,14 +99,14 @@
                                         @endforeach
                                     </select>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-12 col-md-4">
                                     <label class="form-label">Jumlah</label>
                                     <input type="number" name="jumlah[]" class="form-control" min="1"
                                         value="{{ $item->jumlah }}" required>
                                 </div>
-                                <div class="col-md-2 d-flex align-items-end">
+                                <div class="col-12 col-md-2 d-flex justify-content-md-end">
                                     <button type="button"
-                                        class="btn btn-outline-{{ $idx === 0 ? 'success btn-add' : 'danger btn-remove' }}">
+                                        class="btn btn-outline-{{ $idx === 0 ? 'success btn-add' : 'danger btn-remove' }} w-100 w-md-auto">
                                         <i class="bi bi-{{ $idx === 0 ? 'plus' : 'dash' }}-lg"></i>
                                     </button>
                                 </div>

@@ -43,38 +43,37 @@
                 @enderror
                 
                 <div id="fields-container" class="fields-container">
-                    <div class="row mb-3 field-row">
-                    <!-- Lokasi -->
-                    <div class="col-md-6">
-                        <label class="form-label">Lokasi</label>
-                        <select name="ruangan_id[]" class="form-select" required>
-                        <option disabled selected>-- Pilih Lokasi --</option>
-                        @foreach($ruangan as $r)
-                            <option value="{{ $r->id }}">{{ $r->nama_ruangan }}</option>
-                        @endforeach
-                        </select>
-                        {{-- Tampilkan error untuk semua index ruangan_id --}}
-                        @error('ruangan_id.*')
-                        <div class="text-danger mt-1">{{ $message }}</div>
-                        @enderror
-                    </div>
+                    <div class="row mb-3 field-row g-2 align-items-end">
+                        <!-- Lokasi -->
+                        <div class="col-12 col-md-6">
+                            <label class="form-label">Lokasi</label>
+                            <select name="ruangan_id[]" class="form-select" required>
+                                <option disabled selected>-- Pilih Lokasi --</option>
+                                @foreach ($ruangan as $r)
+                                    <option value="{{ $r->id }}">{{ $r->nama_ruangan }}</option>
+                                @endforeach
+                            </select>
+                            @error('ruangan_id.*')
+                                <div class="text-danger mt-1">{{ $message }}</div>
+                            @enderror
+                        </div>
 
-                    <!-- Jumlah -->
-                    <div class="col-md-4">
-                        <label class="form-label">Jumlah</label>
-                        <input type="number" name="jumlah[]" class="form-control" min="1" required>
-                        {{-- Tampilkan error untuk semua index jumlah --}}
-                        @error('jumlah.*')
-                        <div class="text-danger mt-1">{{ $message }}</div>
-                        @enderror
-                    </div>
+                        <!-- Jumlah -->
+                        <div class="col-12 col-md-4">
+                            <label class="form-label">Jumlah</label>
+                            <input type="number" name="jumlah[]" class="form-control" min="1" required>
+                            @error('jumlah.*')
+                                <div class="text-danger mt-1">{{ $message }}</div>
+                            @enderror
+                        </div>
 
-                    <!-- Tombol add/remove -->
-                    <div class="col-md-2 d-flex align-items-end">
-                        <button type="button" class="btn btn-outline-success btn-add">
-                        <i class="bi bi-plus-lg"></i>
-                        </button>
-                    </div>
+                        <!-- Tombol add/remove -->
+                        <div class="col-12 col-md-2 d-flex justify-content-md-end">
+                            <button type="button" class="btn btn-outline-success btn-add w-100 w-md-auto"
+                                title="Tambah baris">
+                                <i class="bi bi-plus-lg"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
 

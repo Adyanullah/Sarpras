@@ -32,8 +32,7 @@
                         <option disabled selected>-- Pilih Barang --</option>
                         @foreach ($barangs as $barang)
                             <option value="{{ $barang->barangMaster->id }}"
-                                {{ old('barang_id') == $barang->barangMaster->id ? 'selected' : '' }}
-                                >
+                                {{ old('barang_id') == $barang->barangMaster->id ? 'selected' : '' }}>
                                 {{ $barang->barangMaster->nama_barang }}
                             </option>
                         @endforeach
@@ -42,47 +41,46 @@
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
                 </div>
-                
+
                 <div id="fields-container" class="fields-container">
-                    <div class="row mb-3 field-row">
-                    <!-- Lokasi -->
-                    <div class="col-md-6">
-                        <label class="form-label">Lokasi</label>
-                        <select name="ruangan_id[]" class="form-select" required>
-                        <option disabled selected>-- Pilih Lokasi --</option>
-                        @foreach($ruangan as $r)
-                            <option value="{{ $r->id }}">{{ $r->nama_ruangan }}</option>
-                        @endforeach
-                        </select>
-                        {{-- Tampilkan error untuk semua index ruangan_id --}}
-                        @error('ruangan_id.*')
-                        <div class="text-danger mt-1">{{ $message }}</div>
-                        @enderror
-                    </div>
+                    <div class="row mb-3 field-row g-2 align-items-end">
+                        <!-- Lokasi -->
+                        <div class="col-12 col-md-6">
+                            <label class="form-label">Lokasi</label>
+                            <select name="ruangan_id[]" class="form-select" required>
+                                <option disabled selected>-- Pilih Lokasi --</option>
+                                @foreach ($ruangan as $r)
+                                    <option value="{{ $r->id }}">{{ $r->nama_ruangan }}</option>
+                                @endforeach
+                            </select>
+                            @error('ruangan_id.*')
+                                <div class="text-danger mt-1">{{ $message }}</div>
+                            @enderror
+                        </div>
 
-                    <!-- Jumlah -->
-                    <div class="col-md-4">
-                        <label class="form-label">Jumlah</label>
-                        <input type="number" name="jumlah[]" class="form-control" min="1" required>
-                        {{-- Tampilkan error untuk semua index jumlah --}}
-                        @error('jumlah.*')
-                        <div class="text-danger mt-1">{{ $message }}</div>
-                        @enderror
-                    </div>
+                        <!-- Jumlah -->
+                        <div class="col-12 col-md-4">
+                            <label class="form-label">Jumlah</label>
+                            <input type="number" name="jumlah[]" class="form-control" min="1" required>
+                            @error('jumlah.*')
+                                <div class="text-danger mt-1">{{ $message }}</div>
+                            @enderror
+                        </div>
 
-                    <!-- Tombol add/remove -->
-                    <div class="col-md-2 d-flex align-items-end">
-                        <button type="button" class="btn btn-outline-success btn-add">
-                        <i class="bi bi-plus-lg"></i>
-                        </button>
-                    </div>
+                        <!-- Tombol add/remove -->
+                        <div class="col-12 col-md-2 d-flex justify-content-md-end">
+                            <button type="button" class="btn btn-outline-success btn-add w-100 w-md-auto"
+                                title="Tambah baris">
+                                <i class="bi bi-plus-lg"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
 
                 {{-- Error umum jika misalnya array kosong --}}
-                @if($errors->has('ruangan_id') || $errors->has('jumlah'))
+                @if ($errors->has('ruangan_id') || $errors->has('jumlah'))
                     <div class="alert alert-danger">
-                    Pastikan setidaknya satu lokasi dan jumlah diisi dengan benar.
+                        Pastikan setidaknya satu lokasi dan jumlah diisi dengan benar.
                     </div>
                 @endif
                 <div class="col-md-12 mb-3">
@@ -105,7 +103,7 @@
                 <div class="col-md-12 mb-3">
                     <label for="cv_pengadaan" class="form-label">Supplier</label>
                     <input type="text" name="cv_pengadaan" class="form-control" id="cv_pengadaan"
-                         value="{{ old('cv_pengadaan') }}">
+                        value="{{ old('cv_pengadaan') }}">
                     @error('cv_pengadaan')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
